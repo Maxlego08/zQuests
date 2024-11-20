@@ -12,7 +12,7 @@ quests:
     auto-accept: true # Si la quête doit commencer automatiquement
     rewards: # Les récompenses
       - type: message # Envoie d'un message
-        message:
+        messages:
           - "&fYou have broken &7500 stone&f blocks!"
       - type: console_command # Exécution d'une commande
         commands:

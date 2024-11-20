@@ -2,28 +2,35 @@ package fr.maxlego08.quests;
 
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
+import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.api.utils.Parameter;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 public class ZQuestManager extends ZUtils implements QuestManager {
 
     private final QuestsPlugin plugin;
     private final List<Quest> quests = new ArrayList<>();
+    private final Map<UUID, List<ActiveQuest>> activesQuests = new HashMap<>();
 
     public ZQuestManager(QuestsPlugin plugin) {
         this.plugin = plugin;
@@ -101,5 +108,63 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public List<Quest> getQuests() {
         return quests;
+    }
+
+    @Override
+    public void handleJoin(Player player) {
+        this.plugin.getStorageManager().load(player.getUniqueId(), activeQuests -> {
+
+            this.activesQuests.put(player.getUniqueId(), activeQuests);
+
+            this.quests.stream().filter(Quest::isAutoAccept).filter(quest -> {
+                return activeQuests.stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest));
+            }).forEach(quest -> this.addQuestToPlayer(player, quest));
+        });
+    }
+
+    @Override
+    public void handleQuit(UUID uuid) {
+        List<ActiveQuest> quests = this.activesQuests.remove(uuid);
+        quests.forEach(activeQuest -> this.plugin.getStorageManager().upsert(activeQuest));
+    }
+
+    @Override
+    public void handleQuests(UUID uuid, QuestType type, Parameter<?>... parameters) {
+        this.activesQuests.getOrDefault(uuid, new ArrayList<>()).stream().filter(activeQuest -> activeQuest.getQuest().getType() == type && !activeQuest.isComplete()).filter(activeQuest -> {
+            var result = activeQuest.hasParameters(parameters);
+            System.out.println(result + " - " + Arrays.asList(parameters) + " - " + uuid);
+            return result;
+        }).forEach(ActiveQuest::increment);
+    }
+
+    @Override
+    public void addQuestToPlayer(Player player, Quest quest) {
+        ActiveQuest activeQuest = new ZActiveQuest(player.getUniqueId(), quest, 0);
+        this.activesQuests.computeIfAbsent(player.getUniqueId(), uuid -> new ArrayList<>()).add(activeQuest);
+        this.plugin.getStorageManager().upsert(activeQuest);
+    }
+
+    @Override
+    public void removeQuestFromPlayer(Player player, String quest) {
+        this.activesQuests.computeIfPresent(player.getUniqueId(), (uuid, activeQuests) -> {
+            activeQuests.removeIf(activeQuest -> {
+                if (activeQuest.getQuest().getName().equalsIgnoreCase(quest)) {
+                    this.plugin.getStorageManager().delete(activeQuest);
+                    return true;
+                }
+                return false;
+            });
+            return activeQuests;
+        });
+    }
+
+    @Override
+    public List<ActiveQuest> getQuestsFromPlayer(UUID uuid) {
+        return this.activesQuests.getOrDefault(uuid, new ArrayList<>());
+    }
+
+    @Override
+    public Optional<Quest> getQuest(String name) {
+        return this.quests.stream().filter(quest -> quest.getName().equalsIgnoreCase(name)).findFirst();
     }
 }

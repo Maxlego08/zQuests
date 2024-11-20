@@ -44,6 +44,8 @@ public class QuestsPlugin extends ZPlugin {
         this.questManager.loadQuests();
         this.storageManager.loadDatabase();
 
+        this.addListener(new QuestListener(this, this.questManager));
+
         this.postEnable();
     }
 
