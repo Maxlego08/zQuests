@@ -1,0 +1,19 @@
+quests:
+  - type: BLOCK_BREAK # Le type de la quête
+    blocks-types: # Liste des materials a prendre en compte
+      - STONE
+      - DIORITE
+      - COBBLESTONE
+    name: "block-break-1" # Le nom doit être unique et ne doit jamais changer
+    display-name: "Stone Breaker" # Le nom de la quête qui sera affiché dans le jeu
+    description: "Break 500 stone blocks" # La description de la quête
+    thumbnail: MATERIAL # Le material qui sera affiché dans le jeu
+    goal: 500 # L'objectif à atteindre
+    auto-accept: true # Si la quête doit commencer automatiquement
+    rewards: # Les récompenses
+      - type: message # Envoie d'un message
+        message:
+          - "&fYou have broken &7500 stone&f blocks!"
+      - type: console_command # Exécution d'une commande
+        commands:
+          - "give %player% diamond 5"
