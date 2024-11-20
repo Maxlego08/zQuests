@@ -1,0 +1,11 @@
+name: '${name}'
+version: '${version}'
+main: fr.maxlego08.quests.QuestsPlugin
+description: Default plugin description
+website: https://groupez.dev
+author: Maxlego08
+api-version: 1.21
+depend:
+  - zMenu
+softdepend:
+  - PlaceholderAPI
