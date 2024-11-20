@@ -13,9 +13,12 @@ import org.bukkit.entity.EntityType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class ZQuestManager extends ZUtils implements QuestManager {
 
@@ -36,6 +39,20 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
 
         this.files(folder, file -> this.quests.addAll(this.loadQuests(file)));
+
+        // Check quests names
+
+        Set<String> questNames = new HashSet<>();
+        Iterator<Quest> iterator = this.quests.iterator();
+        while (iterator.hasNext()) {
+            Quest quest = iterator.next();
+            if (!questNames.add(quest.getName())) {
+                this.plugin.getLogger().warning("A quest with the name " + quest.getName() + " already exists");
+                iterator.remove();
+            }
+        }
+
+        this.plugin.getLogger().info(this.quests.size() + " quests loaded");
     }
 
     @Override
@@ -53,7 +70,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             String name = accessor.getString("name");
             String displayName = accessor.getString("display-name", name);
             String description = accessor.getString("description", "no description");
-            Material thumbnail = accessor.contains("thumbnail") ? Material.valueOf(accessor.getString("thumbnail")) : null;
+            Material thumbnail = accessor.contains("thumbnail") ? Material.valueOf(accessor.getString("thumbnail").toUpperCase()) : null;
             long goal = accessor.getLong("goal");
             boolean autoAccept = accessor.getBoolean("auto-accept", false);
 
