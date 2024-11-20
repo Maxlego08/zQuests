@@ -89,7 +89,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
             Map<String, Object> parameters = new HashMap<>();
             switch (questType) {
-                case BLOCK_BREAK -> {
+                case BLOCK_BREAK, FARMING -> {
                     parameters.put("blocks", accessor.getStringList("blocks-types").stream().map(String::toUpperCase).map(Material::valueOf).toList());
                 }
                 case ENTITY_KILL -> {

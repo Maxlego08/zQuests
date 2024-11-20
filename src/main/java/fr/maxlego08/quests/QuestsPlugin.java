@@ -4,12 +4,16 @@ package fr.maxlego08.quests;
 import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.quests.api.QuestManager;
+import fr.maxlego08.quests.api.hooks.BlockHook;
 import fr.maxlego08.quests.api.storage.StorageManager;
 import fr.maxlego08.quests.commands.commands.CommandQuests;
+import fr.maxlego08.quests.hooks.BlockTrackerHook;
+import fr.maxlego08.quests.hooks.EmptyHook;
 import fr.maxlego08.quests.placeholder.LocalPlaceholder;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.storage.ZStorageManager;
 import fr.maxlego08.quests.zcore.ZPlugin;
+import fr.maxlego08.quests.zcore.utils.plugins.Plugins;
 
 /**
  * System to create your plugins very simple Projet:
@@ -21,6 +25,7 @@ public class QuestsPlugin extends ZPlugin {
 
     private final StorageManager storageManager = new ZStorageManager(this);
     private final QuestManager questManager = new ZQuestManager(this);
+    private BlockHook blockHook = new EmptyHook();
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
 
@@ -45,6 +50,11 @@ public class QuestsPlugin extends ZPlugin {
         this.storageManager.loadDatabase();
 
         this.addListener(new QuestListener(this, this.questManager));
+
+        if (isEnable(Plugins.BLOCKTRACKER)) {
+            getLogger().info("Using BlockTracker");
+            this.blockHook = new BlockTrackerHook();
+        }
 
         this.postEnable();
     }
@@ -73,5 +83,9 @@ public class QuestsPlugin extends ZPlugin {
 
     public QuestManager getQuestManager() {
         return questManager;
+    }
+
+    public BlockHook getBlockHook() {
+        return blockHook;
     }
 }

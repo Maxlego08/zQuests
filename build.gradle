@@ -59,11 +59,13 @@ allprojects {
         compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
         compileOnly 'me.clip:placeholderapi:2.11.6'
         compileOnly 'com.github.Maxlego08:zMenu-API:1.0.3.5'
+        compileOnly 'dev.krakenied:blocktracker:1.0.6'
 
         compileOnly 'com.mojang:authlib:3.11.50' //only java 16 or newer
         //compileOnly 'com.mojang:authlib:1.6.25'
         implementation "com.github.technicallycoded:FoliaLib:main-SNAPSHOT"
         implementation 'com.github.Maxlego08:Sarah:1.12.2'
+
     }
 
 }
