@@ -2,6 +2,7 @@ package fr.maxlego08.quests;
 
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.Placeholders;
+import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestType;
 import org.bukkit.Bukkit;
@@ -65,9 +66,9 @@ public class ZQuest implements Quest {
     }
 
     @Override
-    public void onComplete(UUID uuid) {
+    public void onComplete(ActiveQuest activeQuest) {
 
-        Player player = Bukkit.getPlayer(uuid);
+        Player player = Bukkit.getPlayer(activeQuest.getUniqueId());
         if (player == null) return;
 
         this.rewards.forEach(reward -> reward.preExecute(player, null, this.plugin.getInventoryManager().getFakeInventory(), new Placeholders()));

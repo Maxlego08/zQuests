@@ -92,11 +92,7 @@ public interface Quest {
      */
     void setParameters(Map<String, Object> section);
 
-    /**
-     * Completes the quest for the given player.
-     *
-     * @param uuid the unique identifier of the player
-     */
-    void onComplete(UUID uuid);
+
+    void onComplete(ActiveQuest activeQuest);
 
 }

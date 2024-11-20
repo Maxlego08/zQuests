@@ -24,9 +24,9 @@ public interface QuestManager {
 
     void addQuestToPlayer(Player player, Quest quest);
 
-    void removeQuestFromPlayer(Player player, String quest);
-
     List<ActiveQuest> getQuestsFromPlayer(UUID uuid);
 
     Optional<Quest> getQuest(String name);
+
+    void completeQuest(ActiveQuest activeQuest);
 }

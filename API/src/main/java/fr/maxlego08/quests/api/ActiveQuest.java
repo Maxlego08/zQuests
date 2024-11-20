@@ -20,8 +20,9 @@ public interface ActiveQuest {
 
     boolean owningBy(UUID uniqueId);
 
-    void increment();
+    boolean increment();
 
     boolean hasParameters(Parameter<?>... parameters);
 
+    CompletedQuest complete();
 }

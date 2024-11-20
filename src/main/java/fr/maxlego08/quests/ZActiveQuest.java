@@ -1,10 +1,12 @@
 package fr.maxlego08.quests;
 
 import fr.maxlego08.quests.api.ActiveQuest;
+import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.utils.Parameter;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,14 +58,16 @@ public class ZActiveQuest implements ActiveQuest {
     }
 
     @Override
-    public void increment() {
-        if (this.isComplete()) {
-            return;
-        }
+    public boolean increment() {
+        if (this.isComplete()) return false;
+
         this.amount++;
         if (this.isComplete()) {
-            this.quest.onComplete(this.uniqueId);
+            this.quest.onComplete(this);
+            return true;
         }
+
+        return false;
     }
 
     @Override
@@ -79,5 +83,10 @@ public class ZActiveQuest implements ActiveQuest {
 
     private boolean matchesParameter(Object questParam, Object paramValue) {
         return questParam instanceof List<?> list ? list.contains(paramValue) : questParam.equals(paramValue);
+    }
+
+    @Override
+    public CompletedQuest complete() {
+        return new CompletedQuest(this.quest, new Date());
     }
 }
