@@ -10,7 +10,8 @@ public enum Plugins {
 	TRANSLATIONAPI("TranslationAPI"),
 	ZTRANSLATOR("zTranslator"),
 	BLOCKTRACKER("BlockTracker"),
-	
+	WILDSTACKER("WildStacker"),
+
 	;
 
 	private final String name;

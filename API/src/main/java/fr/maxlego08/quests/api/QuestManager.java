@@ -20,7 +20,7 @@ public interface QuestManager {
 
     void handleQuit(UUID uuid);
 
-    void handleQuests(UUID uuid, QuestType type, Parameter<?>... parameters);
+    void handleQuests(UUID uuid, QuestType type, int amount, Parameter<?>... parameters);
 
     void addQuestToPlayer(Player player, Quest quest);
 

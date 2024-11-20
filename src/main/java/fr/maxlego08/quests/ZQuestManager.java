@@ -11,6 +11,7 @@ import fr.maxlego08.quests.api.UserQuest;
 import fr.maxlego08.quests.api.utils.Parameter;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -131,7 +132,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public void handleQuests(UUID uuid, QuestType type, Parameter<?>... parameters) {
+    public void handleQuests(UUID uuid, QuestType type, int amount, Parameter<?>... parameters) {
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = this.usersQuests.getOrDefault(uuid, new ZUserQuest());
 
@@ -140,7 +141,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         while (iterator.hasNext()) {
             ActiveQuest activeQuest = iterator.next();
             if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.hasParameters(parameters)) {
-                if (activeQuest.increment()) { // Increment the progress of the quest
+                if (activeQuest.increment(amount)) { // Increment the progress of the quest
                     iterator.remove(); // If the quest is complete, remove it from the list
                     this.completeQuest(activeQuest);
                 }
@@ -186,5 +187,21 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         userQuest.getCompletedQuests().add(completedQuest);
         this.plugin.getStorageManager().upsert(activeQuest.getUniqueId(), completedQuest);
         this.plugin.getStorageManager().delete(activeQuest);
+    }
+
+
+    public void activateQuest(CommandSender sender, Player player, String questName) {
+        Optional<Quest> optionalQuest = this.getQuest(questName);
+        if (optionalQuest.isPresent()) {
+            Quest quest = optionalQuest.get();
+            if (this.getQuestsFromPlayer(player.getUniqueId()).stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest))) {
+                this.addQuestToPlayer(player, quest);
+                sender.sendMessage("La qu te " + questName + " a  t  activ e pour le joueur " + player.getName());
+            } else {
+                sender.sendMessage("Le joueur " + player.getName() + " a d j  cette qu te en cours d'execution");
+            }
+        } else {
+            sender.sendMessage("La qu te " + questName + " n'existe pas");
+        }
     }
 }

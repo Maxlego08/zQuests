@@ -6,11 +6,13 @@ import fr.maxlego08.quests.api.utils.Parameter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -41,17 +43,28 @@ public class QuestListener implements Listener {
         Player player = event.getPlayer();
         Material material = block.getType();
 
-        this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_BREAK, Parameter.of("blocks", event.getBlock().getType()));
-
         if (!(block.getBlockData() instanceof Ageable)) {
 
             if (this.plugin.getBlockHook().isTracked(block)) return;
 
-            this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_BREAK, Parameter.of("blocks", event.getBlock().getType()));
+            this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_BREAK, 1, Parameter.of("blocks", event.getBlock().getType()));
 
         } else if (block.getBlockData() instanceof Ageable ageable && ((material == Material.SUGAR_CANE || material == Material.KELP || material == Material.BAMBOO) || ageable.getAge() == ageable.getMaximumAge())) {
 
-            this.manager.handleQuests(player.getUniqueId(), QuestType.FARMING, Parameter.of("blocks", event.getBlock().getType()));
+            this.manager.handleQuests(player.getUniqueId(), QuestType.FARMING, 1, Parameter.of("blocks", event.getBlock().getType()));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onAnimalTame(EntityDeathEvent event) {
+
+        LivingEntity entity = event.getEntity();
+        if (entity.getKiller() != null) {
+
+            var killer = entity.getKiller();
+            var amount = this.plugin.getStackerHook().getEntityCount(entity);
+
+            this.manager.handleQuests(killer.getUniqueId(), QuestType.ENTITY_KILL, amount, Parameter.of("entities", entity.getType().name()));
         }
     }
 

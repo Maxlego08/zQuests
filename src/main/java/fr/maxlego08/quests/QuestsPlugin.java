@@ -5,10 +5,13 @@ import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.hooks.BlockHook;
+import fr.maxlego08.quests.api.hooks.StackerHook;
 import fr.maxlego08.quests.api.storage.StorageManager;
 import fr.maxlego08.quests.commands.commands.CommandQuests;
-import fr.maxlego08.quests.hooks.BlockTrackerHook;
-import fr.maxlego08.quests.hooks.EmptyHook;
+import fr.maxlego08.quests.hooks.blocks.BlockTrackerHook;
+import fr.maxlego08.quests.hooks.blocks.EmptyBlockHook;
+import fr.maxlego08.quests.hooks.stacker.EmptyStackerHook;
+import fr.maxlego08.quests.hooks.stacker.WildStackerHook;
 import fr.maxlego08.quests.placeholder.LocalPlaceholder;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.storage.ZStorageManager;
@@ -25,7 +28,8 @@ public class QuestsPlugin extends ZPlugin {
 
     private final StorageManager storageManager = new ZStorageManager(this);
     private final QuestManager questManager = new ZQuestManager(this);
-    private BlockHook blockHook = new EmptyHook();
+    private BlockHook blockHook = new EmptyBlockHook();
+    private StackerHook stackerHook = new EmptyStackerHook();
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
 
@@ -54,6 +58,11 @@ public class QuestsPlugin extends ZPlugin {
         if (isEnable(Plugins.BLOCKTRACKER)) {
             getLogger().info("Using BlockTracker");
             this.blockHook = new BlockTrackerHook();
+        }
+
+        if (isEnable(Plugins.WILDSTACKER)) {
+            getLogger().info("Using WildStacker");
+            this.stackerHook = new WildStackerHook();
         }
 
         this.postEnable();
@@ -87,5 +96,9 @@ public class QuestsPlugin extends ZPlugin {
 
     public BlockHook getBlockHook() {
         return blockHook;
+    }
+
+    public StackerHook getStackerHook() {
+        return stackerHook;
     }
 }

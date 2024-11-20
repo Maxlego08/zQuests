@@ -58,10 +58,10 @@ public class ZActiveQuest implements ActiveQuest {
     }
 
     @Override
-    public boolean increment() {
+    public boolean increment(int amount) {
         if (this.isComplete()) return false;
 
-        this.amount++;
+        this.amount += amount;
         if (this.isComplete()) {
             this.quest.onComplete(this);
             return true;

@@ -7,12 +7,10 @@ def propertiesFile = file("personal.properties")
 
 if (propertiesFile.exists()) {
     def properties = new Properties()
-    propertiesFile.withInputStream { stream ->
-        properties.load(stream)
+    propertiesFile.withInputStream { stream -> properties.load(stream)
     }
 
-    properties.each { key, value ->
-        project.ext[key] = value
+    properties.each { key, value -> project.ext[key] = value
     }
 }
 
@@ -50,9 +48,8 @@ allprojects {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/groups/public/"
         }
-        maven {
-            url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-        }
+        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'}
+        maven { url = 'https://repo.bg-software.com/repository/api/' }
     }
 
     dependencies {
@@ -60,6 +57,7 @@ allprojects {
         compileOnly 'me.clip:placeholderapi:2.11.6'
         compileOnly 'com.github.Maxlego08:zMenu-API:1.0.3.5'
         compileOnly 'dev.krakenied:blocktracker:1.0.6'
+        compileOnly 'com.bgsoftware:WildStackerAPI:2024.3'
 
         compileOnly 'com.mojang:authlib:3.11.50' //only java 16 or newer
         //compileOnly 'com.mojang:authlib:1.6.25'
@@ -120,7 +118,7 @@ tasks.register('copyFiles', Copy) {
     into rootProject.testFolder
 }
 
-if(propertiesFile.exists()) {
+if (propertiesFile.exists()) {
     shadowJar.finalizedBy('copyFiles')
 } else {
     println "No personal.properties file found, skipping copyFiles task"

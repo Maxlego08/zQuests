@@ -1,4 +1,4 @@
-package fr.maxlego08.quests.hooks;
+package fr.maxlego08.quests.hooks.blocks;
 
 import dev.krakenied.blocktracker.bukkit.BukkitBlockTrackerPlugin;
 import fr.maxlego08.quests.api.hooks.BlockHook;
