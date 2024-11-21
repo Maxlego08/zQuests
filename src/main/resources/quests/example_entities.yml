@@ -24,7 +24,7 @@ quests:
     description: "Kill 15 Zombies" # The description of the quest
     thumbnail: ROTTEN_FLESH # The material to be displayed in-game
     goal: 15 # The goal to be achieved
-    auto-accept: true # If the quest should start automatically
+    auto-accept: false # If the quest should start automatically
     rewards: # The rewards
       - type: message # Sending a message
         messages:
@@ -41,7 +41,7 @@ quests:
     description: "Kill 5 Creepers" # The description of the quest
     thumbnail: GUNPOWDER # The material to be displayed in-game
     goal: 5 # The goal to be achieved
-    auto-accept: true # If the quest should start automatically
+    auto-accept: false # If the quest should start automatically
     rewards: # The rewards
       - type: message # Sending a message
         messages:
@@ -58,7 +58,7 @@ quests:
     description: "Kill 3 Endermen" # The description of the quest
     thumbnail: ENDER_PEARL # The material to be displayed in-game
     goal: 3 # The goal to be achieved
-    auto-accept: true # If the quest should start automatically
+    auto-accept: false # If the quest should start automatically
     rewards: # The rewards
       - type: message # Sending a message
         messages:
@@ -75,7 +75,7 @@ quests:
     description: "Kill 20 Cows" # The description of the quest
     thumbnail: BEEF # The material to be displayed in-game
     goal: 20 # The goal to be achieved
-    auto-accept: true # If the quest should start automatically
+    auto-accept: false # If the quest should start automatically
     rewards: # The rewards
       - type: message # Sending a message
         messages:

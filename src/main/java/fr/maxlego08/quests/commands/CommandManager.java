@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.commands;
 
+import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.zcore.ZPlugin;
 import fr.maxlego08.quests.zcore.logger.Logger;
@@ -38,7 +39,7 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
         }
     }
 
-    private final ZPlugin plugin;
+    private final QuestsPlugin plugin;
     private final List<VCommand> commands = new ArrayList<VCommand>();
 
     /**
@@ -46,7 +47,7 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
      *
      * @param template
      */
-    public CommandManager(ZPlugin template) {
+    public CommandManager(QuestsPlugin template) {
         this.plugin = template;
     }
 

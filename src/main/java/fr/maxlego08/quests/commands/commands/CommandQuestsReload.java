@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.commands.commands;
 
+import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.commands.VCommand;
 import fr.maxlego08.quests.zcore.ZPlugin;
 import fr.maxlego08.quests.messages.Message;
@@ -16,7 +17,7 @@ public class CommandQuestsReload extends VCommand {
 	}
 
 	@Override
-	protected CommandType perform(ZPlugin plugin) {
+	protected CommandType perform(QuestsPlugin plugin) {
 		
 		plugin.reloadFiles();
 		message(sender, Message.RELOAD);

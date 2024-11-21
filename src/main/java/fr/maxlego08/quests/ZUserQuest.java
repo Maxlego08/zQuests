@@ -2,6 +2,7 @@ package fr.maxlego08.quests;
 
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
+import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.UserQuest;
 
 import java.util.ArrayList;
@@ -30,5 +31,20 @@ public class ZUserQuest implements UserQuest {
     @Override
     public List<CompletedQuest> getCompletedQuests() {
         return this.completedQuests;
+    }
+
+    @Override
+    public boolean isQuestActive(Quest quest) {
+        return this.activeQuests.stream().anyMatch(activeQuest -> activeQuest.getQuest().equals(quest));
+    }
+
+    @Override
+    public boolean isQuestCompleted(Quest quest) {
+        return this.completedQuests.stream().anyMatch(completedQuest -> completedQuest.quest().equals(quest));
+    }
+
+    @Override
+    public boolean canStartQuest(Quest quest) {
+        return !isQuestActive(quest) && !isQuestCompleted(quest);
     }
 }

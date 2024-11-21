@@ -27,7 +27,7 @@ quests:
     description: "Break 300 granite blocks" # The description of the quest
     thumbnail: GRANITE # The material to be displayed in-game
     goal: 300 # The goal to be achieved
-    auto-accept: true # If the quest should start automatically
+    auto-accept: false # If the quest should start automatically
     rewards: # The rewards
       - type: message # Sending a message
         messages:
@@ -45,7 +45,7 @@ quests:
     description: "Break 200 sandstone blocks" # The description of the quest
     thumbnail: SANDSTONE # The material to be displayed in-game
     goal: 200 # The goal to be achieved
-    auto-accept: true # If the quest should start automatically
+    auto-accept: false # If the quest should start automatically
     rewards: # The rewards
       - type: message # Sending a message
         messages:

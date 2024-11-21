@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.PlatformScheduler;
+import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.commands.CommandManager;
 import fr.maxlego08.quests.commands.VCommand;
 import fr.maxlego08.quests.messages.MessageLoader;
@@ -99,7 +100,7 @@ public abstract class ZPlugin extends JavaPlugin {
         MessageLoader messageLoader = new MessageLoader(this);
         messageLoader.load();
 
-        this.commandManager = new CommandManager(this);
+        this.commandManager = new CommandManager((QuestsPlugin) this);
     }
 
     /**

@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.commands;
 
+import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.zcore.ZPlugin;
@@ -486,7 +487,7 @@ public abstract class VCommand extends Arguments {
      * @param args          the arguments of the command.
      * @return the command type.
      */
-    public CommandType prePerform(ZPlugin plugin, CommandSender commandSender, String[] args) {
+    public CommandType prePerform(QuestsPlugin plugin, CommandSender commandSender, String[] args) {
 
         // Update the number of arguments according to the number of parents
         this.parentCount = this.parentCount(0);
@@ -531,7 +532,7 @@ public abstract class VCommand extends Arguments {
      * @param plugin the plugin instance.
      * @return the command type.
      */
-    protected abstract CommandType perform(ZPlugin plugin);
+    protected abstract CommandType perform(QuestsPlugin plugin);
 
     /**
      * Checks if there are any sub-commands with the same name as this command.

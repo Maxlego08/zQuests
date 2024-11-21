@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.api;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -28,4 +29,8 @@ public interface QuestManager {
     Optional<Quest> getQuest(String name);
 
     void completeQuest(ActiveQuest activeQuest);
+
+    UserQuest getUserQuest(UUID uuid);
+
+    void activateQuest(CommandSender sender, Player player, String questName);
 }

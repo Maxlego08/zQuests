@@ -7,6 +7,7 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.UserQuest;
+import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -97,7 +98,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public void handleQuests(UUID uuid, QuestType type, int amount, Object object) {
         // Retrieve the user's quest data or create a new ZUserQuest if not found
-        var userQuest = this.usersQuests.getOrDefault(uuid, new ZUserQuest());
+        var userQuest = getUserQuest(uuid);
 
         // Stream through the active quests of the user
         var iterator = userQuest.getActiveQuests().iterator();
@@ -117,7 +118,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public void addQuestToPlayer(Player player, Quest quest) {
         // Create a new active quest for the player
         ActiveQuest activeQuest = new ZActiveQuest(player.getUniqueId(), quest, 0);
-        var userQuest = this.usersQuests.computeIfAbsent(player.getUniqueId(), uuid -> new ZUserQuest());
+        var userQuest = getUserQuest(player.getUniqueId());
 
         // Check if the user already completes the quest
         if (userQuest.getCompletedQuests().stream().anyMatch(completedQuest -> completedQuest.quest().equals(quest))) {
@@ -133,7 +134,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public List<ActiveQuest> getQuestsFromPlayer(UUID uuid) {
-        return this.usersQuests.getOrDefault(uuid, new ZUserQuest()).getActiveQuests();
+        return getUserQuest(uuid).getActiveQuests();
     }
 
     @Override
@@ -144,7 +145,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public void completeQuest(ActiveQuest activeQuest) {
 
-        var userQuest = this.usersQuests.computeIfAbsent(activeQuest.getUniqueId(), uuid -> new ZUserQuest());
+        var userQuest = getUserQuest(activeQuest.getUniqueId());
 
         CompletedQuest completedQuest = activeQuest.complete();
         userQuest.getCompletedQuests().add(completedQuest);
@@ -152,19 +153,25 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.plugin.getStorageManager().delete(activeQuest);
     }
 
+    @Override
+    public UserQuest getUserQuest(UUID uuid) {
+        return this.usersQuests.computeIfAbsent(uuid, u -> new ZUserQuest());
+    }
 
     public void activateQuest(CommandSender sender, Player player, String questName) {
-        Optional<Quest> optionalQuest = this.getQuest(questName);
-        if (optionalQuest.isPresent()) {
-            Quest quest = optionalQuest.get();
-            if (this.getQuestsFromPlayer(player.getUniqueId()).stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest))) {
-                this.addQuestToPlayer(player, quest);
-                sender.sendMessage("La qu te " + questName + " a  t  activ e pour le joueur " + player.getName());
-            } else {
-                sender.sendMessage("Le joueur " + player.getName() + " a d j  cette qu te en cours d'execution");
-            }
+        Optional<Quest> optional = this.getQuest(questName);
+        if (optional.isEmpty()) {
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
+
+        Quest quest = optional.get();
+        UserQuest userQuest = getUserQuest(player.getUniqueId());
+        if (userQuest.canStartQuest(quest)) {
+            this.addQuestToPlayer(player, quest);
+            message(sender, Message.QUEST_START_SUCCESS, "%name%", questName, "%player%", player.getName());
         } else {
-            sender.sendMessage("La qu te " + questName + " n'existe pas");
+            message(sender, Message.QUEST_START_ERROR, "%name%", questName, "%player%", player.getName());
         }
     }
 }
