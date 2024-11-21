@@ -49,6 +49,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             this.plugin.saveResource("quests/example_fish.yml", false);
             this.plugin.saveResource("quests/example_enchant.yml", false);
             this.plugin.saveResource("quests/example_brew.yml", false);
+            this.plugin.saveResource("quests/example_craft.yml", false);
         }
 
         this.files(folder, file -> this.quests.addAll(this.loadQuests(file)));

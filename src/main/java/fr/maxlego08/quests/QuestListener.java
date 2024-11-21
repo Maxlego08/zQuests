@@ -29,8 +29,10 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -203,8 +205,49 @@ public class QuestListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCraft(CraftItemEvent event) {
-        var result = event.getRecipe().getResult();
-        this.manager.handleQuests(event.getWhoClicked().getUniqueId(), QuestType.CRAFT, result.getAmount(), result.getType());
+        ItemStack result = event.getRecipe().getResult();
+
+        int craftAmount;
+
+        if (event.isShiftClick()) {
+
+            craftAmount = calculateMaxCraftAmount(event);
+        } else {
+
+            craftAmount = event.getCursor() != null && event.getCursor().getType() != Material.AIR ? 0 : result.getAmount();
+        }
+
+        if (craftAmount == 0) return;
+        this.manager.handleQuests(event.getWhoClicked().getUniqueId(), QuestType.CRAFT, craftAmount, result.getType());
     }
+
+    private int calculateMaxCraftAmount(CraftItemEvent event) {
+        ItemStack result = event.getRecipe().getResult();
+        int maxStackSize = result.getMaxStackSize();
+
+        InventoryView view = event.getView();
+        CraftingInventory inventory = (CraftingInventory) view.getTopInventory();
+
+        int maxPossibleCrafts = Integer.MAX_VALUE;
+        for (ItemStack item : inventory.getMatrix()) {
+            if (item != null && item.getType() != Material.AIR) {
+                maxPossibleCrafts = Math.min(maxPossibleCrafts, item.getAmount());
+            }
+        }
+
+        Inventory playerInventory = event.getWhoClicked().getInventory();
+        int availableSpace = 0;
+
+        for (ItemStack item : playerInventory.getStorageContents()) {
+            if (item == null || item.getType() == Material.AIR) {
+                availableSpace += maxStackSize;
+            } else if (item.isSimilar(result)) {
+                availableSpace += maxStackSize - item.getAmount();
+            }
+        }
+
+        return Math.min(maxPossibleCrafts * result.getAmount(), availableSpace / result.getAmount());
+    }
+
 
 }

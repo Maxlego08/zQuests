@@ -35,11 +35,6 @@ public class QuestPlaceholder {
             return optional.map(quest -> quest.getType().name()).orElse("Unknown");
         });
 
-        localPlaceholder.register("quest_progress_", (player, questId) -> {
-            UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
-            return userQuest.findActive(questId).map(ActiveQuest::getAmount).orElse(0L).toString();
-        });
-
         localPlaceholder.register("quest_objective_", (player, questId) -> {
             Optional<Quest> optional = questManager.getQuest(questId);
             return optional.map(Quest::getGoal).orElse(0L).toString();
@@ -66,6 +61,9 @@ public class QuestPlaceholder {
             return Config.progressBar.getProgressBar(amount, goal);
         });
 
+        localPlaceholder.register("quest_progress_", (player, questId) -> {
+            UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
+            return userQuest.findActive(questId).map(ActiveQuest::getAmount).orElse(0L).toString();
+        });
     }
-
 }
