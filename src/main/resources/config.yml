@@ -32,5 +32,11 @@ database-configuration:
   password: 'secret'
   # Database
   database: zquests
-  # Enable of not the sql debug mode
+  # Enable of not the SQL debug mode
   debug: true
+
+progress-bar:
+  icon: '|'
+  progress-color: "#0ff216"
+  color: "#828282"
+  size: 30

@@ -23,11 +23,12 @@ public enum QuestType {
     TAME,
     ENCHANT,
     BREW,
-    SMELT;
+    SMELT,
+    CRAFT;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT -> new MaterialAction(this, (Material) target);
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, CRAFT-> new MaterialAction(this, (Material) target);
             case ENTITY_KILL, TAME -> new EntityAction(this, (EntityType) target);
             case COMMAND -> new CommandAction(target == null ? "" : (String) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
@@ -37,7 +38,7 @@ public enum QuestType {
 
     public boolean isMaterial() {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT -> true;
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, CRAFT -> true;
             case COMMAND, ENTITY_KILL, TAME, ENCHANT, BREW -> false;
         };
     }

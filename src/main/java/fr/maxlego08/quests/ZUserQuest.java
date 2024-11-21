@@ -7,6 +7,7 @@ import fr.maxlego08.quests.api.UserQuest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ZUserQuest implements UserQuest {
 
@@ -44,7 +45,22 @@ public class ZUserQuest implements UserQuest {
     }
 
     @Override
+    public boolean isQuestActive(String questName) {
+        return this.activeQuests.stream().anyMatch(activeQuest -> activeQuest.getQuest().getName().equals(questName));
+    }
+
+    @Override
+    public boolean isQuestCompleted(String questName) {
+        return this.completedQuests.stream().anyMatch(completedQuest -> completedQuest.quest().getName().equalsIgnoreCase(questName));
+    }
+
+    @Override
     public boolean canStartQuest(Quest quest) {
         return !isQuestActive(quest) && !isQuestCompleted(quest);
+    }
+
+    @Override
+    public Optional<ActiveQuest> findActive(String questName) {
+        return this.activeQuests.stream().filter(activeQuest -> activeQuest.getQuest().getName().equalsIgnoreCase(questName)).findFirst();
     }
 }

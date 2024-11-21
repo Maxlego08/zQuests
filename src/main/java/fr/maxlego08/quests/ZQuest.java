@@ -69,7 +69,7 @@ public class ZQuest implements Quest {
 
     @Override
     public Material getThumbnail() {
-        return thumbnail;
+        return thumbnail == null ? Material.PAPER : thumbnail;
     }
 
     @Override

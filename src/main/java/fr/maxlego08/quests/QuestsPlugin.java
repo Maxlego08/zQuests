@@ -65,6 +65,8 @@ public class QuestsPlugin extends ZPlugin {
             this.stackerHook = new WildStackerHook();
         }
 
+        new QuestPlaceholder().register(this, this.questManager);
+
         this.postEnable();
     }
 
@@ -100,5 +102,12 @@ public class QuestsPlugin extends ZPlugin {
 
     public StackerHook getStackerHook() {
         return stackerHook;
+    }
+
+
+    @Override
+    public void reloadFiles() {
+        super.reloadFiles();
+        this.questManager.loadQuests();
     }
 }
