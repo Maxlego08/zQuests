@@ -40,3 +40,12 @@ progress-bar:
   progress-color: "#0ff216"
   color: "#828282"
   size: 30
+
+main-command-aliases:
+  - quêtes
+  - quête
+  - quests
+  - quest
+  - rangs
+  - rankup
+  - q
