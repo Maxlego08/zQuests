@@ -3,6 +3,7 @@ package fr.maxlego08.quests;
 
 import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
+import fr.maxlego08.menu.api.pattern.PatternManager;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.hooks.BlockHook;
 import fr.maxlego08.quests.api.hooks.StackerHook;
@@ -32,6 +33,7 @@ public class QuestsPlugin extends ZPlugin {
     private StackerHook stackerHook = new EmptyStackerHook();
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
+    private PatternManager patternManager;
 
     @Override
     public void onEnable() {
@@ -46,6 +48,7 @@ public class QuestsPlugin extends ZPlugin {
 
         this.inventoryManager = getProvider(InventoryManager.class);
         this.buttonManager = getProvider(ButtonManager.class);
+        this.patternManager = getProvider(PatternManager.class);
 
         this.registerCommand("zquests", new CommandQuests(this), "quests", "q");
 
@@ -66,6 +69,10 @@ public class QuestsPlugin extends ZPlugin {
         }
 
         new QuestPlaceholder().register(this, this.questManager);
+
+        this.questManager.loadButtons();
+        this.questManager.loadPatterns();
+        this.questManager.loadInventories();
 
         this.postEnable();
     }
@@ -104,10 +111,15 @@ public class QuestsPlugin extends ZPlugin {
         return stackerHook;
     }
 
+    public PatternManager getPatternManager() {
+        return patternManager;
+    }
 
     @Override
     public void reloadFiles() {
         super.reloadFiles();
         this.questManager.loadQuests();
+        this.questManager.loadPatterns();
+        this.questManager.loadInventories();
     }
 }

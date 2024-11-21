@@ -36,12 +36,14 @@ public enum Message {
 
     RELOAD("&aYou have just reloaded the configuration files."),
 
+    DESCRIPTION_HELP("Send commands"),
     DESCRIPTION_RELOAD("Reload configuration files"),
     DESCRIPTION_START("Activate a quest for a player"),
     DESCRIPTION_COMPLETE("Complete a quest for a player"),
     DESCRIPTION_DELETE_ALL("Delete all quests for a player"),
     DESCRIPTION_DELETE("Delete a quest for a player"),
     DESCRIPTION_SET_PROGRESS("Set the progress of a quest for a player"),
+    DESCRIPTION_ADD_PROGRESS("Add a number to the progress of a quest for a player"),
 
     QUEST_NOT_FOUND("&cUnable to find the quest &f%name%&c."),
     QUEST_START_ERROR("&cThe quest &f%name% &cis already completed or active for the player &f%player%&c."),
@@ -51,6 +53,7 @@ public enum Message {
     QUEST_DELETE_SUCCESS("&aThe quest &f%name% &ahas just been deleted&a."),
     QUEST_DELETE_ALL_SUCCESS("&aAll the quests have just been deleted&a."),
     QUEST_SET_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just set the progress of the quest &f%name% &ato &f%progress%&a."),
+    QUEST_ADD_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just added &f%progress% &ato the progress of the quest &f%name%&a."),
     ;
 
     private ZPlugin plugin;

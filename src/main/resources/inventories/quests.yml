@@ -1,0 +1,10 @@
+name: "&8Quests"
+size: 54
+items:
+  quest-1:
+    slot: 22
+    item:
+      material: BARRIER
+      name: "&cNo Quests"
+      lore:
+        - "&8You need to do it yourself."

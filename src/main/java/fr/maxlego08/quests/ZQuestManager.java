@@ -1,12 +1,14 @@
 package fr.maxlego08.quests;
 
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
+import fr.maxlego08.menu.exceptions.InventoryException;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.UserQuest;
+import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
 import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.OfflinePlayer;
@@ -34,6 +36,51 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     public ZQuestManager(QuestsPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public void loadButtons() {
+        var buttonManager = this.plugin.getButtonManager();
+        buttonManager.registerAction(new StartQuestLoader(this.plugin));
+
+    }
+
+    @Override
+    public void loadPatterns() {
+        var patternManager = this.plugin.getPatternManager();
+
+        File folder = new File(this.plugin.getDataFolder(), "patterns");
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        files(folder, file -> {
+            try {
+                patternManager.loadPattern(file);
+            } catch (InventoryException exception) {
+                exception.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void loadInventories() {
+        var inventoryManager = this.plugin.getInventoryManager();
+        inventoryManager.deleteInventories(this.plugin);
+
+        File folder = new File(this.plugin.getDataFolder(), "inventories");
+        if (!folder.exists()) {
+            folder.mkdirs();
+            this.plugin.saveResource("inventories/quests.yml", false);
+        }
+
+        files(folder, file -> {
+            try {
+                inventoryManager.loadInventory(plugin, file);
+            } catch (InventoryException exception) {
+                exception.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -246,6 +293,28 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         activeQuest.setAmount(amount);
         this.plugin.getStorageManager().upsert(activeQuest);
 
-        message(sender, Message.QUEST_SET_PROGRESS_SUCCESS, "%name%", questName, "%player%", player.getName(), "%amount%", amount);
+        message(sender, Message.QUEST_SET_PROGRESS_SUCCESS, "%name%", questName, "%player%", player.getName(), "%progress%", amount);
+    }
+
+    @Override
+    public void addQuestProgress(CommandSender sender, Player player, String questName, int amount) {
+        var userQuest = getUserQuest(player.getUniqueId());
+        var optional = userQuest.getActiveQuests().stream().filter(a -> a.getQuest().getName().equalsIgnoreCase(questName)).findFirst();
+
+        if (optional.isEmpty()) {
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
+
+        ActiveQuest activeQuest = optional.get();
+        activeQuest.addAmount(amount);
+        this.plugin.getStorageManager().upsert(activeQuest);
+
+        message(sender, Message.QUEST_ADD_PROGRESS_SUCCESS, "%name%", questName, "%player%", player.getName(), "%progress%", amount);
+    }
+
+    @Override
+    public void openQuestInventory(Player player) {
+        this.plugin.getInventoryManager().openInventory(player, this.plugin, "quests");
     }
 }

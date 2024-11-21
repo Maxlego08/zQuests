@@ -66,8 +66,18 @@ public interface Quest {
      */
     QuestType getType();
 
+    /**
+     * Gets the list of actions associated with the quest.
+     *
+     * @return the list of actions
+     */
     List<QuestAction> getActions();
 
+    /**
+     * Called when the quest is completed.
+     *
+     * @param activeQuest the active quest that was completed
+     */
     void onComplete(ActiveQuest activeQuest);
 
 }
