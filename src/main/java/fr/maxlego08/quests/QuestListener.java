@@ -37,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.List;
 import java.util.UUID;
 
 public class QuestListener implements Listener {
@@ -161,25 +162,38 @@ public class QuestListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBrew(BrewEvent event) {
         var brewerInventory = event.getContents();
-        var block = brewerInventory.getHolder().getBlock();
+        
+        ItemStack[] contents = event.getContents().getContents();
+        List<ItemStack> results = event.getResults();
 
-        if (block.getType() == Material.BREWING_STAND) {
-            var brewingStand = (BrewingStand) block.getState();
-            var container = brewingStand.getPersistentDataContainer();
+        int eventAmount = 0;
+        for (int i = 0; i < results.size(); i++) {
+            if (contents[i] != null && !contents[i].isSimilar(results.get(i))) {
+                eventAmount++;
+            }
+        }
 
-            if (container.has(playerKey, PersistentDataType.STRING)) {
-                var uuidString = container.get(playerKey, PersistentDataType.STRING);
-                if (uuidString == null) return;
+        if (eventAmount > 0) {
+            var block = brewerInventory.getHolder().getBlock();
+            if (block.getType() == Material.BREWING_STAND) {
+                var brewingStand = (BrewingStand) block.getState();
+                var container = brewingStand.getPersistentDataContainer();
 
-                var playerUUID = UUID.fromString(uuidString);
-                Player player = Bukkit.getPlayer(playerUUID);
+                if (container.has(playerKey, PersistentDataType.STRING)) {
+                    var uuidString = container.get(playerKey, PersistentDataType.STRING);
+                    if (uuidString != null) {
+                        var playerUUID = UUID.fromString(uuidString);
+                        Player player = Bukkit.getPlayer(playerUUID);
 
-                if (player != null) {
-                    this.manager.handleQuests(player.getUniqueId(), QuestType.BREW, 1, event);
+                        if (player != null) {
+                            this.manager.handleQuests(player.getUniqueId(), QuestType.BREW, eventAmount, event);
+                        }
+                    }
                 }
             }
         }
     }
+
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFurnaceSmelt(FurnaceSmeltEvent event) {
