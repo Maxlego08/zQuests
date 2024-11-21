@@ -4,10 +4,8 @@ import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestType;
-import fr.maxlego08.quests.api.utils.Parameter;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 public class ZActiveQuest implements ActiveQuest {
@@ -71,22 +69,12 @@ public class ZActiveQuest implements ActiveQuest {
     }
 
     @Override
-    public boolean hasParameters(Parameter<?>... parameters) {
-        for (Parameter<?> parameter : parameters) {
-            Object questParam = this.quest.getParameters().get(parameter.getKey());
-            if (questParam == null || !matchesParameter(questParam, parameter.getValue())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean matchesParameter(Object questParam, Object paramValue) {
-        return questParam instanceof List<?> list ? list.contains(paramValue) : questParam.equals(paramValue);
+    public CompletedQuest complete() {
+        return new CompletedQuest(this.quest, new Date());
     }
 
     @Override
-    public CompletedQuest complete() {
-        return new CompletedQuest(this.quest, new Date());
+    public boolean isQuestAction(Object object) {
+        return this.quest.getActions().stream().anyMatch(questAction -> questAction.isAction(object));
     }
 }

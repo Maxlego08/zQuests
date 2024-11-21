@@ -2,7 +2,6 @@ package fr.maxlego08.quests;
 
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
-import fr.maxlego08.quests.api.utils.Parameter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
@@ -48,11 +47,11 @@ public class QuestListener implements Listener {
 
             if (this.plugin.getBlockHook().isTracked(block)) return;
 
-            this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_BREAK, 1, Parameter.of("blocks", event.getBlock().getType()));
+            this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_BREAK, 1, event.getBlock().getType());
 
         } else if (block.getBlockData() instanceof Ageable ageable && ((material == Material.SUGAR_CANE || material == Material.KELP || material == Material.BAMBOO) || ageable.getAge() == ageable.getMaximumAge())) {
 
-            this.manager.handleQuests(player.getUniqueId(), QuestType.FARMING, 1, Parameter.of("blocks", event.getBlock().getType()));
+            this.manager.handleQuests(player.getUniqueId(), QuestType.FARMING, 1, event.getBlock().getType());
         }
     }
 
@@ -65,7 +64,7 @@ public class QuestListener implements Listener {
             var killer = entity.getKiller();
             var amount = this.plugin.getStackerHook().getEntityCount(entity);
 
-            this.manager.handleQuests(killer.getUniqueId(), QuestType.ENTITY_KILL, amount, Parameter.of("entities", entity.getType()));
+            this.manager.handleQuests(killer.getUniqueId(), QuestType.ENTITY_KILL, amount, entity.getType());
         }
     }
 
@@ -77,7 +76,7 @@ public class QuestListener implements Listener {
         if (animal.isDead()) return;
 
         if (event.getOwner() instanceof Player player && player.isOnline()) {
-            this.manager.handleQuests(player.getUniqueId(), QuestType.TAME, 1, Parameter.of("entities", animal.getType()));
+            this.manager.handleQuests(player.getUniqueId(), QuestType.TAME, 1, animal.getType());
         }
     }
 

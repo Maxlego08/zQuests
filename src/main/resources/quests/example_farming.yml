@@ -1,7 +1,7 @@
 quests:
   - type: FARMING # The type of the quest
-    blocks-types: # List of materials to be considered
-      - WHEAT
+    actions:
+      - material: WHEAT
     name: "block-wheat-1" # The name must be unique and must never change
     display-name: "Wheat Breaker" # The name of the quest to be displayed in-game
     description: "Break 500 wheat blocks" # The description of the quest
@@ -17,8 +17,8 @@ quests:
           - "give %player% diamond 5"
 
   - type: FARMING # The type of the quest
-    blocks-types: # List of materials to be considered
-      - CARROTS
+    actions:
+      - material: CARROTS
     name: "block-carrot-1" # The name must be unique and must never change
     display-name: "Carrot Breaker" # The name of the quest to be displayed in-game
     description: "Break 500 carrot blocks" # The description of the quest
@@ -34,8 +34,8 @@ quests:
           - "give %player% diamond 5"
 
   - type: FARMING # The type of the quest
-    blocks-types: # List of materials to be considered
-      - POTATOES
+    actions:
+      - material: POTATOES
     name: "block-potato-1" # The name must be unique and must never change
     display-name: "Potato Breaker" # The name of the quest to be displayed in-game
     description: "Break 500 potato blocks" # The description of the quest

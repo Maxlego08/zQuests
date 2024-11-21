@@ -1,7 +1,5 @@
 package fr.maxlego08.quests.api;
 
-import fr.maxlego08.quests.api.utils.Parameter;
-
 import java.util.UUID;
 
 public interface ActiveQuest {
@@ -22,7 +20,7 @@ public interface ActiveQuest {
 
     boolean increment(int amount);
 
-    boolean hasParameters(Parameter<?>... parameters);
-
     CompletedQuest complete();
+
+    boolean isQuestAction(Object object);
 }

@@ -4,15 +4,13 @@ import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.Quest;
+import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class ZQuest implements Quest {
 
@@ -25,9 +23,9 @@ public class ZQuest implements Quest {
     private final long goal;
     private final boolean autoAccept;
     private final List<Action> rewards;
-    private final Map<String, Object> parameters = new HashMap<>();
+    private final List<QuestAction> actions;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -37,6 +35,7 @@ public class ZQuest implements Quest {
         this.goal = goal;
         this.autoAccept = autoAccept;
         this.rewards = rewards;
+        this.actions = actions;
     }
 
     @Override
@@ -47,22 +46,6 @@ public class ZQuest implements Quest {
     @Override
     public QuestType getType() {
         return type;
-    }
-
-    @Override
-    public <T> T getParameter(String key, Class<T> type) {
-        return type.cast(this.parameters.get(key));
-    }
-
-    @Override
-    public Map<String, Object> getParameters() {
-        return this.parameters;
-    }
-
-    @Override
-    public void setParameters(Map<String, Object> section) {
-        this.parameters.clear();
-        this.parameters.putAll(section);
     }
 
     @Override
@@ -104,4 +87,8 @@ public class ZQuest implements Quest {
         return rewards;
     }
 
+    @Override
+    public List<QuestAction> getActions() {
+        return actions;
+    }
 }

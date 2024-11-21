@@ -1,7 +1,7 @@
 quests:
   - type: ENTITY_KILL # The type of the quest
-    entities-types: # List of entities to be considered
-      - SKELETON
+    actions: # List of entities to be considered
+      - entity: SKELETON
     name: "entity-skeleton-1" # The name must be unique and must never change
     display-name: "Skeleton Killer" # The name of the quest to be displayed in-game
     description: "Kill 10 Skeleton" # The description of the quest
@@ -17,8 +17,8 @@ quests:
           - "give %player% diamond 5"
 
   - type: ENTITY_KILL # The type of the quest
-    entities-types: # List of entities to be considered
-      - ZOMBIE
+    actions: # List of entities to be considered
+      - entity: ZOMBIE
     name: "entity-zombie-1" # The name must be unique and must never change
     display-name: "Zombie Slayer" # The name of the quest to be displayed in-game
     description: "Kill 15 Zombies" # The description of the quest
@@ -34,8 +34,8 @@ quests:
           - "give %player% iron_ingot 3"
 
   - type: ENTITY_KILL # The type of the quest
-    entities-types: # List of entities to be considered
-      - CREEPER
+    actions: # List of entities to be considered
+      - entity: CREEPER
     name: "entity-creeper-1" # The name must be unique and must never change
     display-name: "Creeper Crusher" # The name of the quest to be displayed in-game
     description: "Kill 5 Creepers" # The description of the quest
@@ -51,8 +51,8 @@ quests:
           - "give %player% tnt 2"
 
   - type: ENTITY_KILL # The type of the quest
-    entities-types: # List of entities to be considered
-      - ENDERMAN
+    actions: # List of entities to be considered
+      - entity: ENDERMAN
     name: "entity-enderman-1" # The name must be unique and must never change
     display-name: "Enderman Hunter" # The name of the quest to be displayed in-game
     description: "Kill 3 Endermen" # The description of the quest
@@ -68,8 +68,8 @@ quests:
           - "give %player% ender_pearl 3"
 
   - type: ENTITY_KILL # The type of the quest
-    entities-types: # List of entities to be considered
-      - COW
+    actions: # List of entities to be considered
+      - entity: COW
     name: "entity-cow-1" # The name must be unique and must never change
     display-name: "Cow Butcher" # The name of the quest to be displayed in-game
     description: "Kill 20 Cows" # The description of the quest

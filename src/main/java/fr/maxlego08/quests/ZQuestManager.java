@@ -1,6 +1,5 @@
 package fr.maxlego08.quests;
 
-import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
@@ -8,12 +7,9 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.UserQuest;
-import fr.maxlego08.quests.api.utils.Parameter;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -70,44 +66,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public List<Quest> loadQuests(File file) {
 
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        return configuration.getMapList("quests").stream().map(map -> new TypedMapAccessor((Map<String, Object>) map)).map(typedMapAccessor -> this.loadQuest(typedMapAccessor, file)).filter(Objects::nonNull).toList();
+        QuestLoader questLoader = new QuestLoader(this.plugin);
+        return configuration.getMapList("quests").stream().map(map -> new TypedMapAccessor((Map<String, Object>) map)).map(typedMapAccessor -> questLoader.loadQuest(typedMapAccessor, file)).filter(Objects::nonNull).toList();
     }
-
-    private Quest loadQuest(TypedMapAccessor accessor, File file) {
-
-        try {
-
-            QuestType questType = QuestType.valueOf(accessor.getString("type", QuestType.BLOCK_BREAK.name()).toUpperCase());
-            String name = accessor.getString("name");
-            String displayName = accessor.getString("display-name", name);
-            String description = accessor.getString("description", "no description");
-            Material thumbnail = accessor.contains("thumbnail") ? Material.valueOf(accessor.getString("thumbnail").toUpperCase()) : null;
-            long goal = accessor.getLong("goal");
-            boolean autoAccept = accessor.getBoolean("auto-accept", false);
-
-            List<Map<String, Object>> actions = accessor.contains("rewards") ? (List<Map<String, Object>>) accessor.getList("rewards") : new ArrayList<>();
-            List<Action> rewards = plugin.getButtonManager().loadActions(actions, "quests", file);
-
-            Quest quest = new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards);
-
-            Map<String, Object> parameters = new HashMap<>();
-            switch (questType) {
-                case BLOCK_BREAK, FARMING -> {
-                    parameters.put("blocks", accessor.getStringList("blocks-types").stream().map(String::toUpperCase).map(Material::valueOf).toList());
-                }
-                case ENTITY_KILL, TAME -> {
-                    parameters.put("entities", accessor.getStringList("entities-types").stream().map(String::toUpperCase).map(EntityType::valueOf).toList());
-                }
-            }
-            quest.setParameters(parameters);
-
-            return quest;
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return null;
-        }
-    }
-
 
     @Override
     public List<Quest> getQuests() {
@@ -134,7 +95,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public void handleQuests(UUID uuid, QuestType type, int amount, Parameter<?>... parameters) {
+    public void handleQuests(UUID uuid, QuestType type, int amount, Object object) {
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = this.usersQuests.getOrDefault(uuid, new ZUserQuest());
 
@@ -142,7 +103,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         var iterator = userQuest.getActiveQuests().iterator();
         while (iterator.hasNext()) {
             ActiveQuest activeQuest = iterator.next();
-            if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.hasParameters(parameters)) {
+            if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
                 if (activeQuest.increment(amount)) { // Increment the progress of the quest
                     iterator.remove(); // If the quest is complete, remove it from the list
                     this.completeQuest(activeQuest);

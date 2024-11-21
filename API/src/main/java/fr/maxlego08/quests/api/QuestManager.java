@@ -1,6 +1,5 @@
 package fr.maxlego08.quests.api;
 
-import fr.maxlego08.quests.api.utils.Parameter;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -20,7 +19,7 @@ public interface QuestManager {
 
     void handleQuit(UUID uuid);
 
-    void handleQuests(UUID uuid, QuestType type, int amount, Parameter<?>... parameters);
+    void handleQuests(UUID uuid, QuestType type, int amount, Object object);
 
     void addQuestToPlayer(Player player, Quest quest);
 
