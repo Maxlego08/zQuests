@@ -96,7 +96,7 @@ public class QuestListener implements Listener {
         if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH && event.getCaught() instanceof Item item) {
 
             ItemStack itemStack = item.getItemStack();
-            this.manager.handleQuests(player.getUniqueId(), QuestType.FISHING, 1, itemStack);
+            this.manager.handleQuests(player.getUniqueId(), QuestType.FISHING, 1, itemStack.getType());
         }
     }
 
@@ -197,7 +197,7 @@ public class QuestListener implements Listener {
                 Player player = Bukkit.getPlayer(playerUUID);
 
                 if (player != null) {
-                    this.manager.handleQuests(player.getUniqueId(), QuestType.SMELT, 1, event);
+                    this.manager.handleQuests(player.getUniqueId(), QuestType.SMELT, 1, event.getResult().getType());
                 }
             }
         }
