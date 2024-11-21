@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.api;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -33,4 +34,12 @@ public interface QuestManager {
     UserQuest getUserQuest(UUID uuid);
 
     void activateQuest(CommandSender sender, Player player, String questName);
+
+    void completeQuest(CommandSender sender, Player player, String questName);
+
+    void deleteUserQuest(CommandSender sender, Player player, String questName);
+
+    void deleteUserQuests(CommandSender sender, OfflinePlayer offlinePlayer);
+
+    void setQuestProgress(CommandSender sender, Player player, String questName, int amount);
 }

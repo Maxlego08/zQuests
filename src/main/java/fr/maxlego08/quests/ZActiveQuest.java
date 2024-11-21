@@ -41,6 +41,11 @@ public class ZActiveQuest implements ActiveQuest {
     }
 
     @Override
+    public void setAmount(long amount) {
+        this.amount = amount;
+    }
+
+    @Override
     public boolean isComplete() {
         return this.amount >= this.quest.getGoal();
     }

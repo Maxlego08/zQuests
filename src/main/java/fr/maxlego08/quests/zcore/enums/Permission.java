@@ -4,7 +4,7 @@ public enum Permission {
 
     ZQUESTS_USE, ZQUESTS_RELOAD,
 
-    ZQUESTS_START;
+    ZQUESTS_START, ZQUESTS_DELETE, ZQUESTS_COMPLETE, ZQUESTS_DELETE_ALL, ZQUESTS_SET_PROGRESS;
 
     private final String permission;
 

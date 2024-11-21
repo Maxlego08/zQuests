@@ -9,6 +9,7 @@ import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.UserQuest;
 import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -158,7 +159,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         return this.usersQuests.computeIfAbsent(uuid, u -> new ZUserQuest());
     }
 
+    @Override
     public void activateQuest(CommandSender sender, Player player, String questName) {
+
         Optional<Quest> optional = this.getQuest(questName);
         if (optional.isEmpty()) {
             message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
@@ -173,5 +176,71 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         } else {
             message(sender, Message.QUEST_START_ERROR, "%name%", questName, "%player%", player.getName());
         }
+    }
+
+
+    @Override
+    public void completeQuest(CommandSender sender, Player player, String questName) {
+        var userQuest = getUserQuest(player.getUniqueId());
+        var optional = userQuest.getActiveQuests().stream().filter(a -> a.getQuest().getName().equalsIgnoreCase(questName)).findFirst();
+
+        if (optional.isEmpty()) {
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
+
+        userQuest.getActiveQuests().remove(optional.get());
+        this.completeQuest(optional.get());
+
+        message(sender, Message.QUEST_COMPLETE_SUCCESS, "%name%", questName, "%player%", player.getName());
+    }
+
+    @Override
+    public void deleteUserQuest(CommandSender sender, Player player, String questName) {
+
+        var userQuest = getUserQuest(player.getUniqueId());
+
+        Optional<Quest> optional = this.getQuest(questName);
+        if (optional.isEmpty()) {
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
+
+        var quest = optional.get();
+
+        userQuest.getActiveQuests().removeIf(activeQuest -> activeQuest.getQuest() == quest);
+        userQuest.getCompletedQuests().removeIf(completedQuest -> completedQuest.quest() == quest);
+
+        this.plugin.getStorageManager().deleteQuest(player.getUniqueId(), quest.getName());
+
+        message(sender, Message.QUEST_DELETE_SUCCESS, "%name%", questName, "%player%", player.getName());
+    }
+
+    @Override
+    public void deleteUserQuests(CommandSender sender, OfflinePlayer offlinePlayer) {
+        var userQuest = getUserQuest(offlinePlayer.getUniqueId());
+
+        plugin.getStorageManager().deleteAll(offlinePlayer.getUniqueId());
+        userQuest.getActiveQuests().clear();
+        userQuest.getCompletedQuests().clear();
+
+        message(sender, Message.QUEST_DELETE_ALL_SUCCESS, "%player%", offlinePlayer.getName());
+    }
+
+    @Override
+    public void setQuestProgress(CommandSender sender, Player player, String questName, int amount) {
+        var userQuest = getUserQuest(player.getUniqueId());
+        var optional = userQuest.getActiveQuests().stream().filter(a -> a.getQuest().getName().equalsIgnoreCase(questName)).findFirst();
+
+        if (optional.isEmpty()) {
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
+
+        ActiveQuest activeQuest = optional.get();
+        activeQuest.setAmount(amount);
+        this.plugin.getStorageManager().upsert(activeQuest);
+
+        message(sender, Message.QUEST_SET_PROGRESS_SUCCESS, "%name%", questName, "%player%", player.getName(), "%amount%", amount);
     }
 }

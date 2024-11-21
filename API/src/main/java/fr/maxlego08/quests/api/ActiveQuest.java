@@ -12,6 +12,8 @@ public interface ActiveQuest {
 
     void addAmount(long amount);
 
+    void setAmount(long amount);
+
     boolean isComplete();
 
     boolean isType(QuestType type);

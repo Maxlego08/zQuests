@@ -12,6 +12,10 @@ public class CommandQuests extends VCommand {
 		this.setPermission(Permission.ZQUESTS_USE);
 		this.addSubCommand(new CommandQuestsReload(plugin));
 		this.addSubCommand(new CommandQuestsStart(plugin));
+		this.addSubCommand(new CommandQuestsDeleteAll(plugin));
+		this.addSubCommand(new CommandQuestsDelete(plugin));
+		this.addSubCommand(new CommandQuestsComplete(plugin));
+		this.addSubCommand(new CommandQuestsSetProgress(plugin));
 	}
 
 	@Override

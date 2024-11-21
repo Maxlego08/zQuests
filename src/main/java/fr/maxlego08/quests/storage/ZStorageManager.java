@@ -24,6 +24,7 @@ import fr.maxlego08.sarah.database.DatabaseType;
 import fr.maxlego08.sarah.logger.JULogger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -126,6 +127,22 @@ public class ZStorageManager implements StorageManager {
             table.where("unique_id", activeQuest.getUniqueId());
             table.where("name", activeQuest.getQuest().getName());
         }));
+    }
+
+    @Override
+    public void deleteQuest(@NotNull UUID uniqueId, String name) {
+        executor.execute(() -> {
+            this.requestHelper.delete("%prefix%" + Tables.ACTIVE_QUESTS, table -> table.where("unique_id", uniqueId).where("name", name));
+            this.requestHelper.delete("%prefix%" + Tables.COMPLETED_QUESTS, table -> table.where("unique_id", uniqueId).where("name", name));
+        });
+    }
+
+    @Override
+    public void deleteAll(UUID uuid) {
+        executor.execute(() -> {
+            this.requestHelper.delete("%prefix%" + Tables.ACTIVE_QUESTS, table -> table.where("unique_id", uuid));
+            this.requestHelper.delete("%prefix%" + Tables.COMPLETED_QUESTS, table -> table.where("unique_id", uuid));
+        });
     }
 
     @Override
