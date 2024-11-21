@@ -11,7 +11,7 @@ import java.util.List;
 
 public enum Message {
 
-    PREFIX("&8(#3dffa1Template&8) "),
+    PREFIX("&8(#3dffa1zQuests&8) "),
 
     INVENTORY_CLONE_NULL("&cThe inventory clone is null!"),
     INVENTORY_OPEN_ERROR("&cAn error occurred with the opening of the inventory &6%id%&c."),
