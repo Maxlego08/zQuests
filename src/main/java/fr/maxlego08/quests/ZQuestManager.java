@@ -99,6 +99,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             this.plugin.saveResource("quests/example_craft.yml", false);
         }
 
+        this.quests.clear();
+
         this.files(folder, file -> this.quests.addAll(this.loadQuests(file)));
 
         // Check quests names
@@ -108,7 +110,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         while (iterator.hasNext()) {
             Quest quest = iterator.next();
             if (!questNames.add(quest.getName())) {
-                this.plugin.getLogger().warning("A quest with the name " + quest.getName() + " already exists");
+                this.plugin.getLogger().severe("A quest with the name " + quest.getName() + " already exists");
                 iterator.remove();
             }
         }
