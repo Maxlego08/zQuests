@@ -45,6 +45,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         if (!folder.exists()) {
             folder.mkdirs();
             this.plugin.saveResource("quests/example_blocks.yml", false);
+            this.plugin.saveResource("quests/example_entities.yml", false);
+            this.plugin.saveResource("quests/example_farming.yml", false);
         }
 
         this.files(folder, file -> this.quests.addAll(this.loadQuests(file)));
@@ -93,7 +95,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 case BLOCK_BREAK, FARMING -> {
                     parameters.put("blocks", accessor.getStringList("blocks-types").stream().map(String::toUpperCase).map(Material::valueOf).toList());
                 }
-                case ENTITY_KILL -> {
+                case ENTITY_KILL, TAME -> {
                     parameters.put("entities", accessor.getStringList("entities-types").stream().map(String::toUpperCase).map(EntityType::valueOf).toList());
                 }
             }

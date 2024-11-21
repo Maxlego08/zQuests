@@ -13,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -64,7 +65,19 @@ public class QuestListener implements Listener {
             var killer = entity.getKiller();
             var amount = this.plugin.getStackerHook().getEntityCount(entity);
 
-            this.manager.handleQuests(killer.getUniqueId(), QuestType.ENTITY_KILL, amount, Parameter.of("entities", entity.getType().name()));
+            this.manager.handleQuests(killer.getUniqueId(), QuestType.ENTITY_KILL, amount, Parameter.of("entities", entity.getType()));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onAnimalTame(EntityTameEvent event) {
+
+        LivingEntity animal = event.getEntity();
+
+        if (animal.isDead()) return;
+
+        if (event.getOwner() instanceof Player player && player.isOnline()) {
+            this.manager.handleQuests(player.getUniqueId(), QuestType.TAME, 1, Parameter.of("entities", animal.getType()));
         }
     }
 

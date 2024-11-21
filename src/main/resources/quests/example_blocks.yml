@@ -1,19 +1,55 @@
 quests:
-  - type: BLOCK_BREAK # Le type de la quête
-    blocks-types: # Liste des materials a prendre en compte
+  - type: BLOCK_BREAK # The type of the quest
+    blocks-types: # List of materials to be considered
       - STONE
       - DIORITE
       - COBBLESTONE
-    name: "block-break-1" # Le nom doit être unique et ne doit jamais changer
-    display-name: "Stone Breaker" # Le nom de la quête qui sera affiché dans le jeu
-    description: "Break 500 stone blocks" # La description de la quête
-    thumbnail: STONE # Le material qui sera affiché dans le jeu
-    goal: 500 # L'objectif à atteindre
-    auto-accept: true # Si la quête doit commencer automatiquement
-    rewards: # Les récompenses
-      - type: message # Envoie d'un message
+    name: "block-break-1" # The name must be unique and must never change
+    display-name: "Stone Breaker" # The name of the quest to be displayed in-game
+    description: "Break 500 stone blocks" # The description of the quest
+    thumbnail: STONE # The material to be displayed in-game
+    goal: 500 # The goal to be achieved
+    auto-accept: true # If the quest should start automatically
+    rewards: # The rewards
+      - type: message # Sending a message
         messages:
           - "&fYou have broken &7500 stone&f blocks!"
-      - type: console_command # Exécution d'une commande
+      - type: console_command # Executing a command
         commands:
           - "give %player% diamond 5"
+
+  - type: BLOCK_BREAK # The type of the quest
+    blocks-types: # List of materials to be considered
+      - GRANITE
+      - ANDESITE
+    name: "block-break-2" # The name must be unique and must never change
+    display-name: "Granite Breaker" # The name of the quest to be displayed in-game
+    description: "Break 300 granite blocks" # The description of the quest
+    thumbnail: GRANITE # The material to be displayed in-game
+    goal: 300 # The goal to be achieved
+    auto-accept: true # If the quest should start automatically
+    rewards: # The rewards
+      - type: message # Sending a message
+        messages:
+          - "&fYou have broken &7300 granite&f blocks!"
+      - type: console_command # Executing a command
+        commands:
+          - "give %player% emerald 3"
+
+  - type: BLOCK_BREAK # The type of the quest
+    blocks-types: # List of materials to be considered
+      - SANDSTONE
+      - RED_SANDSTONE
+    name: "block-break-3" # The name must be unique and must never change
+    display-name: "Sandstone Breaker" # The name of the quest to be displayed in-game
+    description: "Break 200 sandstone blocks" # The description of the quest
+    thumbnail: SANDSTONE # The material to be displayed in-game
+    goal: 200 # The goal to be achieved
+    auto-accept: true # If the quest should start automatically
+    rewards: # The rewards
+      - type: message # Sending a message
+        messages:
+          - "&fYou have broken &7200 sandstone&f blocks!"
+      - type: console_command # Executing a command
+        commands:
+          - "give %player% gold_ingot 4"
