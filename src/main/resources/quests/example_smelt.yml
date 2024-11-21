@@ -1,0 +1,26 @@
+quests:
+  - type: SMELT
+    actions:
+      - material: IRON_INGOT
+    name: "smelt-iron-1"
+    display-name: "Smelt Iron"
+    description: "Smelt 8 iron ingots"
+    thumbnail: IRON_INGOT
+    goal: 8
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "&fYou have smelted &68 iron ingots&f!"
+  - type: SMELT
+    actions:
+      - material: STONE
+    name: "smelt-stone-1"
+    display-name: "Smelt Stone"
+    description: "Smelt 16 stone"
+    thumbnail: STONE
+    goal: 16
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:

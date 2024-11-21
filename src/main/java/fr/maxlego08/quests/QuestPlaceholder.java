@@ -56,7 +56,7 @@ public class QuestPlaceholder {
         });
 
         localPlaceholder.register("quest_progress_bar_", (player, questId) -> {
-            
+
             Optional<Quest> optional = questManager.getQuest(questId);
             long goal = optional.map(Quest::getGoal).orElse(0L);
 

@@ -78,8 +78,8 @@ public class QuestLoader {
 
                     Material material = materialName == null ? null : Material.valueOf(materialName.toUpperCase());
                     Enchantment enchantment = enchantmentName == null ? null : enchantments.getEnchantments(enchantmentName).map(MenuEnchantment::getEnchantment).orElse(null);
-                    int minimumLevel = actionAccessor.getInt("minimumLevel", 0);
-                    int minimumCost = actionAccessor.getInt("minimumCost", 0);
+                    int minimumLevel = actionAccessor.getInt("minimum-level", 0);
+                    int minimumCost = actionAccessor.getInt("minimum-cost", 0);
 
                     questActions.add(new EnchantmentAction(material, questType, enchantment, minimumLevel, minimumCost));
 

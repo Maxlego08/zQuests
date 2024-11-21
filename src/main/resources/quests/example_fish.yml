@@ -1,0 +1,42 @@
+quests:
+  - type: FISHING
+    actions:
+      - material: COD
+    name: "fishing-cod-1"
+    display-name: "Fishing Cod"
+    description: "Catch 8 cod"
+    thumbnail: COD
+    goal: 8
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "&fYou have caught &68 cod&f!"
+
+  - type: FISHING
+    actions:
+      - material: SALMON
+    name: "fishing-salmon-1"
+    display-name: "Fishing Salmon"
+    description: "Catch 10 salmon"
+    thumbnail: SALMON
+    goal: 10
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "&fYou have caught &610 salmon&f!"
+
+  - type: FISHING
+    actions:
+      - material: PUFFERFISH
+    name: "fishing-pufferfish-1"
+    display-name: "Fishing Pufferfish"
+    description: "Catch 5 pufferfish"
+    thumbnail: PUFFERFISH
+    goal: 5
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "&fYou have caught &65 pufferfish&f!"
