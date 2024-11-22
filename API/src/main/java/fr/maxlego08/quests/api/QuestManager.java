@@ -1,6 +1,5 @@
 package fr.maxlego08.quests.api;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -73,10 +72,10 @@ public interface QuestManager {
     /**
      * Add a quest to a player's active quests.
      *
-     * @param player the player to add the quest to
-     * @param quest  the quest to add
+     * @param uuid  the player to add the quest to
+     * @param quest the quest to add
      */
-    void addQuestToPlayer(Player player, Quest quest);
+    void addQuestToPlayer(UUID uuid, Quest quest);
 
     /**
      * Retrieve active quests for a player.
@@ -139,10 +138,10 @@ public interface QuestManager {
     /**
      * Delete all quests from a player's active quests.
      *
-     * @param sender        the command sender
-     * @param offlinePlayer the offline player to delete quests from
+     * @param sender the command sender
+     * @param player the offline player to delete quests from
      */
-    void deleteUserQuests(CommandSender sender, OfflinePlayer offlinePlayer);
+    void deleteUserQuests(CommandSender sender, Player player);
 
     /**
      * Set the progress of a quest for a player.

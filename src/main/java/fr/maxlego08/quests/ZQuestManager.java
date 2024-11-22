@@ -8,10 +8,10 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.UserQuest;
+import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
 import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -42,7 +42,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public void loadButtons() {
         var buttonManager = this.plugin.getButtonManager();
         buttonManager.registerAction(new StartQuestLoader(this.plugin));
-
+        buttonManager.register(new QuestCompleteLoader(this.plugin));
     }
 
     @Override
@@ -137,10 +137,13 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
             this.usersQuests.put(player.getUniqueId(), userQuest);
 
-            this.quests.stream().filter(Quest::isAutoAccept).filter(quest -> {
-                return userQuest.getActiveQuests().stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest));
-            }).forEach(quest -> this.addQuestToPlayer(player, quest));
+            handleDefaultQuest(player.getUniqueId());
         });
+    }
+
+    private void handleDefaultQuest(UUID uuid) {
+        UserQuest userQuest = getUserQuest(uuid);
+        this.quests.stream().filter(Quest::isAutoAccept).filter(quest -> userQuest.getActiveQuests().stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest))).forEach(quest -> this.addQuestToPlayer(uuid, quest));
     }
 
     @Override
@@ -170,10 +173,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public void addQuestToPlayer(Player player, Quest quest) {
+    public void addQuestToPlayer(UUID uuid, Quest quest) {
         // Create a new active quest for the player
-        ActiveQuest activeQuest = new ZActiveQuest(player.getUniqueId(), quest, 0);
-        var userQuest = getUserQuest(player.getUniqueId());
+        ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, 0);
+        var userQuest = getUserQuest(uuid);
 
         // Check if the user already completes the quest
         if (userQuest.getCompletedQuests().stream().anyMatch(completedQuest -> completedQuest.quest().equals(quest))) {
@@ -225,7 +228,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         Quest quest = optional.get();
         UserQuest userQuest = getUserQuest(player.getUniqueId());
         if (userQuest.canStartQuest(quest)) {
-            this.addQuestToPlayer(player, quest);
+            this.addQuestToPlayer(player.getUniqueId(), quest);
             message(sender, Message.QUEST_START_SUCCESS, "%name%", questName, "%player%", player.getName());
         } else {
             message(sender, Message.QUEST_START_ERROR, "%name%", questName, "%player%", player.getName());
@@ -271,27 +274,22 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public void deleteUserQuests(CommandSender sender, OfflinePlayer offlinePlayer) {
-        var userQuest = getUserQuest(offlinePlayer.getUniqueId());
+    public void deleteUserQuests(CommandSender sender, Player player) {
+        var userQuest = getUserQuest(player.getUniqueId());
 
-        plugin.getStorageManager().deleteAll(offlinePlayer.getUniqueId());
+        plugin.getStorageManager().deleteAll(player.getUniqueId());
         userQuest.getActiveQuests().clear();
         userQuest.getCompletedQuests().clear();
+        handleDefaultQuest(player.getUniqueId());
 
-        message(sender, Message.QUEST_DELETE_ALL_SUCCESS, "%player%", offlinePlayer.getName());
+        message(sender, Message.QUEST_DELETE_ALL_SUCCESS, "%player%", player.getName());
     }
 
     @Override
     public void setQuestProgress(CommandSender sender, Player player, String questName, int amount) {
-        var userQuest = getUserQuest(player.getUniqueId());
-        var optional = userQuest.getActiveQuests().stream().filter(a -> a.getQuest().getName().equalsIgnoreCase(questName)).findFirst();
+        ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
+        if (activeQuest == null) return;
 
-        if (optional.isEmpty()) {
-            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
-            return;
-        }
-
-        ActiveQuest activeQuest = optional.get();
         activeQuest.setAmount(amount);
         this.plugin.getStorageManager().upsert(activeQuest);
 
@@ -300,20 +298,31 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public void addQuestProgress(CommandSender sender, Player player, String questName, int amount) {
+        ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
+        if (activeQuest == null) return;
+
+        if (activeQuest.increment(amount)) {
+            getUserQuest(player.getUniqueId()).getActiveQuests().remove(activeQuest);
+            completeQuest(activeQuest);
+        } else {
+            this.plugin.getStorageManager().upsert(activeQuest);
+        }
+
+        message(sender, Message.QUEST_ADD_PROGRESS_SUCCESS, "%name%", questName, "%player%", player.getName(), "%progress%", amount);
+    }
+
+    private ActiveQuest findActiveQuest(CommandSender sender, Player player, String questName) {
         var userQuest = getUserQuest(player.getUniqueId());
         var optional = userQuest.getActiveQuests().stream().filter(a -> a.getQuest().getName().equalsIgnoreCase(questName)).findFirst();
 
         if (optional.isEmpty()) {
             message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
-            return;
+            return null;
         }
 
-        ActiveQuest activeQuest = optional.get();
-        activeQuest.addAmount(amount);
-        this.plugin.getStorageManager().upsert(activeQuest);
-
-        message(sender, Message.QUEST_ADD_PROGRESS_SUCCESS, "%name%", questName, "%player%", player.getName(), "%progress%", amount);
+        return optional.get();
     }
+
 
     @Override
     public void openQuestInventory(Player player) {

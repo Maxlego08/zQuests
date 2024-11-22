@@ -6,6 +6,7 @@ import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.zcore.enums.Permission;
 import fr.maxlego08.quests.zcore.utils.commands.CommandType;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 public class CommandQuestsDeleteAll extends VCommand {
 
@@ -20,8 +21,8 @@ public class CommandQuestsDeleteAll extends VCommand {
     @Override
     protected CommandType perform(QuestsPlugin plugin) {
 
-        OfflinePlayer offlinePlayer = this.argAsOfflinePlayer(0);
-        plugin.getQuestManager().deleteUserQuests(sender, offlinePlayer);
+        Player player = this.argAsPlayer(0);
+        plugin.getQuestManager().deleteUserQuests(sender, player);
 
         return CommandType.SUCCESS;
     }

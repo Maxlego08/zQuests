@@ -22,6 +22,7 @@ public record ProgressBarConfig(String symbol, String notCompletedSymbol, String
      * @return a string representation of the progress bar
      */
     public String getProgressBar(double current, double max) {
+        current = Math.min(current, max);
         float percent = (float) current / (float) max;
         int progressBars = (int) ((float) size * percent);
         return Strings.repeat(progressColor + symbol, progressBars) + Strings.repeat(notCompletedColor + notCompletedSymbol, size - progressBars);

@@ -26,7 +26,7 @@ public class StartQuestAction extends Action {
             var quest = optional.get();
             UserQuest userQuest = manager.getUserQuest(player.getUniqueId());
             if (userQuest.canStartQuest(quest)) {
-                manager.addQuestToPlayer(player, quest);
+                manager.addQuestToPlayer(player.getUniqueId(), quest);
             }
         }
     }

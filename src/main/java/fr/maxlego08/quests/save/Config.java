@@ -8,6 +8,8 @@ public class Config {
     public static boolean enableDebug = true;
     public static boolean enableDebugTime = false;
     public static ProgressBarConfig progressBar;
+    public static String loreLinePlaceholderActive;
+    public static String loreLinePlaceholderComplete;
 
     /**
      * static Singleton instance.
@@ -38,6 +40,9 @@ public class Config {
         enableDebug = configuration.getBoolean("enable-debug", false);
         enableDebugTime = configuration.getBoolean("enable-debug-time", false);
         progressBar = loadProgressBarConfig(configuration, "progress-bar");
+
+        loreLinePlaceholderActive = configuration.getString("lore-line-placeholder.active", "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘");
+        loreLinePlaceholderComplete = configuration.getString("lore-line-placeholder.complete", "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔");
     }
 
     private ProgressBarConfig loadProgressBarConfig(FileConfiguration configuration, String path) {
