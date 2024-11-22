@@ -35,6 +35,12 @@ database-configuration:
   # Enable of not the SQL debug mode
   debug: true
 
+# Progress bar settings:
+# icon: The character used to display the completed progress.
+# not-completed-icon: The character used to display the uncompleted progress.
+# progress-color: The color of the progress bar that is already completed.
+# color: The color of the progress bar for sections not yet completed.
+# size: The total length of the progress bar, representing the complete goal.
 progress-bar:
   icon: '|'
   not-completed-icon: '|'
@@ -42,6 +48,9 @@ progress-bar:
   color: "#828282"
   size: 30
 
+# Main command aliases:
+# Defines the alternative aliases for the main plugin command.
+# These aliases make it easier for players to access plugin commands using different variations.
 main-command-aliases:
   - quêtes
   - quête
@@ -51,6 +60,29 @@ main-command-aliases:
   - rankup
   - q
 
+# Lore line placeholders:
+# active: The format for an active quest's progress in the lore, including placeholders for the progress bar, progress, and goal.
+# complete: The format for a completed quest in the lore, indicating completion with a checkmark symbol.
 lore-line-placeholder:
   active: "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘"
   complete: "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔"
+
+# Custom rewards:
+# Allows configuration of specific rewards when certain quests are completed.
+# quests: A list of quests that need to be completed to trigger the reward.
+# actions: Defines the reward action that will be performed. In this case, it sends a congratulatory message to the player.
+custom-rewards:
+  - quests:
+      - "block-break-1"
+      - "block-break-2"
+      - "block-break-3"
+    actions:
+      - type: message
+        messages:
+          - "&7You have just completed 3 quests! Congratulations!"
+
+# Rewards that are executed for all quests.
+global-rewards:
+  - type: message
+    messages:
+      - "&fYou have broken &7%name%&f blocks!" # Placeholder : %name%, %description% and %goal%

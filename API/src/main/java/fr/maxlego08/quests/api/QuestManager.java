@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.api;
 
+import fr.maxlego08.quests.api.utils.CustomReward;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -169,4 +170,12 @@ public interface QuestManager {
      * @param player the player to open the quest inventory for
      */
     void openQuestInventory(Player player);
+
+
+    /**
+     * Get all the custom rewards registered in the plugin.
+     *
+     * @return a list of all the custom rewards
+     */
+    List<CustomReward> getCustomRewards();
 }
