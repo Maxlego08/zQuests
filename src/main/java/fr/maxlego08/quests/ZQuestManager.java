@@ -124,7 +124,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         this.plugin.getLogger().info(this.quests.size() + " quests loaded");
         this.updateOnlyPlayers();
-        this.loadCustomRewards();
+        this.loadGlobalRewards();
+
+        this.loadCustomRewards(this.plugin.getConfig(), new File(this.plugin.getDataFolder(), "config.yml"));
+        this.plugin.getLogger().info(this.customRewards.size() + " custom rewards loaded");
     }
 
     private void updateOnlyPlayers() {
@@ -132,6 +135,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         for (Player player : Bukkit.getOnlinePlayers()) {
             UserQuest userQuest = this.getUserQuest(player.getUniqueId());
             List<ActiveQuest> activeQuests = userQuest.getActiveQuests();
+
             for (int i = 0; i < activeQuests.size(); i++) {
                 ActiveQuest activeQuest = activeQuests.get(i);
                 Optional<Quest> optionalQuest = this.getQuest(activeQuest.getQuest().getName());
@@ -140,6 +144,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                     activeQuests.set(i, new ZActiveQuest(activeQuest.getUniqueId(), quest, activeQuest.getAmount()));
                 }
             }
+
             List<CompletedQuest> completedQuests = userQuest.getCompletedQuests();
             for (int i = 0; i < completedQuests.size(); i++) {
                 CompletedQuest completedQuest = completedQuests.get(i);
@@ -152,25 +157,28 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
     }
 
-    private void loadCustomRewards() {
+    private void loadGlobalRewards() {
         FileConfiguration configuration = this.plugin.getConfig();
+        this.globalRewards = this.plugin.getButtonManager().loadActions((List<Map<String, Object>>) configuration.getList("global-rewards"), "global-rewards", new File(plugin.getDataFolder(), "config.yml"));
+    }
+
+    private void loadCustomRewards(FileConfiguration configuration, File file) {
         this.customRewards.clear();
         for (Map<?, ?> map : configuration.getMapList("custom-rewards")) {
             TypedMapAccessor typedMapAccessor = new TypedMapAccessor((Map<String, Object>) map);
             List<String> quests = typedMapAccessor.getStringList("quests");
-            List<Action> actions = plugin.getButtonManager().loadActions((List<Map<String, Object>>) typedMapAccessor.getList("actions"), "custom-rewards", new File(plugin.getDataFolder(), "config.yml"));
+            List<Action> actions = this.plugin.getButtonManager().loadActions((List<Map<String, Object>>) typedMapAccessor.getList("actions"), "custom-rewards", file);
             this.customRewards.add(new CustomReward(quests, actions));
         }
-
-        this.plugin.getLogger().info(this.customRewards.size() + " custom rewards loaded");
-
-        this.globalRewards = plugin.getButtonManager().loadActions((List<Map<String, Object>>) configuration.getList("global-rewards"), "global-rewards", new File(plugin.getDataFolder(), "config.yml"));
     }
 
     @Override
     public List<Quest> loadQuests(File file) {
 
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+
+        this.loadCustomRewards(configuration, file);
+
         QuestLoader questLoader = new QuestLoader(this.plugin);
         return configuration.getMapList("quests").stream().map(map -> new TypedMapAccessor((Map<String, Object>) map)).map(typedMapAccessor -> questLoader.loadQuest(typedMapAccessor, file)).filter(Objects::nonNull).toList();
     }
@@ -390,6 +398,15 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         Player player = Bukkit.getPlayer(activeQuest.getUniqueId());
         if (player == null) return;
 
+        var quest = activeQuest.getQuest();
+        Placeholders placeholders = new Placeholders();
+        placeholders.register("name", quest.getDisplayName());
+        placeholders.register("description", quest.getDescription());
+        placeholders.register("goal", String.valueOf(quest.getGoal()));
+        for (Action action : this.globalRewards) {
+            action.preExecute(player, null, this.plugin.getInventoryManager().getFakeInventory(), placeholders);
+        }
+
         var optional = this.customRewards.stream().filter(customReward -> customReward.quests().contains(activeQuest.getQuest().getName())).findFirst();
         if (optional.isEmpty()) return;
 
@@ -398,15 +415,6 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             for (Action action : customReward.actions()) {
                 action.preExecute(player, null, this.plugin.getInventoryManager().getFakeInventory(), new Placeholders());
             }
-        }
-
-        var quest = activeQuest.getQuest();
-        Placeholders placeholders = new Placeholders();
-        placeholders.register("name", quest.getDisplayName());
-        placeholders.register("description", quest.getDescription());
-        placeholders.register("goal", String.valueOf(quest.getGoal()));
-        for (Action action : this.globalRewards) {
-            action.preExecute(player, null, this.plugin.getInventoryManager().getFakeInventory(), placeholders);
         }
     }
 
