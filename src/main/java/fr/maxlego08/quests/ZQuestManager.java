@@ -12,6 +12,7 @@ import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
 import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -116,6 +117,32 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
 
         this.plugin.getLogger().info(this.quests.size() + " quests loaded");
+        this.updateOnlyPlayers();
+    }
+
+    private void updateOnlyPlayers() {
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            UserQuest userQuest = this.getUserQuest(player.getUniqueId());
+            List<ActiveQuest> activeQuests = userQuest.getActiveQuests();
+            for (int i = 0; i < activeQuests.size(); i++) {
+                ActiveQuest activeQuest = activeQuests.get(i);
+                Optional<Quest> optionalQuest = this.getQuest(activeQuest.getQuest().getName());
+                if (optionalQuest.isPresent()) {
+                    Quest quest = optionalQuest.get();
+                    activeQuests.set(i, new ZActiveQuest(activeQuest.getUniqueId(), quest, activeQuest.getAmount()));
+                }
+            }
+            List<CompletedQuest> completedQuests = userQuest.getCompletedQuests();
+            for (int i = 0; i < completedQuests.size(); i++) {
+                CompletedQuest completedQuest = completedQuests.get(i);
+                Optional<Quest> optionalQuest = this.getQuest(completedQuest.quest().getName());
+                if (optionalQuest.isPresent()) {
+                    Quest quest = optionalQuest.get();
+                    completedQuests.set(i, new CompletedQuest(quest, completedQuest.completedAt()));
+                }
+            }
+        }
     }
 
     @Override

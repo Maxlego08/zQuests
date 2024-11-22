@@ -117,7 +117,9 @@ public class QuestsPlugin extends ZPlugin {
 
     @Override
     public void reloadFiles() {
+        reloadConfig();
         super.reloadFiles();
+        Config.getInstance().load(this.getConfig());
         this.questManager.loadQuests();
         this.questManager.loadPatterns();
         this.questManager.loadInventories();
