@@ -107,6 +107,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
 
         this.quests.clear();
+        this.customRewards.clear();
 
         this.files(folder, file -> this.quests.addAll(this.loadQuests(file)));
 
@@ -163,7 +164,6 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     private void loadCustomRewards(FileConfiguration configuration, File file) {
-        this.customRewards.clear();
         for (Map<?, ?> map : configuration.getMapList("custom-rewards")) {
             TypedMapAccessor typedMapAccessor = new TypedMapAccessor((Map<String, Object>) map);
             List<String> quests = typedMapAccessor.getStringList("quests");

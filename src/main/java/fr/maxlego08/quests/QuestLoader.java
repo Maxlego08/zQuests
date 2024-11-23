@@ -60,7 +60,9 @@ public class QuestLoader {
                         questActions.add(new MaterialAction(material, questType));
                     } else if (actionAccessor.contains("tag")) {
                         Tag<Material> tag = TagRegistry.getTag(actionAccessor.getString("tag").toUpperCase());
-                        questActions.add(new TagAction(tag, questType));
+                        if (tag == null) {
+                            plugin.getLogger().severe("Impossible to find the tag or material for " + questType + " in file " + file.getAbsolutePath());
+                        } else questActions.add(new TagAction(tag, questType));
                     } else {
                         plugin.getLogger().severe("Impossible to find the tag or material for " + questType + " in file " + file.getAbsolutePath());
                     }
