@@ -8,6 +8,7 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.UserQuest;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
 
@@ -35,5 +36,15 @@ public class QuestCompleteButton extends ZButton {
         boolean hasCompleted = quests.stream().allMatch(userQuest::isQuestCompleted);
 
         return super.checkPermission(player, inventory, placeholders) && hasCompleted;
+    }
+
+    @Override
+    public void onClick(Player player, InventoryClickEvent event, InventoryDefault inventory, int slot, Placeholders placeholders) {
+
+        if (!checkPermission(player, inventory, placeholders)) {
+            return;
+        }
+
+        super.onClick(player, event, inventory, slot, placeholders);
     }
 }
