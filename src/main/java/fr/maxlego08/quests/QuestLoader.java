@@ -4,11 +4,7 @@ import fr.maxlego08.menu.api.enchantment.Enchantments;
 import fr.maxlego08.menu.api.enchantment.MenuEnchantment;
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
-import fr.maxlego08.quests.actions.BrewAction;
-import fr.maxlego08.quests.actions.EnchantmentAction;
-import fr.maxlego08.quests.actions.EntityAction;
-import fr.maxlego08.quests.actions.MaterialAction;
-import fr.maxlego08.quests.actions.TagAction;
+import fr.maxlego08.quests.actions.*;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestType;
@@ -98,6 +94,18 @@ public class QuestLoader {
                     questActions.add(new BrewAction(potionType, questType, potionMaterial, material));
                 }
             });
+
+            if (questActions.isEmpty()) {
+                if (questType == QuestType.HATCHING) {
+                    questActions.add(new HatchingAction());
+                } else if (questType == QuestType.ENTITY_DAMAGE) {
+                    questActions.add(new EntityDamageAction());
+                } else if (questType == QuestType.EXPERIENCE_GAIN) {
+                    questActions.add(new ExperienceGainAction());
+                } else if (questType == QuestType.RESURRECT) {
+                    questActions.add(new ResurrectAction());
+                }
+            }
 
             return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, questActions);
         } catch (Exception exception) {
