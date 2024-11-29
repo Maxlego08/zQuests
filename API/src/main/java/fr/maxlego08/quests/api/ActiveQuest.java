@@ -74,6 +74,15 @@ public interface ActiveQuest {
     boolean increment(int amount);
 
     /**
+     * This method sets the progress amount directly, instead of incrementing it.
+     * For example, for verifying a player's job level.
+     *
+     * @param amount the amount to set for the progress
+     * @return true if the quest became complete as a result of setting the progress, false otherwise
+     */
+    boolean incrementStatic(int amount);
+
+    /**
      * Completes the quest and returns the completed quest data.
      *
      * @return the completed quest data

@@ -64,6 +64,7 @@ allprojects {
         implementation "com.github.technicallycoded:FoliaLib:main-SNAPSHOT"
         implementation 'com.github.Maxlego08:Sarah:1.12.2'
 
+        compileOnly files('libs/zJobs-1.0.0.jar')
     }
 
 }

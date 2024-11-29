@@ -36,13 +36,13 @@ public class ZActiveQuest implements ActiveQuest {
     }
 
     @Override
-    public void addAmount(long amount) {
-        this.amount += amount;
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 
     @Override
-    public void setAmount(long amount) {
-        this.amount = amount;
+    public void addAmount(long amount) {
+        this.amount += amount;
     }
 
     @Override
@@ -60,17 +60,29 @@ public class ZActiveQuest implements ActiveQuest {
         return this.uniqueId.equals(uniqueId);
     }
 
-    @Override
-    public boolean increment(int amount) {
-        if (this.isComplete()) return false;
-
-        this.amount += amount;
+    private boolean postCheck() {
         if (this.isComplete()) {
             this.quest.onComplete(this);
             return true;
         }
 
         return false;
+    }
+
+    @Override
+    public boolean increment(int amount) {
+        if (this.isComplete()) return false;
+
+        this.amount += amount;
+        return postCheck();
+    }
+
+    @Override
+    public boolean incrementStatic(int amount) {
+        if (this.isComplete()) return false;
+
+        this.amount = amount;
+        return postCheck();
     }
 
     @Override

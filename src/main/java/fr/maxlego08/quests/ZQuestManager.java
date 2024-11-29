@@ -10,6 +10,7 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.UserQuest;
+import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
@@ -230,6 +231,25 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
+    public void handleStaticQuests(UUID uuid, QuestType type, int amount, Object object) {
+        // Retrieve the user's quest data or create a new ZUserQuest if not found
+        var userQuest = getUserQuest(uuid);
+
+        // Stream through the active quests of the user
+        var iterator = userQuest.getActiveQuests().iterator();
+        while (iterator.hasNext()) {
+            ActiveQuest activeQuest = iterator.next();
+            if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
+                if (activeQuest.incrementStatic(amount)) { // Increment the progress of the quest
+                    iterator.remove(); // If the quest is complete, remove it from the list
+                    this.completeQuest(activeQuest);
+                }
+                this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
+            }
+        }
+    }
+
+    @Override
     public void addQuestToPlayer(UUID uuid, Quest quest) {
         // Create a new active quest for the player
         ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, 0);
@@ -240,8 +260,12 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             return; // Exit if the quest is already completed
         }
 
+        QuestStartEvent event = new QuestStartEvent(uuid, activeQuest);
+        event.call();
+        if (event.isCancelled()) return;
+
         // Add the active quest to the user's active quests
-        userQuest.getActiveQuests().add(activeQuest);
+        userQuest.getActiveQuests().add(event.getActiveQuest());
 
         // Persist the new active quest in storage
         this.plugin.getStorageManager().upsert(activeQuest);

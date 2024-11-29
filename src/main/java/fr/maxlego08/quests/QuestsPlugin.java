@@ -13,6 +13,7 @@ import fr.maxlego08.quests.hooks.blocks.BlockTrackerHook;
 import fr.maxlego08.quests.hooks.blocks.EmptyBlockHook;
 import fr.maxlego08.quests.hooks.stacker.EmptyStackerHook;
 import fr.maxlego08.quests.hooks.stacker.WildStackerHook;
+import fr.maxlego08.quests.listeners.ZJobListener;
 import fr.maxlego08.quests.listeners.QuestListener;
 import fr.maxlego08.quests.placeholder.LocalPlaceholder;
 import fr.maxlego08.quests.save.Config;
@@ -67,6 +68,11 @@ public class QuestsPlugin extends ZPlugin {
         if (isEnable(Plugins.WILDSTACKER)) {
             getLogger().info("Using WildStacker");
             this.stackerHook = new WildStackerHook();
+        }
+
+        if (isEnable(Plugins.ZJOBS)) {
+            getLogger().info("Using zJobs");
+            this.addListener(new ZJobListener(this, this.questManager));
         }
 
         new QuestPlaceholder().register(this, this.questManager);

@@ -11,6 +11,7 @@ public enum Plugins {
 	ZTRANSLATOR("zTranslator"),
 	BLOCKTRACKER("BlockTracker"),
 	WILDSTACKER("WildStacker"),
+	ZJOBS("zJobs"),
 
 	;
 

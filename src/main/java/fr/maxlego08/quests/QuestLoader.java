@@ -4,7 +4,16 @@ import fr.maxlego08.menu.api.enchantment.Enchantments;
 import fr.maxlego08.menu.api.enchantment.MenuEnchantment;
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
-import fr.maxlego08.quests.actions.*;
+import fr.maxlego08.quests.actions.BrewAction;
+import fr.maxlego08.quests.actions.EnchantmentAction;
+import fr.maxlego08.quests.actions.EntityAction;
+import fr.maxlego08.quests.actions.EntityDamageAction;
+import fr.maxlego08.quests.actions.ExperienceGainAction;
+import fr.maxlego08.quests.actions.HatchingAction;
+import fr.maxlego08.quests.actions.JobAction;
+import fr.maxlego08.quests.actions.MaterialAction;
+import fr.maxlego08.quests.actions.ResurrectAction;
+import fr.maxlego08.quests.actions.TagAction;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestType;
@@ -92,6 +101,10 @@ public class QuestLoader {
                     Material potionMaterial = Material.valueOf(potionMaterialName.toUpperCase());
 
                     questActions.add(new BrewAction(potionType, questType, potionMaterial, material));
+                } else if (questType == QuestType.JOB_LEVEL || questType == QuestType.JOB_PRESTIGE) {
+
+                    String potionName = actionAccessor.getString("job", null);
+                    questActions.add(new JobAction(questType, potionName));
                 }
             });
 

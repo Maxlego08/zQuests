@@ -71,6 +71,17 @@ public interface QuestManager {
     void handleQuests(UUID uuid, QuestType type, int amount, Object object);
 
     /**
+     * Handle static quests (quests that can be completed multiple times)
+     * for a user.
+     *
+     * @param uuid   the unique identifier of the user
+     * @param type   the type of quest
+     * @param amount the amount to increment
+     * @param object additional data for the quest action
+     */
+    void handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
+
+    /**
      * Add a quest to a player's active quests.
      *
      * @param uuid  the player to add the quest to

@@ -29,7 +29,9 @@ public enum QuestType {
     ITEM_BREAK,
     ITEM_MENDING,
     RESURRECT,
-    JOB;
+    JOB_LEVEL,
+    JOB_PRESTIGE
+    ;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
@@ -43,7 +45,7 @@ public enum QuestType {
             case ENTITY_DAMAGE -> new EntityDamageAction(this, (EntityDamageByEntityEvent) target);
             case EXPERIENCE_GAIN -> new ExperienceGainAction(this, (Integer) target);
             case RESURRECT -> new ResurrectAction(this);
-            case JOB -> new JobAction(this);
+            case JOB_LEVEL, JOB_PRESTIGE -> new JobAction(this, (String) target);
         };
     }
 

@@ -9,3 +9,6 @@ depend:
   - zMenu
 softdepend:
   - PlaceholderAPI
+  - zJobs
+  - WildStacker
+  - BlockTracker
