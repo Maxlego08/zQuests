@@ -46,7 +46,7 @@ public class QuestLoader {
             String displayName = accessor.getString("display-name", name);
             String description = accessor.getString("description", "no description");
             Material thumbnail = accessor.contains("thumbnail") ? Material.valueOf(accessor.getString("thumbnail").toUpperCase()) : null;
-            long goal = accessor.getLong("goal");
+            long goal = accessor.getLong("goal", 1);
             boolean autoAccept = accessor.getBoolean("auto-accept", false);
 
             List<Map<String, Object>> rewardsMap = accessor.contains("rewards") ? (List<Map<String, Object>>) accessor.getList("rewards") : new ArrayList<>();

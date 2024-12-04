@@ -7,4 +7,7 @@ items:
       material: BARRIER
       name: "&cNo Quests"
       lore:
-        - "&8You need to do it yourself."
+        - "&7You need to do it yourself."
+        - "&fYou can do it!"
+        - ""
+        - "&8&oOkay, I’ll just add a quick example."

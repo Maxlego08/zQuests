@@ -15,7 +15,6 @@ public enum QuestType {
     ENTITY_KILL,
     FARMING,
     FISHING,
-    COMMAND,
     TAME,
     ENCHANT,
     BREW,
@@ -37,7 +36,6 @@ public enum QuestType {
         return switch (this) {
             case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, CRAFT, SELL, ITEM_BREAK, ITEM_MENDING -> new MaterialAction(this, (Material) target);
             case ENTITY_KILL, TAME -> new EntityAction(this, (EntityType) target);
-            case COMMAND -> new CommandAction(target == null ? "" : (String) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
             case BREW -> new BrewAction(this, (BrewEvent) target);
             case VOTE -> new VoteAction(this);

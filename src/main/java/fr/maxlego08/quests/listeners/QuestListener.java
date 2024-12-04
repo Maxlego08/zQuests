@@ -340,7 +340,7 @@ public class QuestListener implements Listener {
 
         if (isNPC(player)) return;
 
-        this.manager.handleQuests(player.getUniqueId(), QuestType.ITEM_MENDING, 1, event.getItem().getType());
+        this.manager.handleQuests(player.getUniqueId(), QuestType.ITEM_MENDING, event.getRepairAmount(), event.getItem().getType());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
