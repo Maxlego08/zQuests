@@ -128,6 +128,12 @@ public abstract class VCommand extends Arguments {
         return parent;
     }
 
+    public VCommand getMainParent() {
+        if (parent == null) return null;
+        if (parent.getParent() == null) return parent;
+        else return parent.getMainParent();
+    }
+
     /**
      * Sets the parent command.
      *
@@ -380,7 +386,7 @@ public abstract class VCommand extends Arguments {
      * @return the first sub-command.
      */
     public String getFirst() {
-        return this.subCommands.get(0);
+        return this.subCommands.getFirst();
     }
 
     //
