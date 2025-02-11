@@ -3,14 +3,18 @@ package fr.maxlego08.quests;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
+import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.api.UserQuest;
 import fr.maxlego08.quests.placeholder.LocalPlaceholder;
 import fr.maxlego08.quests.save.Config;
+import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class QuestPlaceholder {
+public class QuestPlaceholder extends ZUtils {
 
     private QuestsPlugin plugin;
     private QuestManager questManager;
@@ -39,6 +43,7 @@ public class QuestPlaceholder {
         localPlaceholder.register("is_completed_", (player, questId) -> String.valueOf(getQuestIsCompleted(player, questId)));
         localPlaceholder.register("is_active_", (player, questId) -> String.valueOf(getQuestIsActive(player, questId)));
         localPlaceholder.register("progress_bar_", this::getProgressBar);
+        localPlaceholder.register("progress_bar_", this::getPercent);
         localPlaceholder.register("progress_", (player, questId) -> String.valueOf(getProgress(player, questId)));
 
         localPlaceholder.register("lore_line_", (player, questId) -> {
@@ -56,11 +61,57 @@ public class QuestPlaceholder {
 
             return line;
         });
+
+        localPlaceholder.register("group_name_", (player, groupKey) -> questManager.getGroup(groupKey).map(QuestsGroup::getDisplayName).orElse("Quests group " + groupKey + " was not found"));
+        localPlaceholder.register("group_count_", (player, groupKey) -> String.valueOf(questManager.getGroup(groupKey).map(QuestsGroup::getQuests).map(List::size).orElse(0)));
+        localPlaceholder.register("group_finish_", (player, groupKey) -> {
+            var user = questManager.getUserQuest(player.getUniqueId());
+            var completedQuests = user.getCompletedQuests();
+            var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>());
+            if (groupQuests.isEmpty()) return "0";
+
+            var amount = completedQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
+            return String.valueOf(amount);
+        });
+
+        localPlaceholder.register("group_percent_", (player, groupKey) -> {
+            var user = questManager.getUserQuest(player.getUniqueId());
+            var completedQuests = user.getCompletedQuests();
+            var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>());
+            if (groupQuests.isEmpty()) return "0";
+
+            var amount = completedQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
+            return format(percent(amount, groupQuests.size()));
+        });
+
+        localPlaceholder.register("group_total_percent_", (player, groupKey) -> {
+
+            var user = questManager.getUserQuest(player.getUniqueId());
+            var activeQuests = user.getActiveQuests();
+
+            var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>());
+            if (groupQuests.isEmpty()) return "0";
+
+            int totalQuests = groupQuests.size();
+            var completedQuests = user.getCompletedQuests().stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
+            double completedProgress = completedQuests * 100;
+
+            var inProgressSum = activeQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.getQuest())).mapToDouble(q -> getPercent(player, q.getQuest())).average().orElse(0.0);
+
+            return format((completedProgress + inProgressSum) / totalQuests);
+        });
+
+
     }
 
     private long getProgress(Player player, String questId) {
         UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
         return userQuest.findActive(questId).map(ActiveQuest::getAmount).orElse(0L);
+    }
+
+    private String getPercent(Player player, String questId) {
+        Optional<Quest> optional = questManager.getQuest(questId);
+        return optional.map(q -> format(getPercent(player, q))).orElse("0");
     }
 
     private String getProgressBar(Player player, String questId) {
@@ -71,6 +122,15 @@ public class QuestPlaceholder {
         long amount = userQuest.findActive(questId).map(ActiveQuest::getAmount).orElse(0L);
 
         return Config.progressBar.getProgressBar(amount, goal);
+    }
+
+    private double getPercent(Player player, Quest quest) {
+        long goal = quest.getGoal();
+
+        UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
+        long amount = userQuest.findActive(quest.getName()).map(ActiveQuest::getAmount).orElse(0L);
+
+        return percent(amount, goal);
     }
 
     private String getQuestName(Player player, String questId) {

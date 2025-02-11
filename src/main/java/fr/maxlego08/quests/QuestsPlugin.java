@@ -4,6 +4,7 @@ package fr.maxlego08.quests;
 import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.menu.api.pattern.PatternManager;
+import fr.maxlego08.menu.api.utils.MetaUpdater;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.hooks.BlockHook;
 import fr.maxlego08.quests.api.hooks.StackerHook;

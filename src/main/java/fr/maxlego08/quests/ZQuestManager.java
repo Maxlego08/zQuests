@@ -4,11 +4,13 @@ import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.menu.exceptions.InventoryException;
+import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.api.UserQuest;
 import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
@@ -40,10 +42,15 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     private final List<Quest> quests = new ArrayList<>();
     private final Map<UUID, UserQuest> usersQuests = new HashMap<>();
     private final List<CustomReward> customRewards = new ArrayList<>();
+    private final Map<String, QuestsGroup> groups = new HashMap<>();
     private List<Action> globalRewards = new ArrayList<>();
 
     public ZQuestManager(QuestsPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    private static void getaVoid(Action action, Player player, InventoryDefault fakeInventory) {
+        action.preExecute(player, null, fakeInventory, new Placeholders());
     }
 
     @Override
@@ -130,6 +137,29 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         this.loadCustomRewards(this.plugin.getConfig(), new File(this.plugin.getDataFolder(), "config.yml"));
         this.plugin.getLogger().info(this.customRewards.size() + " custom rewards loaded");
+
+        this.loadGroups();
+    }
+
+    private void loadGroups() {
+
+        this.groups.clear();
+
+        var config = this.plugin.getConfig();
+        var section = config.getConfigurationSection("quests-groups");
+        if (section == null) return;
+
+        for (String key : section.getKeys(false)) {
+
+            var currentSection = section.getConfigurationSection(key);
+
+            if (currentSection == null) continue;
+
+            String displayName = currentSection.getString("display-name", key);
+            List<Quest> quests = currentSection.getStringList("quests").stream().map(this::getQuest).filter(Optional::isPresent).map(Optional::get).toList();
+
+            this.groups.put(key, new ZQuestsGroup(key, displayName, quests));
+        }
     }
 
     private void updateOnlyPlayers() {
@@ -318,7 +348,6 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
     }
 
-
     @Override
     public void completeQuest(CommandSender sender, Player player, String questName) {
         var userQuest = getUserQuest(player.getUniqueId());
@@ -406,7 +435,6 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         return optional.get();
     }
 
-
     @Override
     public void openQuestInventory(Player player) {
         this.plugin.getInventoryManager().openInventory(player, this.plugin, "quests");
@@ -427,8 +455,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         placeholders.register("name", quest.getDisplayName());
         placeholders.register("description", quest.getDescription());
         placeholders.register("goal", String.valueOf(quest.getGoal()));
+
+        var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
+
         for (Action action : this.globalRewards) {
-            action.preExecute(player, null, this.plugin.getInventoryManager().getFakeInventory(), placeholders);
+            action.preExecute(player, null, fakeInventory, placeholders);
         }
 
         var optional = this.customRewards.stream().filter(customReward -> customReward.quests().contains(activeQuest.getQuest().getName())).findFirst();
@@ -437,9 +468,17 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         var customReward = optional.get();
         if (customReward.quests().stream().allMatch(userQuest::isQuestCompleted)) {
             for (Action action : customReward.actions()) {
-                action.preExecute(player, null, this.plugin.getInventoryManager().getFakeInventory(), new Placeholders());
+                getaVoid(action, player, fakeInventory);
             }
         }
     }
 
+    public Map<String, QuestsGroup> getGroups() {
+        return this.groups;
+    }
+
+    @Override
+    public Optional<QuestsGroup> getGroup(String key) {
+        return Optional.ofNullable(this.groups.get(key));
+    }
 }

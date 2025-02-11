@@ -189,4 +189,6 @@ public interface QuestManager {
      * @return a list of all the custom rewards
      */
     List<CustomReward> getCustomRewards();
+
+    Optional<QuestsGroup> getGroup(String key);
 }

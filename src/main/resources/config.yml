@@ -86,3 +86,12 @@ global-rewards:
   - type: message
     messages:
       - "&fYou have broken &7%name%&f blocks!" # Placeholder : %name%, %description% and %goal%
+
+quests-groups:
+  block-break:
+    display-name: "Block Break"
+    quests:
+      - "block-break-1"
+      - "block-break-2"
+      - "block-break-3"
+
