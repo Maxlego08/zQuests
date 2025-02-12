@@ -69,7 +69,7 @@ public class QuestListener implements Listener {
         this.manager.handleQuit(event.getPlayer().getUniqueId());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
 
         Block block = event.getBlock();

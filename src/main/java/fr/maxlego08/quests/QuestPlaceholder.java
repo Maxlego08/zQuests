@@ -64,24 +64,12 @@ public class QuestPlaceholder extends ZUtils {
 
         localPlaceholder.register("group_name_", (player, groupKey) -> questManager.getGroup(groupKey).map(QuestsGroup::getDisplayName).orElse("Quests group " + groupKey + " was not found"));
         localPlaceholder.register("group_count_", (player, groupKey) -> String.valueOf(questManager.getGroup(groupKey).map(QuestsGroup::getQuests).map(List::size).orElse(0)));
-        localPlaceholder.register("group_finish_", (player, groupKey) -> {
-            var user = questManager.getUserQuest(player.getUniqueId());
-            var completedQuests = user.getCompletedQuests();
-            var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>());
-            if (groupQuests.isEmpty()) return "0";
-
-            var amount = completedQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
-            return String.valueOf(amount);
-        });
+        localPlaceholder.register("group_finish_", (player, groupKey) -> String.valueOf(getCompletedQuestsCount(player, groupKey)));
 
         localPlaceholder.register("group_percent_", (player, groupKey) -> {
-            var user = questManager.getUserQuest(player.getUniqueId());
-            var completedQuests = user.getCompletedQuests();
-            var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>());
-            if (groupQuests.isEmpty()) return "0";
-
-            var amount = completedQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
-            return format(percent(amount, groupQuests.size()));
+            long completedQuestsCount = getCompletedQuestsCount(player, groupKey);
+            long totalQuestsCount = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>()).size();
+            return format(percent(completedQuestsCount, totalQuestsCount));
         });
 
         localPlaceholder.register("group_total_percent_", (player, groupKey) -> {
@@ -156,5 +144,14 @@ public class QuestPlaceholder extends ZUtils {
     private long getQuestObjective(Player player, String questId) {
         Optional<Quest> optional = questManager.getQuest(questId);
         return optional.map(Quest::getGoal).orElse(0L);
+    }
+
+    private long getCompletedQuestsCount(Player player, String groupKey) {
+        var user = questManager.getUserQuest(player.getUniqueId());
+        var completedQuests = user.getCompletedQuests();
+        var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>());
+        if (groupQuests.isEmpty()) return 0;
+
+        return completedQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
     }
 }

@@ -87,11 +87,19 @@ global-rewards:
     messages:
       - "&fYou have broken &7%name%&f blocks!" # Placeholder : %name%, %description% and %goal%
 
+# Allows grouping multiple quests to display them in placeholders.
+# Placeholders :
+# %zquests_group_name_<group id>% - Returns the display name of the group
+# %zquests_group_count_<group id>% - Displays the number of quests in the group
+# %zquests_group_finish_<group id>% - Displays the number of completed quests in the group
+# %zquests_group_percent_<group id>% - Displays the percentage of completed quests in the group
+# %zquests_group_total_percent_<group id>% - Displays the percentage of completed and ongoing quests, providing a more precise progress value than the placeholder above
 quests-groups:
-  block-break:
-    display-name: "Block Break"
-    quests:
+  block-break: # Group identifier
+    display-name: "Block Break" # Display name of the group
+    quests: # Quests present in the group
       - "block-break-1"
       - "block-break-2"
       - "block-break-3"
+
 
