@@ -350,16 +350,16 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public void completeQuest(CommandSender sender, Player player, String questName) {
-        var userQuest = getUserQuest(player.getUniqueId());
-        var optional = userQuest.getActiveQuests().stream().filter(a -> a.getQuest().getName().equalsIgnoreCase(questName)).findFirst();
 
-        if (optional.isEmpty()) {
+        ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
+        if (activeQuest == null) {
             message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
             return;
         }
 
-        userQuest.getActiveQuests().remove(optional.get());
-        this.completeQuest(optional.get());
+        activeQuest.increment(activeQuest.getQuest().getGoal());
+        getUserQuest(player.getUniqueId()).getActiveQuests().remove(activeQuest);
+        completeQuest(activeQuest);
 
         message(sender, Message.QUEST_COMPLETE_SUCCESS, "%name%", questName, "%player%", player.getName());
     }
@@ -400,7 +400,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public void setQuestProgress(CommandSender sender, Player player, String questName, int amount) {
         ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
-        if (activeQuest == null) return;
+        if (activeQuest == null) {
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
 
         activeQuest.setAmount(amount);
         this.plugin.getStorageManager().upsert(activeQuest);
@@ -411,7 +414,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public void addQuestProgress(CommandSender sender, Player player, String questName, int amount) {
         ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
-        if (activeQuest == null) return;
+        if (activeQuest == null) {
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
 
         if (activeQuest.increment(amount)) {
             getUserQuest(player.getUniqueId()).getActiveQuests().remove(activeQuest);

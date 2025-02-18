@@ -71,7 +71,7 @@ public interface ActiveQuest {
      * @param amount the amount to increment
      * @return true if the quest became complete as a result of the increment, false otherwise
      */
-    boolean increment(int amount);
+    boolean increment(long amount);
 
     /**
      * This method sets the progress amount directly, instead of incrementing it.
@@ -80,7 +80,7 @@ public interface ActiveQuest {
      * @param amount the amount to set for the progress
      * @return true if the quest became complete as a result of setting the progress, false otherwise
      */
-    boolean incrementStatic(int amount);
+    boolean incrementStatic(long amount);
 
     /**
      * Completes the quest and returns the completed quest data.

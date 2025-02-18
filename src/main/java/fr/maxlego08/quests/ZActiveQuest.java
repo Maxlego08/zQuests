@@ -70,7 +70,7 @@ public class ZActiveQuest implements ActiveQuest {
     }
 
     @Override
-    public boolean increment(int amount) {
+    public boolean increment(long amount) {
         if (this.isComplete()) return false;
 
         this.amount += amount;
@@ -78,7 +78,7 @@ public class ZActiveQuest implements ActiveQuest {
     }
 
     @Override
-    public boolean incrementStatic(int amount) {
+    public boolean incrementStatic(long amount) {
         if (this.isComplete()) return false;
 
         this.amount = amount;
