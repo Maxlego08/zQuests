@@ -40,15 +40,18 @@ public enum Message {
     DESCRIPTION_RELOAD("Reload configuration files"),
     DESCRIPTION_START("Activate a quest for a player"),
     DESCRIPTION_COMPLETE("Complete a quest for a player"),
+    DESCRIPTION_COMPLETE_ALL("Complete a quest group for a player"),
     DESCRIPTION_DELETE_ALL("Delete all quests for a player"),
     DESCRIPTION_DELETE("Delete a quest for a player"),
     DESCRIPTION_SET_PROGRESS("Set the progress of a quest for a player"),
     DESCRIPTION_ADD_PROGRESS("Add a number to the progress of a quest for a player"),
 
+    GROUP_NOT_FOUND("&cUnable to find the group &f%name%&c."),
     QUEST_NOT_FOUND("&cUnable to find the quest &f%name%&c."),
     QUEST_START_ERROR("&cThe quest &f%name% &cis already completed or active for the player &f%player%&c."),
     QUEST_START_SUCCESS("&aYou have just activated the quest &f%name%&a for the player &f%player%&a."),
 
+    GROUP_COMPLETE_SUCCESS("&aThe player &f%player% &ahas just completed the quest group &f%name%&a!"),
     QUEST_COMPLETE_SUCCESS("&aThe player &f%player% &ahas just completed the quest &f%name%&a!"),
     QUEST_DELETE_SUCCESS("&aThe quest &f%name% &ahas just been deleted&a."),
     QUEST_DELETE_ALL_SUCCESS("&aAll the quests have just been deleted&a."),

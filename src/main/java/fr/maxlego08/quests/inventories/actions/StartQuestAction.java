@@ -8,25 +8,29 @@ import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.UserQuest;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class StartQuestAction extends Action {
 
     private final QuestsPlugin plugin;
-    private final String questName;
+    private final List<String> quests;
 
-    public StartQuestAction(QuestsPlugin plugin, String questName) {
+    public StartQuestAction(QuestsPlugin plugin, List<String> quests) {
         this.plugin = plugin;
-        this.questName = questName;
+        this.quests = quests;
     }
 
     @Override
     protected void execute(Player player, Button button, InventoryDefault inventoryDefault, Placeholders placeholders) {
         var manager = this.plugin.getQuestManager();
-        var optional = manager.getQuest(this.questName);
-        if (optional.isPresent()) {
-            var quest = optional.get();
-            UserQuest userQuest = manager.getUserQuest(player.getUniqueId());
-            if (userQuest.canStartQuest(quest)) {
-                manager.addQuestToPlayer(player.getUniqueId(), quest);
+        for (String questName : quests) {
+            var optional = manager.getQuest(questName);
+            if (optional.isPresent()) {
+                var quest = optional.get();
+                UserQuest userQuest = manager.getUserQuest(player.getUniqueId());
+                if (userQuest.canStartQuest(quest)) {
+                    manager.addQuestToPlayer(player.getUniqueId(), quest);
+                }
             }
         }
     }

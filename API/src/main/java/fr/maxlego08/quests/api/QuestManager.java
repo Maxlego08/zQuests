@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -139,6 +140,15 @@ public interface QuestManager {
     void completeQuest(CommandSender sender, Player player, String questName);
 
     /**
+     * Complete a quest group for a player.
+     *
+     * @param sender    the command sender
+     * @param player    the player to complete the quest group for
+     * @param groupName the name of the quest group to complete
+     */
+    void completeQuestGroup(CommandSender sender, Player player, String groupName);
+
+    /**
      * Delete a quest from a player's active quests.
      *
      * @param sender    the command sender
@@ -191,4 +201,6 @@ public interface QuestManager {
     List<CustomReward> getCustomRewards();
 
     Optional<QuestsGroup> getGroup(String key);
+
+    Map<String, QuestsGroup> getGroups();
 }

@@ -7,6 +7,7 @@ import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.inventories.actions.StartQuestAction;
 
 import java.io.File;
+import java.util.List;
 
 public class StartQuestLoader implements ActionLoader {
 
@@ -18,12 +19,12 @@ public class StartQuestLoader implements ActionLoader {
 
     @Override
     public String getKey() {
-        return "start_quest";
+        return "start_quest,start quest,start quests,start_quests";
     }
 
     @Override
     public Action load(String path, TypedMapAccessor typedMapAccessor, File file) {
-        String questName = typedMapAccessor.getString("quest");
-        return new StartQuestAction(plugin, questName);
+        List<String> quests = typedMapAccessor.getStringList("quests");
+        return new StartQuestAction(plugin, quests);
     }
 }

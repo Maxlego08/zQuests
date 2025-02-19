@@ -16,6 +16,7 @@ public class CommandQuests extends VCommand {
         this.addSubCommand(new CommandQuestsDeleteAll(plugin));
         this.addSubCommand(new CommandQuestsDelete(plugin));
         this.addSubCommand(new CommandQuestsComplete(plugin));
+        this.addSubCommand(new CommandQuestsCompleteAll(plugin));
         this.addSubCommand(new CommandQuestsAddProgress(plugin));
         this.addSubCommand(new CommandQuestsSetProgress(plugin));
         this.addSubCommand(new CommandQuestsHelp(plugin));

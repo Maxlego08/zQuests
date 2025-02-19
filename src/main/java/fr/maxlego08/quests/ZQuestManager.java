@@ -145,7 +145,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         this.groups.clear();
 
-        var config = this.plugin.getConfig();
+        var config = this.plugin.getInventoryManager().loadYamlConfiguration(new File(this.plugin.getDataFolder(), "config.yml"));
         var section = config.getConfigurationSection("quests-groups");
         if (section == null) return;
 
@@ -365,6 +365,32 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
+    public void completeQuestGroup(CommandSender sender, Player player, String groupName) {
+
+        var optional = getGroup(groupName);
+        if (optional.isEmpty()) {
+            message(sender, Message.GROUP_NOT_FOUND, "%name%", groupName);
+            return;
+        }
+
+        var group = optional.get();
+        for (Quest quest : group.getQuests()) {
+
+            var userQuest = getUserQuest(player.getUniqueId());
+            var optionalActiveQuest = userQuest.getActiveQuests().stream().filter(a -> a.getQuest() == quest).findFirst();
+
+            if (optionalActiveQuest.isEmpty()) continue;
+
+            var activeQuest = optionalActiveQuest.get();
+            activeQuest.increment(activeQuest.getQuest().getGoal());
+            getUserQuest(player.getUniqueId()).getActiveQuests().remove(activeQuest);
+            completeQuest(activeQuest);
+        }
+
+        message(sender, Message.GROUP_COMPLETE_SUCCESS, "%name%", group.getDisplayName(), "%player%", player.getName());
+    }
+
+    @Override
     public void deleteUserQuest(CommandSender sender, Player player, String questName) {
 
         var userQuest = getUserQuest(player.getUniqueId());
@@ -479,6 +505,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
     }
 
+    @Override
     public Map<String, QuestsGroup> getGroups() {
         return this.groups;
     }
