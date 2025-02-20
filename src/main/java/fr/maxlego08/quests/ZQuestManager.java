@@ -14,6 +14,7 @@ import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.api.UserQuest;
 import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
+import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
 import fr.maxlego08.quests.messages.Message;
@@ -468,8 +469,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public void openQuestInventory(Player player) {
-        this.plugin.getInventoryManager().openInventory(player, this.plugin, "quests");
+    public void openQuestInventory(Player player, QuestInventoryPage questInventoryPage) {
+        var manager = this.plugin.getInventoryManager();
+        manager.getInventory(this.plugin, questInventoryPage.inventory()).ifPresentOrElse(inventory -> manager.openInventory(player, inventory, questInventoryPage.page()), () -> message(player, Message.INVENTORY_NOT_FOUND, "%inventory%", questInventoryPage.inventory()));
     }
 
     @Override

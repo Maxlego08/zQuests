@@ -57,7 +57,7 @@ public enum Message {
     QUEST_DELETE_ALL_SUCCESS("&aAll the quests have just been deleted&a."),
     QUEST_SET_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just set the progress of the quest &f%name% &ato &f%progress%&a."),
     QUEST_ADD_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just added &f%progress% &ato the progress of the quest &f%name%&a."),
-    ;
+    INVENTORY_NOT_FOUND("&cUnable to find the inventory &f%inventory%&c."),;
 
     private ZPlugin plugin;
     private List<ZMessage> messages = new ArrayList<>();

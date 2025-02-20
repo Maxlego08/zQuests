@@ -1,6 +1,7 @@
 package fr.maxlego08.quests.api;
 
 import fr.maxlego08.quests.api.utils.CustomReward;
+import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -188,9 +189,10 @@ public interface QuestManager {
     /**
      * Open the quest inventory for a player.
      *
-     * @param player the player to open the quest inventory for
+     * @param player             the player to open the quest inventory for
+     * @param questInventoryPage the page to open
      */
-    void openQuestInventory(Player player);
+    void openQuestInventory(Player player, QuestInventoryPage questInventoryPage);
 
 
     /**

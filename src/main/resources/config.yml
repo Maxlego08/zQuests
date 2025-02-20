@@ -60,6 +60,14 @@ main-command-aliases:
   - rankup
   - q
 
+main-command-page:
+  - permission: "quests.page.2"
+    inventory: "quests"
+    page: 2
+  - permission: "quests.page.3"
+    inventory: "quests"
+    page: 3
+
 # Lore line placeholders:
 # active: The format for an active quest's progress in the lore, including placeholders for the progress bar, progress, and goal.
 # complete: The format for a completed quest in the lore, indicating completion with a checkmark symbol.
