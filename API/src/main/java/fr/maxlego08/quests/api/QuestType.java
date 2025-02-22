@@ -7,6 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.BrewEvent;
+import org.bukkit.inventory.ItemStack;
 
 public enum QuestType {
 
@@ -29,12 +30,15 @@ public enum QuestType {
     ITEM_MENDING,
     RESURRECT,
     JOB_LEVEL,
-    JOB_PRESTIGE
+    JOB_PRESTIGE,
+    SMITHING,
+    SELLING,
     ;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, CRAFT, SELL, ITEM_BREAK, ITEM_MENDING -> new MaterialAction(this, (Material) target);
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING, SELLING -> new MaterialAction(this, (Material) target);
+            case CRAFT -> new ItemStackAction(this, (ItemStack) target);
             case ENTITY_KILL, TAME -> new EntityAction(this, (EntityType) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
             case BREW -> new BrewAction(this, (BrewEvent) target);
@@ -49,7 +53,7 @@ public enum QuestType {
 
     public boolean isMaterial() {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, CRAFT, SELL, ITEM_BREAK, ITEM_MENDING -> true;
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING, SELLING -> true;
             default -> false;
         };
     }

@@ -10,6 +10,7 @@ import fr.maxlego08.quests.actions.EntityAction;
 import fr.maxlego08.quests.actions.EntityDamageAction;
 import fr.maxlego08.quests.actions.ExperienceGainAction;
 import fr.maxlego08.quests.actions.HatchingAction;
+import fr.maxlego08.quests.actions.ItemStackAction;
 import fr.maxlego08.quests.actions.JobAction;
 import fr.maxlego08.quests.actions.MaterialAction;
 import fr.maxlego08.quests.actions.ResurrectAction;
@@ -68,6 +69,18 @@ public class QuestLoader {
                         if (tag == null) {
                             plugin.getLogger().severe("Impossible to find the tag or material for " + questType + " in file " + file.getAbsolutePath());
                         } else questActions.add(new TagAction(tag, questType));
+                    } else {
+                        plugin.getLogger().severe("Impossible to find the tag or material for " + questType + " in file " + file.getAbsolutePath());
+                    }
+
+                } else if (questType == QuestType.CRAFT) {
+
+                    if (actionAccessor.contains("material")) {
+
+                        Material material = Material.valueOf(actionAccessor.getString("material").toUpperCase());
+                        int fireworkPower = actionAccessor.getInt("firework-power", 0);
+
+                        questActions.add(new ItemStackAction(material, questType, fireworkPower));
                     } else {
                         plugin.getLogger().severe("Impossible to find the tag or material for " + questType + " in file " + file.getAbsolutePath());
                     }

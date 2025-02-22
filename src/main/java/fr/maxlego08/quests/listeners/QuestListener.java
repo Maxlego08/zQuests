@@ -26,21 +26,30 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.BrewEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.*;
-import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.event.player.PlayerItemMendEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.projectiles.ProjectileSource;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class QuestListener implements Listener {
@@ -249,54 +258,37 @@ public class QuestListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraft(CraftItemEvent event) {
-        ItemStack result = event.getRecipe().getResult();
+        if (!isValidCraftEvent(event)) return;
 
-        int craftAmount;
+        Player player = (Player) event.getWhoClicked();
+        ItemStack result = event.getCurrentItem();
 
-        if (event.isShiftClick()) {
+        int craftAmount = event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP ? calculateMaxCraftAmount(event) : event.getCursor().getType() != Material.AIR ? 0 : result.getAmount();
 
-            craftAmount = calculateMaxCraftAmount(event);
-        } else {
-
-            craftAmount = event.getCursor() != null && event.getCursor().getType() != Material.AIR ? 0 : result.getAmount();
-        }
-
-        if (craftAmount == 0) return;
-
-        if (event.getWhoClicked() instanceof Player player) {
-
-            if (isNPC(player)) return;
-
-            this.manager.handleQuests(player.getUniqueId(), QuestType.CRAFT, craftAmount, result.getType());
+        if (craftAmount > 0 && !isNPC(player)) {
+            this.manager.handleQuests(player.getUniqueId(), QuestType.CRAFT, craftAmount, result);
         }
     }
 
+    private boolean isValidCraftEvent(CraftItemEvent event) {
+        return event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && event.getAction() != InventoryAction.NOTHING && !isInvalidDrop(event) && event.getWhoClicked() instanceof Player player && player.getInventory().getItemInOffHand().getAmount() == 0;
+    }
+
+    private boolean isInvalidDrop(CraftItemEvent event) {
+        return (event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getClick() == ClickType.DROP && event.getCursor().getType() != Material.AIR) || (event.getAction() == InventoryAction.DROP_ALL_SLOT && event.getClick() == ClickType.CONTROL_DROP && event.getCursor().getType() != Material.AIR) || (event.getAction() == InventoryAction.UNKNOWN && event.getClick() == ClickType.UNKNOWN);
+    }
+
     private int calculateMaxCraftAmount(CraftItemEvent event) {
-        ItemStack result = event.getRecipe().getResult();
-        int maxStackSize = result.getMaxStackSize();
+        int eventAmount = event.getCurrentItem().getAmount();
+        int maxAmount = Arrays.stream(event.getInventory().getMatrix()).filter(item -> item != null && item.getType() != Material.AIR).mapToInt(ItemStack::getAmount).min().orElse(event.getInventory().getMaxStackSize());
+        return Math.min(eventAmount * maxAmount, getAvailableSpace((Player) event.getWhoClicked(), event.getCurrentItem()));
+    }
 
-        InventoryView view = event.getView();
-        CraftingInventory inventory = (CraftingInventory) view.getTopInventory();
-
-        int maxPossibleCrafts = Integer.MAX_VALUE;
-        for (ItemStack item : inventory.getMatrix()) {
-            if (item != null && item.getType() != Material.AIR) {
-                maxPossibleCrafts = Math.min(maxPossibleCrafts, item.getAmount());
-            }
-        }
-
-        Inventory playerInventory = event.getWhoClicked().getInventory();
-        int availableSpace = 0;
-
-        for (ItemStack item : playerInventory.getStorageContents()) {
-            if (item == null || item.getType() == Material.AIR) {
-                availableSpace += maxStackSize;
-            } else if (item.isSimilar(result)) {
-                availableSpace += maxStackSize - item.getAmount();
-            }
-        }
-
-        return Math.min(maxPossibleCrafts * result.getAmount(), availableSpace / result.getAmount());
+    private int getAvailableSpace(Player player, ItemStack newItemStack) {
+        PlayerInventory inventory = player.getInventory();
+        int availableSpace = inventory.all(newItemStack.getType()).values().stream().filter(newItemStack::isSimilar).mapToInt(item -> newItemStack.getMaxStackSize() - item.getAmount()).sum();
+        availableSpace += Arrays.stream(inventory.getStorageContents()).filter(Objects::isNull).mapToInt(item -> newItemStack.getMaxStackSize()).sum();
+        return availableSpace;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -354,6 +346,16 @@ public class QuestListener implements Listener {
 
 
         this.manager.handleQuests(player.getUniqueId(), QuestType.ENTITY_DAMAGE, (int) event.getDamage(), event.getDamage());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSmith(SmithItemEvent event) {
+        if (event.getWhoClicked() instanceof Player player) {
+            if (isNPC(player)) return;
+            var result = event.getInventory().getResult();
+            if (result == null) return;
+            this.manager.handleQuests(player.getUniqueId(), QuestType.SMITHING, 1, result.getType());
+        }
     }
 
 }
