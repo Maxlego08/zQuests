@@ -10,6 +10,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Container;
+import org.bukkit.block.Crafter;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Entity;
@@ -21,6 +22,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -48,11 +50,16 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 public class QuestListener implements Listener {
+
+    private static final Set<InventoryType> TRACKABLE_INVENTORIES = EnumSet.of(InventoryType.BREWING, InventoryType.FURNACE, InventoryType.BLAST_FURNACE, InventoryType.SMOKER, InventoryType.CRAFTER);
+    private static final Set<Material> TRACKABLE_BLOCKS = EnumSet.of(Material.BREWING_STAND, Material.FURNACE, Material.BLAST_FURNACE, Material.SMOKER, Material.CRAFTER);
 
     private final QuestsPlugin plugin;
     private final QuestManager manager;
@@ -172,26 +179,33 @@ public class QuestListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        var inventory = event.getInventory();
-        if (event.getWhoClicked() instanceof Player player) {
+        if (!(event.getWhoClicked() instanceof Player player) || isNPC(player)) return;
 
-            if (isNPC(player)) return;
+        Inventory inventory = event.getInventory();
+        if (!isTrackableInventory(inventory)) return;
 
-            if ((inventory.getType() == InventoryType.BREWING || inventory.getType() == InventoryType.FURNACE || inventory.getType() == InventoryType.BLAST_FURNACE || inventory.getType() == InventoryType.SMOKER) && inventory.getHolder() instanceof Container container) {
-
-                var block = container.getBlock();
-                if (block.getType() == Material.BREWING_STAND || block.getType() == Material.FURNACE || block.getType() == Material.BLAST_FURNACE || block.getType() == Material.SMOKER) {
-                    var containerState = (Container) block.getState();
-
-                    var playerUUID = player.getUniqueId();
-
-                    var persistentDataContainer = containerState.getPersistentDataContainer();
-                    persistentDataContainer.set(playerKey, PersistentDataType.STRING, playerUUID.toString());
-
-                    containerState.update();
-                }
-            }
+        if (inventory.getHolder() instanceof Container container) {
+            updateContainerOwner(container, player);
         }
+    }
+
+    private boolean isTrackableInventory(Inventory inventory) {
+        return TRACKABLE_INVENTORIES.contains(inventory.getType());
+    }
+
+    private void updateContainerOwner(Container container, Player player) {
+        Block block = container.getBlock();
+        if (!isTrackableBlock(block)) return;
+
+        if (block.getState() instanceof Container containerState) {
+            PersistentDataContainer pdc = containerState.getPersistentDataContainer();
+            pdc.set(playerKey, PersistentDataType.STRING, player.getUniqueId().toString());
+            containerState.update();
+        }
+    }
+
+    private boolean isTrackableBlock(Block block) {
+        return TRACKABLE_BLOCKS.contains(block.getType());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -355,6 +369,30 @@ public class QuestListener implements Listener {
             var result = event.getInventory().getResult();
             if (result == null) return;
             this.manager.handleQuests(player.getUniqueId(), QuestType.SMITHING, 1, result.getType());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCrafter(CrafterCraftEvent event) {
+        var result = event.getResult();
+        var block = event.getBlock();
+
+        if (block.getState() instanceof Crafter crafter) {
+            PersistentDataContainer container = crafter.getPersistentDataContainer();
+
+            if (container.has(playerKey, PersistentDataType.STRING)) {
+                var uuidString = container.get(playerKey, PersistentDataType.STRING);
+                if (uuidString == null) return;
+
+                var playerUUID = UUID.fromString(uuidString);
+                Player player = Bukkit.getPlayer(playerUUID);
+
+                if (isNPC(player)) return;
+
+                if (player != null) {
+                    this.manager.handleQuests(player.getUniqueId(), QuestType.CRAFT, result.getAmount(), result);
+                }
+            }
         }
     }
 
