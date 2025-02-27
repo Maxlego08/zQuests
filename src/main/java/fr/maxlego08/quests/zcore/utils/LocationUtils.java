@@ -96,27 +96,29 @@ public abstract class LocationUtils extends PapiUtils {
     /**
      * Converts a string representation of a cuboid to a Cuboid object.
      *
-     * @param str the string representation of the cuboid.
+     * @param string the string representation of the cuboid.
      * @return the Cuboid object.
      */
-    protected Cuboid changeStringToCuboid(String str) {
-        String[] parsedCuboid = str.split(";");
-        String[] parsedFirstLoc = parsedCuboid[0].split(",");
-        String[] parsedSecondLoc = parsedCuboid[1].split(",");
+    protected Cuboid changeStringToCuboid(String string) {
+        try {
 
-        String firstWorldName = parsedFirstLoc[0];
-        double firstX = Double.parseDouble(parsedFirstLoc[1]);
-        double firstY = Double.parseDouble(parsedFirstLoc[2]);
-        double firstZ = Double.parseDouble(parsedFirstLoc[3]);
+            String[] parsedCuboid = string.split(",");
 
-        String secondWorldName = parsedSecondLoc[0];
-        double secondX = Double.parseDouble(parsedSecondLoc[1]);
-        double secondY = Double.parseDouble(parsedSecondLoc[2]);
-        double secondZ = Double.parseDouble(parsedSecondLoc[3]);
+            String worldName = parsedCuboid[0];
+            double firstX = Double.parseDouble(parsedCuboid[1]);
+            double firstY = Double.parseDouble(parsedCuboid[2]);
+            double firstZ = Double.parseDouble(parsedCuboid[3]);
 
-        Location l1 = new Location(Bukkit.getWorld(firstWorldName), firstX, firstY, firstZ);
-        Location l2 = new Location(Bukkit.getWorld(secondWorldName), secondX, secondY, secondZ);
+            double secondX = Double.parseDouble(parsedCuboid[4]);
+            double secondY = Double.parseDouble(parsedCuboid[5]);
+            double secondZ = Double.parseDouble(parsedCuboid[6]);
 
-        return new Cuboid(l1, l2);
+            Location l1 = new Location(Bukkit.getWorld(worldName), firstX, firstY, firstZ);
+            Location l2 = new Location(Bukkit.getWorld(worldName), secondX, secondY, secondZ);
+
+            return new Cuboid(l1, l2);
+        } catch (Exception exception) {
+            return null;
+        }
     }
 }

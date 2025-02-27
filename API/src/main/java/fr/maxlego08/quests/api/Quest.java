@@ -80,4 +80,11 @@ public interface Quest {
      */
     void onComplete(ActiveQuest activeQuest);
 
+    /**
+     * Checks if the quest uses global rewards.
+     *
+     * @return true if the quest uses global rewards, false otherwise
+     */
+    boolean useGlobalRewards();
+
 }

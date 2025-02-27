@@ -35,11 +35,13 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
@@ -91,19 +93,27 @@ public class QuestListener implements Listener {
         Block block = event.getBlock();
         Player player = event.getPlayer();
 
+        this.plugin.debug("Start Break Block " + player.getName() + " : " + block.getType() + " - world: " + block.getWorld().getName() + " x: " + block.getX() + " y: " + block.getY() + " z: " + block.getZ());
+
         if (isNPC(player)) return;
 
         Material material = block.getType();
 
+        this.plugin.debug("Break Block: PLAYER IS NOT AN NPC " + block.getBlockData() + " -> " + (block.getBlockData() instanceof Ageable));
+
         if (!(block.getBlockData() instanceof Ageable)) {
 
+            this.plugin.debug("Break Block: tracked: " + this.plugin.getBlockHook().isTracked(block));
             if (this.plugin.getBlockHook().isTracked(block)) return;
 
             this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_BREAK, 1, event.getBlock().getType());
 
-        } else if (block.getBlockData() instanceof Ageable ageable && ((material == Material.SUGAR_CANE || material == Material.KELP || material == Material.BAMBOO) || ageable.getAge() == ageable.getMaximumAge())) {
+        } else if (block.getBlockData() instanceof Ageable ageable) {
 
-            this.manager.handleQuests(player.getUniqueId(), QuestType.FARMING, 1, event.getBlock().getType());
+            this.plugin.debug("Break Block: Ageable: " + ageable.getAge() + " / " + ageable.getMaximumAge() + " - is special block: " + material + " = " + (material == Material.SUGAR_CANE || material == Material.KELP || material == Material.BAMBOO));
+            if ((material == Material.SUGAR_CANE || material == Material.KELP || material == Material.BAMBOO) || ageable.getAge() == ageable.getMaximumAge()) {
+                this.manager.handleQuests(player.getUniqueId(), QuestType.FARMING, 1, event.getBlock().getType());
+            }
         }
     }
 
@@ -394,6 +404,25 @@ public class QuestListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCommand(PlayerCommandPreprocessEvent event) {
+        var player = event.getPlayer();
+        if (isNPC(player)) return;
+
+        this.manager.handleQuests(player.getUniqueId(), QuestType.COMMAND, 1, event.getMessage().substring(1));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCommand(PlayerMoveEvent event) {
+
+        if (!event.hasExplicitlyChangedBlock()) return;
+
+        var player = event.getPlayer();
+        if (isNPC(player)) return;
+
+        this.manager.handleQuests(player.getUniqueId(), QuestType.CUBOID, 1, event.getTo());
     }
 
 }

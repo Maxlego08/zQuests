@@ -12,6 +12,8 @@ public enum Plugins {
 	BLOCKTRACKER("BlockTracker"),
 	WILDSTACKER("WildStacker"),
 	ZJOBS("zJobs"),
+	SUPERIORSKYBLOCK2("SuperiorSkyblock2"),
+	ZSHOP("zShop"),
 
 	;
 

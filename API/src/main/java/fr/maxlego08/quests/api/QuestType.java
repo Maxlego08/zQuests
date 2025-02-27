@@ -1,6 +1,21 @@
 package fr.maxlego08.quests.api;
 
-import fr.maxlego08.quests.api.actions.*;
+import fr.maxlego08.quests.api.actions.ActionInfo;
+import fr.maxlego08.quests.api.actions.BrewAction;
+import fr.maxlego08.quests.api.actions.CommandAction;
+import fr.maxlego08.quests.api.actions.EnchantAction;
+import fr.maxlego08.quests.api.actions.EntityAction;
+import fr.maxlego08.quests.api.actions.EntityDamageAction;
+import fr.maxlego08.quests.api.actions.ExperienceGainAction;
+import fr.maxlego08.quests.api.actions.HatchingAction;
+import fr.maxlego08.quests.api.actions.IslandAction;
+import fr.maxlego08.quests.api.actions.ItemStackAction;
+import fr.maxlego08.quests.api.actions.JobAction;
+import fr.maxlego08.quests.api.actions.LocationAction;
+import fr.maxlego08.quests.api.actions.MaterialAction;
+import fr.maxlego08.quests.api.actions.ResurrectAction;
+import fr.maxlego08.quests.api.actions.VoteAction;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EntityType;
@@ -32,12 +47,13 @@ public enum QuestType {
     JOB_LEVEL,
     JOB_PRESTIGE,
     SMITHING,
-    SELLING,
-    ;
+    ISLAND,
+    COMMAND,
+    CUBOID;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING, SELLING -> new MaterialAction(this, (Material) target);
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING -> new MaterialAction(this, (Material) target);
             case CRAFT -> new ItemStackAction(this, (ItemStack) target);
             case ENTITY_KILL, TAME -> new EntityAction(this, (EntityType) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
@@ -48,12 +64,15 @@ public enum QuestType {
             case EXPERIENCE_GAIN -> new ExperienceGainAction(this, (Integer) target);
             case RESURRECT -> new ResurrectAction(this);
             case JOB_LEVEL, JOB_PRESTIGE -> new JobAction(this, (String) target);
+            case ISLAND -> new IslandAction(target);
+            case COMMAND -> new CommandAction((String) target);
+            case CUBOID -> new LocationAction(this, (Location) target);
         };
     }
 
     public boolean isMaterial() {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING, SELLING -> true;
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING -> true;
             default -> false;
         };
     }

@@ -4,7 +4,6 @@ package fr.maxlego08.quests;
 import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.menu.api.pattern.PatternManager;
-import fr.maxlego08.menu.api.utils.MetaUpdater;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.hooks.BlockHook;
 import fr.maxlego08.quests.api.hooks.StackerHook;
@@ -14,8 +13,10 @@ import fr.maxlego08.quests.hooks.blocks.BlockTrackerHook;
 import fr.maxlego08.quests.hooks.blocks.EmptyBlockHook;
 import fr.maxlego08.quests.hooks.stacker.EmptyStackerHook;
 import fr.maxlego08.quests.hooks.stacker.WildStackerHook;
-import fr.maxlego08.quests.listeners.ZJobListener;
+import fr.maxlego08.quests.listeners.IslandListener;
 import fr.maxlego08.quests.listeners.QuestListener;
+import fr.maxlego08.quests.listeners.ZJobListener;
+import fr.maxlego08.quests.listeners.ZShopListener;
 import fr.maxlego08.quests.placeholder.LocalPlaceholder;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.storage.ZStorageManager;
@@ -76,6 +77,16 @@ public class QuestsPlugin extends ZPlugin {
             this.addListener(new ZJobListener(this, this.questManager));
         }
 
+        if (isEnable(Plugins.ZSHOP)) {
+            getLogger().info("Using zShop");
+            this.addListener(new ZShopListener(this.questManager));
+        }
+
+        if (isEnable(Plugins.SUPERIORSKYBLOCK2)) {
+            getLogger().info("Using SuperiorSkyBlock2");
+            this.addListener(new IslandListener(this.questManager));
+        }
+
         new QuestPlaceholder().register(this, this.questManager);
 
         this.questManager.loadButtons();
@@ -131,5 +142,11 @@ public class QuestsPlugin extends ZPlugin {
         this.questManager.loadQuests();
         this.questManager.loadPatterns();
         this.questManager.loadInventories();
+    }
+
+    public void debug(String string) {
+        if (Config.enableDebug) {
+            this.getLogger().info(string);
+        }
     }
 }

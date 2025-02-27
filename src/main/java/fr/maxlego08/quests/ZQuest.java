@@ -24,8 +24,9 @@ public class ZQuest implements Quest {
     private final boolean autoAccept;
     private final List<Action> rewards;
     private final List<QuestAction> actions;
+    private final boolean useGlobalRewards;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions, boolean useGlobalRewards) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -36,6 +37,7 @@ public class ZQuest implements Quest {
         this.autoAccept = autoAccept;
         this.rewards = rewards;
         this.actions = actions;
+        this.useGlobalRewards = useGlobalRewards;
     }
 
     @Override
@@ -90,5 +92,10 @@ public class ZQuest implements Quest {
     @Override
     public List<QuestAction> getActions() {
         return actions;
+    }
+
+    @Override
+    public boolean useGlobalRewards() {
+        return this.useGlobalRewards;
     }
 }
