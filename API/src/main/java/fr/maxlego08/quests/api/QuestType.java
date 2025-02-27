@@ -3,6 +3,7 @@ package fr.maxlego08.quests.api;
 import fr.maxlego08.quests.api.actions.ActionInfo;
 import fr.maxlego08.quests.api.actions.BrewAction;
 import fr.maxlego08.quests.api.actions.CommandAction;
+import fr.maxlego08.quests.api.actions.CustomAction;
 import fr.maxlego08.quests.api.actions.EnchantAction;
 import fr.maxlego08.quests.api.actions.EntityAction;
 import fr.maxlego08.quests.api.actions.EntityDamageAction;
@@ -49,7 +50,8 @@ public enum QuestType {
     SMITHING,
     ISLAND,
     COMMAND,
-    CUBOID;
+    CUBOID,
+    CUSTOM;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
@@ -67,6 +69,7 @@ public enum QuestType {
             case ISLAND -> new IslandAction(target);
             case COMMAND -> new CommandAction((String) target);
             case CUBOID -> new LocationAction(this, (Location) target);
+            case CUSTOM -> new CustomAction((String) target);
         };
     }
 

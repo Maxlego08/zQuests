@@ -7,6 +7,7 @@ import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.actions.BrewAction;
 import fr.maxlego08.quests.actions.CommandAction;
 import fr.maxlego08.quests.actions.CuboidAction;
+import fr.maxlego08.quests.actions.CustomAction;
 import fr.maxlego08.quests.actions.EnchantmentAction;
 import fr.maxlego08.quests.actions.EntityAction;
 import fr.maxlego08.quests.actions.EntityDamageAction;
@@ -130,6 +131,10 @@ public class QuestLoader extends ZUtils {
 
                         List<String> commands = actionAccessor.getStringList("commands", Collections.emptyList());
                         questActions.add(new CommandAction(commands));
+                    } else if (questType == QuestType.CUSTOM) {
+
+                        String data = actionAccessor.getString("data", "");
+                        questActions.add(new CustomAction(data));
                     } else if (questType == QuestType.CUBOID) {
 
                         String stringCuboid = actionAccessor.getString("cuboid", null);

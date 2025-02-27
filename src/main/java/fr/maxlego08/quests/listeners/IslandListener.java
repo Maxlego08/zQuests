@@ -29,7 +29,7 @@ public class IslandListener implements Listener {
         this.manager.handleStaticQuests(player.getUniqueId(), QuestType.ISLAND, 1, event.getIsland());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onQuestStart(QuestStartEvent event) {
 
         var activeQuest = event.getActiveQuest();
