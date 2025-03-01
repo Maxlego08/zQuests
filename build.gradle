@@ -63,7 +63,7 @@ allprojects {
         compileOnly 'com.mojang:authlib:3.11.50' //only java 16 or newer
         //compileOnly 'com.mojang:authlib:1.6.25'
         implementation "com.github.technicallycoded:FoliaLib:main-SNAPSHOT"
-        implementation 'com.github.Maxlego08:Sarah:1.12.2'
+        implementation 'com.github.Maxlego08:Sarah:1.15'
 
         compileOnly files('libs/zJobs-1.0.0.jar')
         compileOnly files('libs/zshop-3.1.7.jar')

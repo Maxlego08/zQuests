@@ -19,13 +19,16 @@ import fr.maxlego08.sarah.HikariDatabaseConnection;
 import fr.maxlego08.sarah.MigrationManager;
 import fr.maxlego08.sarah.MySqlConnection;
 import fr.maxlego08.sarah.RequestHelper;
+import fr.maxlego08.sarah.SchemaBuilder;
 import fr.maxlego08.sarah.SqliteConnection;
 import fr.maxlego08.sarah.database.DatabaseType;
+import fr.maxlego08.sarah.database.Schema;
 import fr.maxlego08.sarah.logger.JULogger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,11 +103,24 @@ public class ZStorageManager implements StorageManager {
     }
 
     private void upsertQuest(ActiveQuest activeQuest) {
-        this.requestHelper.upsert("%prefix%" + Tables.ACTIVE_QUESTS, table -> {
+        this.requestHelper.upsert("%prefix%" + Tables.ACTIVE_QUESTS, upsertToSchema(activeQuest));
+    }
+
+    private Consumer<Schema> upsertToSchema(ActiveQuest activeQuest) {
+        return table -> {
             table.uuid("unique_id", activeQuest.getUniqueId()).primary();
             table.string("name", activeQuest.getQuest().getName()).primary();
             table.bigInt("amount", activeQuest.getAmount());
-        });
+        };
+    }
+
+    @Override
+    public void upsert(List<ActiveQuest> activeQuests) {
+        List<Schema> schemas = new ArrayList<>();
+        for (ActiveQuest activeQuest : activeQuests) {
+            schemas.add(SchemaBuilder.upsert("%prefix%" + Tables.ACTIVE_QUESTS, upsertToSchema(activeQuest)));
+        }
+        this.requestHelper.upsertMultiple(schemas);
     }
 
     @Override

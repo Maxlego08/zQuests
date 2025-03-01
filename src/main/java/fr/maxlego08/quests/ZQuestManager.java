@@ -239,7 +239,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public void handleQuit(UUID uuid) {
         UserQuest userQuest = this.usersQuests.remove(uuid);
         if (userQuest == null) return;
-        userQuest.getActiveQuests().forEach(activeQuest -> this.plugin.getStorageManager().upsert(activeQuest));
+        // userQuest.getActiveQuests().forEach(activeQuest -> this.plugin.getStorageManager().upsert(activeQuest));
+        this.plugin.getStorageManager().upsert(userQuest.getActiveQuests());
     }
 
     @Override

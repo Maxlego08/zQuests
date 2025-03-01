@@ -5,6 +5,7 @@ import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.UserQuest;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -69,4 +70,6 @@ public interface StorageManager {
      * @param name     the name of the quest
      */
     void deleteQuest(@NotNull UUID uniqueId, String name);
+
+    void upsert(List<ActiveQuest> activeQuests);
 }
