@@ -69,4 +69,11 @@ public interface UserQuest {
      * @return an Optional containing the active quest if found, otherwise an empty Optional
      */
     Optional<ActiveQuest> findActive(String questName);
+
+    /**
+     * Removes an active quest from the user's active quests.
+     *
+     * @param activeQuest the active quest to remove
+     */
+    void removeActiveQuest(ActiveQuest activeQuest);
 }

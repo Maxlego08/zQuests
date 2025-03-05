@@ -10,11 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public interface QuestManager {
 
     /**
-     * Load button actions for quests.
+     * Loads all the buttons related to quests.
      */
     void loadButtons();
 
@@ -70,7 +71,21 @@ public interface QuestManager {
      * @param amount the amount to increment
      * @param object additional data for the quest action
      */
-    void handleQuests(UUID uuid, QuestType type, int amount, Object object);
+    int handleQuests(UUID uuid, QuestType type, int amount, Object object);
+
+    /**
+     * Handle quest actions for a user.
+     *
+     * @param uuid     the unique identifier of the user
+     * @param type     the type of quest
+     * @param amount   the amount to increment
+     * @param object   additional data for the quest action
+     * @param consumer a consumer that will be called with the
+     *                 updated active quest, if the quest is complete
+     *                 it will be called after the quest has been
+     *                 completed
+     */
+    int handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
 
     /**
      * Handle static quests (quests that can be completed multiple times)
@@ -81,15 +96,17 @@ public interface QuestManager {
      * @param amount the amount to increment
      * @param object additional data for the quest action
      */
-    void handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
+    int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
 
     /**
      * Add a quest to a player's active quests.
      *
      * @param uuid  the player to add the quest to
      * @param quest the quest to add
+     * @param store whether to store the active quest
+     * @return an optional containing the added active quest if successful, empty otherwise
      */
-    void addQuestToPlayer(UUID uuid, Quest quest);
+    Optional<ActiveQuest> addQuestToPlayer(UUID uuid, Quest quest, boolean store);
 
     /**
      * Retrieve active quests for a player.
@@ -202,7 +219,26 @@ public interface QuestManager {
      */
     List<CustomReward> getCustomRewards();
 
+    /**
+     * Retrieves a quest group by its name.
+     *
+     * @param key the name of the quest group to retrieve
+     * @return an Optional containing the quest group if found, otherwise an empty Optional
+     */
     Optional<QuestsGroup> getGroup(String key);
 
+    /**
+     * Retrieve all quest groups.
+     *
+     * @return a map where the keys are group names and the values are the corresponding quest groups
+     */
     Map<String, QuestsGroup> getGroups();
+
+    /**
+     * Starts all the given quests for the player with the given uuid.
+     *
+     * @param uuid   the uuid of the player to start the quests for
+     * @param quests the list of quests to start
+     */
+    void startQuests(UUID uuid, List<Quest> quests);
 }

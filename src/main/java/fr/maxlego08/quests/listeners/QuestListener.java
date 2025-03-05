@@ -1,6 +1,7 @@
 package fr.maxlego08.quests.listeners;
 
 import com.destroystokyo.paper.event.entity.ThrownEggHatchEvent;
+import fr.maxlego08.menu.api.event.events.PlayerOpenInventoryEvent;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
@@ -423,6 +424,15 @@ public class QuestListener implements Listener {
         if (isNPC(player)) return;
 
         this.manager.handleQuests(player.getUniqueId(), QuestType.CUBOID, 1, event.getTo());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInventoryOpen(PlayerOpenInventoryEvent event){
+
+        var player = event.getPlayer();
+        if (isNPC(player)) return;
+
+        this.manager.handleQuests(player.getUniqueId(), QuestType.INVENTORY_OPEN, 1, event.getInventory());
     }
 
 }

@@ -9,6 +9,7 @@ import fr.maxlego08.quests.api.actions.EntityAction;
 import fr.maxlego08.quests.api.actions.EntityDamageAction;
 import fr.maxlego08.quests.api.actions.ExperienceGainAction;
 import fr.maxlego08.quests.api.actions.HatchingAction;
+import fr.maxlego08.quests.api.actions.InventoryOpenAction;
 import fr.maxlego08.quests.api.actions.IslandAction;
 import fr.maxlego08.quests.api.actions.ItemStackAction;
 import fr.maxlego08.quests.api.actions.JobAction;
@@ -51,7 +52,9 @@ public enum QuestType {
     ISLAND,
     COMMAND,
     CUBOID,
-    CUSTOM;
+    CUSTOM,
+    INVENTORY_OPEN,
+    ;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
@@ -70,6 +73,7 @@ public enum QuestType {
             case COMMAND -> new CommandAction((String) target);
             case CUBOID -> new LocationAction(this, (Location) target);
             case CUSTOM -> new CustomAction((String) target);
+            case INVENTORY_OPEN -> new InventoryOpenAction((String) target);
         };
     }
 

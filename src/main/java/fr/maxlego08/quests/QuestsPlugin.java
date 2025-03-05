@@ -54,6 +54,10 @@ public class QuestsPlugin extends ZPlugin {
         this.buttonManager = getProvider(ButtonManager.class);
         this.patternManager = getProvider(PatternManager.class);
 
+        this.questManager.loadButtons();
+        this.questManager.loadPatterns();
+        this.questManager.loadInventories();
+
         this.commandManager.registerCommand(this, "zquests", new CommandQuests(this), getConfig().getStringList("main-command-aliases"));
 
         this.loadFiles();
@@ -88,10 +92,6 @@ public class QuestsPlugin extends ZPlugin {
         }
 
         new QuestPlaceholder().register(this, this.questManager);
-
-        this.questManager.loadButtons();
-        this.questManager.loadPatterns();
-        this.questManager.loadInventories();
 
         this.postEnable();
     }

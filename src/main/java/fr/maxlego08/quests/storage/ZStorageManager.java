@@ -154,10 +154,11 @@ public class ZStorageManager implements StorageManager {
     }
 
     @Override
-    public void deleteAll(UUID uuid) {
+    public void deleteAll(UUID uuid, Runnable runnable) {
         executor.execute(() -> {
             this.requestHelper.delete("%prefix%" + Tables.ACTIVE_QUESTS, table -> table.where("unique_id", uuid));
             this.requestHelper.delete("%prefix%" + Tables.COMPLETED_QUESTS, table -> table.where("unique_id", uuid));
+            runnable.run();
         });
     }
 
@@ -176,10 +177,16 @@ public class ZStorageManager implements StorageManager {
         });
     }
 
+    /**
+     * Maps a list of {@link T} objects to a list of {@link R} objects, filtering out any null values.
+     *
+     * @param list the list of objects to map
+     * @param mapper the function to use to map each element of the list
+     * @return a list of the mapped objects, with any null values filtered out
+     */
     private <T, R> List<R> mapDTOsToQuests(List<T> list, Function<T, R> mapper) {
         return list.stream().map(mapper).filter(Objects::nonNull).collect(Collectors.toList());
     }
-
 
     @Override
     public void softUpsert(ActiveQuest activeQuest) {

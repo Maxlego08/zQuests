@@ -63,4 +63,9 @@ public class ZUserQuest implements UserQuest {
     public Optional<ActiveQuest> findActive(String questName) {
         return this.activeQuests.stream().filter(activeQuest -> activeQuest.getQuest().getName().equalsIgnoreCase(questName)).findFirst();
     }
+
+    @Override
+    public void removeActiveQuest(ActiveQuest activeQuest) {
+        this.activeQuests.remove(activeQuest);
+    }
 }

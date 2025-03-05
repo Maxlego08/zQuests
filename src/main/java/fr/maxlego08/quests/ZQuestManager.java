@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ZQuestManager extends ZUtils implements QuestManager {
 
@@ -48,10 +49,6 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     public ZQuestManager(QuestsPlugin plugin) {
         this.plugin = plugin;
-    }
-
-    private static void getaVoid(Action action, Player player, InventoryDefault fakeInventory) {
-        action.preExecute(player, null, fakeInventory, new Placeholders());
     }
 
     @Override
@@ -232,7 +229,17 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     private void handleDefaultQuest(UUID uuid) {
         UserQuest userQuest = getUserQuest(uuid);
-        this.quests.stream().filter(Quest::isAutoAccept).filter(quest -> userQuest.getActiveQuests().stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest))).forEach(quest -> this.addQuestToPlayer(uuid, quest));
+        var quests = this.quests.stream().filter(Quest::isAutoAccept).filter(quest -> userQuest.getActiveQuests().stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest)));
+        this.startQuests(uuid, quests.toList());
+    }
+
+    @Override
+    public void startQuests(UUID uuid, List<Quest> quests) {
+        List<ActiveQuest> activeQuests = new ArrayList<>();
+        for (Quest quest : quests) {
+            this.addQuestToPlayer(uuid, quest, false).ifPresent(activeQuests::add);
+        }
+        this.plugin.getStorageManager().upsert(activeQuests);
     }
 
     @Override
@@ -244,26 +251,38 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public void handleQuests(UUID uuid, QuestType type, int amount, Object object) {
+    public int handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer) {
+        int count = 0;
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(uuid);
 
         // Stream through the active quests of the user
-        var iterator = userQuest.getActiveQuests().iterator();
-        while (iterator.hasNext()) {
-            ActiveQuest activeQuest = iterator.next();
+        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
             if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
                 if (activeQuest.increment(amount)) { // Increment the progress of the quest
-                    iterator.remove(); // If the quest is complete, remove it from the list
+                    // iterator.remove(); // If the quest is complete, remove it from the list
+                    userQuest.removeActiveQuest(activeQuest);
                     this.completeQuest(activeQuest);
+                    count++;
+
+                    if (consumer != null) {
+                        consumer.accept(activeQuest);
+                    }
                 }
                 this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
             }
         }
+        return count;
     }
 
     @Override
-    public void handleStaticQuests(UUID uuid, QuestType type, int amount, Object object) {
+    public int handleQuests(UUID uuid, QuestType type, int amount, Object object) {
+        return this.handleQuests(uuid, type, amount, object, null);
+    }
+
+    @Override
+    public int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object) {
+        int count = 0;
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(uuid);
 
@@ -275,32 +294,37 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 if (activeQuest.incrementStatic(amount)) { // Increment the progress of the quest
                     iterator.remove(); // If the quest is complete, remove it from the list
                     this.completeQuest(activeQuest);
+                    count++;
                 }
                 this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
             }
         }
+        return count;
     }
 
     @Override
-    public void addQuestToPlayer(UUID uuid, Quest quest) {
+    public Optional<ActiveQuest> addQuestToPlayer(UUID uuid, Quest quest, boolean store) {
         // Create a new active quest for the player
         ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, 0);
         var userQuest = getUserQuest(uuid);
 
         // Check if the user already completes the quest
         if (userQuest.getCompletedQuests().stream().anyMatch(completedQuest -> completedQuest.quest().equals(quest))) {
-            return; // Exit if the quest is already completed
+            return Optional.empty(); // Exit if the quest is already completed
         }
 
         QuestStartEvent event = new QuestStartEvent(uuid, activeQuest);
         event.call();
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) return Optional.empty();
 
         // Add the active quest to the user's active quests
         userQuest.getActiveQuests().add(event.getActiveQuest());
 
         // Persist the new active quest in storage
-        this.plugin.getStorageManager().upsert(activeQuest);
+        if (store) {
+            this.plugin.getStorageManager().upsert(activeQuest);
+        }
+        return Optional.of(activeQuest);
     }
 
     @Override
@@ -343,7 +367,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         Quest quest = optional.get();
         UserQuest userQuest = getUserQuest(player.getUniqueId());
         if (userQuest.canStartQuest(quest)) {
-            this.addQuestToPlayer(player.getUniqueId(), quest);
+            this.addQuestToPlayer(player.getUniqueId(), quest, true);
             message(sender, Message.QUEST_START_SUCCESS, "%name%", questName, "%player%", player.getName());
         } else {
             message(sender, Message.QUEST_START_ERROR, "%name%", questName, "%player%", player.getName());
@@ -417,12 +441,14 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public void deleteUserQuests(CommandSender sender, Player player) {
         var userQuest = getUserQuest(player.getUniqueId());
 
-        plugin.getStorageManager().deleteAll(player.getUniqueId());
-        userQuest.getActiveQuests().clear();
-        userQuest.getCompletedQuests().clear();
-        handleDefaultQuest(player.getUniqueId());
+        this.plugin.getStorageManager().deleteAll(player.getUniqueId(), () -> this.plugin.getScheduler().runNextTick(w -> {
 
-        message(sender, Message.QUEST_DELETE_ALL_SUCCESS, "%player%", player.getName());
+            userQuest.getActiveQuests().clear();
+            userQuest.getCompletedQuests().clear();
+            handleDefaultQuest(player.getUniqueId());
+
+            message(sender, Message.QUEST_DELETE_ALL_SUCCESS, "%player%", player.getName());
+        }));
     }
 
     @Override
@@ -493,8 +519,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
 
-        for (Action action : this.globalRewards) {
-            action.preExecute(player, null, fakeInventory, placeholders);
+        if (quest.useGlobalRewards()) {
+            for (Action action : this.globalRewards) {
+                action.preExecute(player, null, fakeInventory, placeholders);
+            }
         }
 
         var optional = this.customRewards.stream().filter(customReward -> customReward.quests().contains(activeQuest.getQuest().getName())).findFirst();
@@ -503,7 +531,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         var customReward = optional.get();
         if (customReward.quests().stream().allMatch(userQuest::isQuestCompleted)) {
             for (Action action : customReward.actions()) {
-                getaVoid(action, player, fakeInventory);
+                action.preExecute(player, null, fakeInventory, new Placeholders());
             }
         }
     }

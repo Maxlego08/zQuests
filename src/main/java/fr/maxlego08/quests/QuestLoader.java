@@ -13,6 +13,7 @@ import fr.maxlego08.quests.actions.EntityAction;
 import fr.maxlego08.quests.actions.EntityDamageAction;
 import fr.maxlego08.quests.actions.ExperienceGainAction;
 import fr.maxlego08.quests.actions.HatchingAction;
+import fr.maxlego08.quests.actions.InventoryOpenAction;
 import fr.maxlego08.quests.actions.IslandAction;
 import fr.maxlego08.quests.actions.ItemStackAction;
 import fr.maxlego08.quests.actions.JobAction;
@@ -135,6 +136,10 @@ public class QuestLoader extends ZUtils {
 
                         String data = actionAccessor.getString("data", "");
                         questActions.add(new CustomAction(data));
+                    } else if (questType == QuestType.INVENTORY_OPEN) {
+
+                        var inventories = actionAccessor.getStringList("inventories");
+                        questActions.add(new InventoryOpenAction(inventories));
                     } else if (questType == QuestType.CUBOID) {
 
                         String stringCuboid = actionAccessor.getString("cuboid", null);

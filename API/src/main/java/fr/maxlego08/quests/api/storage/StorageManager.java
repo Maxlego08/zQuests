@@ -38,7 +38,7 @@ public interface StorageManager {
      *
      * @param uuid the unique identifier of the user
      */
-    void deleteAll(UUID uuid);
+    void deleteAll(UUID uuid, Runnable runnable);
 
     /**
      * Load user quest data.
@@ -71,5 +71,10 @@ public interface StorageManager {
      */
     void deleteQuest(@NotNull UUID uniqueId, String name);
 
+    /**
+     * Upsert multiple active quests in the storage.
+     *
+     * @param activeQuests the active quests to upsert
+     */
     void upsert(List<ActiveQuest> activeQuests);
 }

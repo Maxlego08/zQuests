@@ -5,9 +5,11 @@ import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.QuestsPlugin;
+import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.UserQuest;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StartQuestAction extends Action {
@@ -23,15 +25,17 @@ public class StartQuestAction extends Action {
     @Override
     protected void execute(Player player, Button button, InventoryDefault inventoryDefault, Placeholders placeholders) {
         var manager = this.plugin.getQuestManager();
-        for (String questName : quests) {
+        List<Quest> quests = new ArrayList<>();
+        for (String questName : this.quests) {
             var optional = manager.getQuest(questName);
             if (optional.isPresent()) {
                 var quest = optional.get();
                 UserQuest userQuest = manager.getUserQuest(player.getUniqueId());
                 if (userQuest.canStartQuest(quest)) {
-                    manager.addQuestToPlayer(player.getUniqueId(), quest);
+                    quests.add(quest);
                 }
             }
         }
+        manager.startQuests(player.getUniqueId(), quests);
     }
 }
