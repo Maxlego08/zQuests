@@ -1,48 +1,54 @@
 package fr.maxlego08.quests;
 
-import fr.maxlego08.menu.api.enchantment.Enchantments;
-import fr.maxlego08.menu.api.enchantment.MenuEnchantment;
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
-import fr.maxlego08.quests.actions.BrewAction;
-import fr.maxlego08.quests.actions.CommandAction;
-import fr.maxlego08.quests.actions.CuboidAction;
-import fr.maxlego08.quests.actions.CustomAction;
-import fr.maxlego08.quests.actions.EnchantmentAction;
-import fr.maxlego08.quests.actions.EntityAction;
 import fr.maxlego08.quests.actions.EntityDamageAction;
 import fr.maxlego08.quests.actions.ExperienceGainAction;
 import fr.maxlego08.quests.actions.HatchingAction;
-import fr.maxlego08.quests.actions.InventoryOpenAction;
 import fr.maxlego08.quests.actions.IslandAction;
-import fr.maxlego08.quests.actions.ItemStackAction;
-import fr.maxlego08.quests.actions.JobAction;
-import fr.maxlego08.quests.actions.MaterialAction;
 import fr.maxlego08.quests.actions.ResurrectAction;
-import fr.maxlego08.quests.actions.TagAction;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestAction;
+import fr.maxlego08.quests.api.QuestActionLoader;
 import fr.maxlego08.quests.api.QuestType;
-import fr.maxlego08.quests.zcore.utils.TagRegistry;
+import fr.maxlego08.quests.loader.BrewQuestLoader;
+import fr.maxlego08.quests.loader.CommandQuestLoader;
+import fr.maxlego08.quests.loader.CraftQuestLoader;
+import fr.maxlego08.quests.loader.CuboidQuestLoader;
+import fr.maxlego08.quests.loader.CustomQuestLoader;
+import fr.maxlego08.quests.loader.EnchantQuestLoader;
+import fr.maxlego08.quests.loader.EntityQuestLoader;
+import fr.maxlego08.quests.loader.InventoryContentQuestLoader;
+import fr.maxlego08.quests.loader.InventoryOpenQuestLoader;
+import fr.maxlego08.quests.loader.JobQuestLoader;
+import fr.maxlego08.quests.loader.MaterialQuestLoader;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Material;
-import org.bukkit.Tag;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
-import org.bukkit.potion.PotionType;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class QuestLoader extends ZUtils {
 
     private final QuestsPlugin plugin;
+    private final List<QuestActionLoader> loaders = new ArrayList<>();
 
     public QuestLoader(QuestsPlugin plugin) {
         this.plugin = plugin;
+
+        this.loaders.add(new BrewQuestLoader(plugin));
+        this.loaders.add(new CuboidQuestLoader(plugin));
+        this.loaders.add(new CommandQuestLoader(plugin));
+        this.loaders.add(new CustomQuestLoader(plugin));
+        this.loaders.add(new CraftQuestLoader(plugin));
+        this.loaders.add(new EnchantQuestLoader(plugin));
+        this.loaders.add(new EntityQuestLoader(plugin));
+        this.loaders.add(new InventoryContentQuestLoader(plugin));
+        this.loaders.add(new InventoryOpenQuestLoader(plugin));
+        this.loaders.add(new JobQuestLoader(plugin));
+        this.loaders.add(new MaterialQuestLoader(plugin));
     }
 
     public Quest loadQuest(TypedMapAccessor accessor, File file) {
@@ -69,106 +75,22 @@ public class QuestLoader extends ZUtils {
 
                     TypedMapAccessor actionAccessor = new TypedMapAccessor(map);
 
-                    if (questType.isMaterial()) {
-
-                        if (actionAccessor.contains("material")) {
-                            Material material = Material.valueOf(actionAccessor.getString("material").toUpperCase());
-                            questActions.add(new MaterialAction(material, questType));
-                        } else if (actionAccessor.contains("tag")) {
-                            Tag<Material> tag = TagRegistry.getTag(actionAccessor.getString("tag").toUpperCase());
-                            if (tag == null) {
-                                plugin.getLogger().severe("Impossible to find the tag or material for " + questType + " in file " + file.getAbsolutePath());
-                            } else questActions.add(new TagAction(tag, questType));
-                        } else {
-                            plugin.getLogger().severe("Impossible to find the tag or material for " + questType + " in file " + file.getAbsolutePath());
-                        }
-
-                    } else if (questType == QuestType.CRAFT) {
-
-                        if (actionAccessor.contains("material")) {
-
-                            Material material = Material.valueOf(actionAccessor.getString("material").toUpperCase());
-                            int fireworkPower = actionAccessor.getInt("firework-power", 0);
-
-                            questActions.add(new ItemStackAction(material, questType, fireworkPower));
-                        } else {
-                            plugin.getLogger().severe("Impossible to find the tag or material for " + questType + " in file " + file.getAbsolutePath());
-                        }
-
-                    } else if (questType.isEntityType()) {
-
-                        EntityType entityType = EntityType.valueOf(actionAccessor.getString("entity").toUpperCase());
-                        questActions.add(new EntityAction(entityType, questType));
-
-                    } else if (questType == QuestType.ENCHANT) {
-
-                        Enchantments enchantments = plugin.getInventoryManager().getEnchantments();
-                        String enchantmentName = actionAccessor.getString("enchantment");
-                        String materialName = actionAccessor.getString("material", null);
-
-                        Material material = materialName == null ? null : Material.valueOf(materialName.toUpperCase());
-                        Enchantment enchantment = enchantmentName == null ? null : enchantments.getEnchantments(enchantmentName).map(MenuEnchantment::getEnchantment).orElse(null);
-                        int minimumLevel = actionAccessor.getInt("minimum-level", 0);
-                        int minimumCost = actionAccessor.getInt("minimum-cost", 0);
-
-                        questActions.add(new EnchantmentAction(material, questType, enchantment, minimumLevel, minimumCost));
-
-                    } else if (questType == QuestType.BREW) {
-
-                        String potionName = actionAccessor.getString("potion-type", null);
-                        String potionMaterialName = actionAccessor.getString("potion-material", "POTION");
-                        String ingredientName = actionAccessor.getString("ingredient", null);
-
-                        PotionType potionType = potionName == null ? null : PotionType.valueOf(potionName.toUpperCase());
-                        Material material = ingredientName == null ? null : Material.valueOf(ingredientName.toUpperCase());
-                        Material potionMaterial = Material.valueOf(potionMaterialName.toUpperCase());
-
-                        questActions.add(new BrewAction(potionType, questType, potionMaterial, material));
-                    } else if (questType == QuestType.JOB_LEVEL || questType == QuestType.JOB_PRESTIGE) {
-
-                        String potionName = actionAccessor.getString("job", null);
-                        questActions.add(new JobAction(questType, potionName));
-                    } else if (questType == QuestType.COMMAND) {
-
-                        List<String> commands = actionAccessor.getStringList("commands", Collections.emptyList());
-                        questActions.add(new CommandAction(commands));
-                    } else if (questType == QuestType.CUSTOM) {
-
-                        String data = actionAccessor.getString("data", "");
-                        questActions.add(new CustomAction(data));
-                    } else if (questType == QuestType.INVENTORY_OPEN) {
-
-                        var inventories = actionAccessor.getStringList("inventories");
-                        questActions.add(new InventoryOpenAction(inventories));
-                    } else if (questType == QuestType.CUBOID) {
-
-                        String stringCuboid = actionAccessor.getString("cuboid", null);
-                        if (stringCuboid != null) {
-
-                            var cuboid = changeStringToCuboid(stringCuboid);
-                            if (cuboid != null) {
-                                questActions.add(new CuboidAction(cuboid));
-                            } else {
-                                plugin.getLogger().severe("Impossible to find the cuboid for " + questType + " in file " + file.getAbsolutePath());
-                            }
-                        } else {
-                            plugin.getLogger().severe("Impossible to find the cuboid for " + questType + " in file " + file.getAbsolutePath());
-                        }
+                    var optionalLoader = this.loaders.stream().filter(loader -> loader.getSupportedTypes().contains(questType)).findFirst();
+                    if (optionalLoader.isPresent()) {
+                        questActions.add(optionalLoader.get().load(actionAccessor, questType, file));
+                    } else {
+                        this.plugin.getLogger().severe("No loader found for " + questType + " in file " + file.getAbsolutePath());
                     }
                 });
             }
 
             if (questActions.isEmpty()) {
-                if (questType == QuestType.HATCHING) {
-                    questActions.add(new HatchingAction());
-                } else if (questType == QuestType.ENTITY_DAMAGE) {
-                    questActions.add(new EntityDamageAction());
-                } else if (questType == QuestType.EXPERIENCE_GAIN) {
-                    questActions.add(new ExperienceGainAction());
-                } else if (questType == QuestType.RESURRECT) {
-                    questActions.add(new ResurrectAction());
-                } else if (questType == QuestType.ISLAND) {
-                    questActions.add(new IslandAction());
+                switch (questType) {
+                    case HATCHING -> questActions.add(new HatchingAction());
+                    case ENTITY_DAMAGE -> questActions.add(new EntityDamageAction());
+                    case EXPERIENCE_GAIN -> questActions.add(new ExperienceGainAction());
+                    case RESURRECT -> questActions.add(new ResurrectAction());
+                    case ISLAND -> questActions.add(new IslandAction());
                 }
             }
 

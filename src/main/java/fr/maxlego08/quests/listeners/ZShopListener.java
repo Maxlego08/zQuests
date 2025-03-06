@@ -3,6 +3,7 @@ package fr.maxlego08.quests.listeners;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.zshop.api.event.ShopAction;
+import fr.maxlego08.zshop.api.event.events.ZShopBuyEvent;
 import fr.maxlego08.zshop.api.event.events.ZShopSellAllEvent;
 import fr.maxlego08.zshop.api.event.events.ZShopSellEvent;
 import org.bukkit.Material;
@@ -19,6 +20,13 @@ public class ZShopListener implements Listener {
 
     public ZShopListener(QuestManager manager) {
         this.manager = manager;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSell(ZShopBuyEvent event) {
+        var player = event.getPlayer();
+        var itemType = event.getItemButton().getItemStack().build(player).getType();
+        this.manager.handleStaticQuests(player.getUniqueId(), QuestType.PURCHASE, event.getAmount(), itemType);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

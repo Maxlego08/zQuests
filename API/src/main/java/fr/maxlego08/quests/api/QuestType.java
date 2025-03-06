@@ -9,6 +9,7 @@ import fr.maxlego08.quests.api.actions.EntityAction;
 import fr.maxlego08.quests.api.actions.EntityDamageAction;
 import fr.maxlego08.quests.api.actions.ExperienceGainAction;
 import fr.maxlego08.quests.api.actions.HatchingAction;
+import fr.maxlego08.quests.api.actions.InventoryContentAction;
 import fr.maxlego08.quests.api.actions.InventoryOpenAction;
 import fr.maxlego08.quests.api.actions.IslandAction;
 import fr.maxlego08.quests.api.actions.ItemStackAction;
@@ -40,6 +41,7 @@ public enum QuestType {
     CRAFT,
     VOTE,
     SELL,
+    PURCHASE,
     ENTITY_DAMAGE,
     EXPERIENCE_GAIN,
     HATCHING,
@@ -54,11 +56,12 @@ public enum QuestType {
     CUBOID,
     CUSTOM,
     INVENTORY_OPEN,
+    INVENTORY_CONTENT,
     ;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING -> new MaterialAction(this, (Material) target);
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, PURCHASE, ITEM_BREAK, ITEM_MENDING, SMITHING -> new MaterialAction(this, (Material) target);
             case CRAFT -> new ItemStackAction(this, (ItemStack) target);
             case ENTITY_KILL, TAME -> new EntityAction(this, (EntityType) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
@@ -74,12 +77,13 @@ public enum QuestType {
             case CUBOID -> new LocationAction(this, (Location) target);
             case CUSTOM -> new CustomAction((String) target);
             case INVENTORY_OPEN -> new InventoryOpenAction((String) target);
+            case INVENTORY_CONTENT -> new InventoryContentAction();
         };
     }
 
     public boolean isMaterial() {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING -> true;
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING, PURCHASE -> true;
             default -> false;
         };
     }

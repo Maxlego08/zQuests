@@ -36,6 +36,10 @@ public class StartQuestAction extends Action {
                 }
             }
         }
-        manager.startQuests(player.getUniqueId(), quests);
+        if (quests.isEmpty()) {
+            plugin.getLogger().severe("Impossible to find quests : " + this.quests + " for " + player.getName());
+        } else {
+            manager.startQuests(player.getUniqueId(), quests);
+        }
     }
 }
