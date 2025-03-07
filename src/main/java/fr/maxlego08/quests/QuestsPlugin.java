@@ -37,10 +37,11 @@ public class QuestsPlugin extends ZPlugin {
     private final QuestManager questManager = new ZQuestManager(this);
     private BlockHook blockHook = new EmptyBlockHook();
     private StackerHook stackerHook = new EmptyStackerHook();
-    private ScoreboardHook scoreboardHook = new EmptyScoreboardHook();
+    private final ScoreboardHook scoreboardHook = new EmptyScoreboardHook();
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
     private PatternManager patternManager;
+    private QuestPlaceholder questPlaceholder;
 
     @Override
     public void onEnable() {
@@ -94,7 +95,8 @@ public class QuestsPlugin extends ZPlugin {
             this.addListener(new IslandListener(this.questManager));
         }
 
-        new QuestPlaceholder().register(this, this.questManager);
+        this.questPlaceholder = new QuestPlaceholder();
+        this.questPlaceholder.register(this, this.questManager);
 
         this.postEnable();
     }
@@ -156,4 +158,9 @@ public class QuestsPlugin extends ZPlugin {
     public ScoreboardHook getScoreboardHook() {
         return scoreboardHook;
     }
+
+    public QuestPlaceholder getQuestPlaceholder() {
+        return questPlaceholder;
+    }
+
 }

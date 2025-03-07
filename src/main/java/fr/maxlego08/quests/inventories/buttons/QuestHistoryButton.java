@@ -68,6 +68,13 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
             Placeholders placeholders = new Placeholders();
             placeholders.register("quest-name", quest.getName());
             placeholders.register("quest-description", quest.getDescription());
+            placeholders.register("quest-thumbnail", quest.getThumbnail().name());
+            placeholders.register("quest-type", quest.getType().name());
+            placeholders.register("quest-objective", String.valueOf(quest.getGoal()));
+            placeholders.register("quest-lore-line", this.plugin.getQuestPlaceholder().getLoreLine(player, quest.getName()));
+            placeholders.register("quest-progress-bar", this.plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
+            placeholders.register("quest-percent", this.plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
+            placeholders.register("quest-progress", String.valueOf(this.plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
 
             for (Integer offsetSlot : this.offsetSlots) {
 

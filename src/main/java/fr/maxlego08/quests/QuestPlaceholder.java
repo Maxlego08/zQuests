@@ -16,8 +16,8 @@ import java.util.Optional;
 
 public class QuestPlaceholder extends ZUtils {
 
-    private QuestsPlugin plugin;
-    private QuestManager questManager;
+    public QuestsPlugin plugin;
+    public QuestManager questManager;
 
     public void register(QuestsPlugin plugin, QuestManager questManager) {
 
@@ -43,24 +43,9 @@ public class QuestPlaceholder extends ZUtils {
         localPlaceholder.register("is_completed_", (player, questId) -> String.valueOf(getQuestIsCompleted(player, questId)));
         localPlaceholder.register("is_active_", (player, questId) -> String.valueOf(getQuestIsActive(player, questId)));
         localPlaceholder.register("progress_bar_", this::getProgressBar);
-        localPlaceholder.register("progress_bar_", this::getPercent);
+        localPlaceholder.register("percent_", this::getPercent);
         localPlaceholder.register("progress_", (player, questId) -> String.valueOf(getProgress(player, questId)));
-
-        localPlaceholder.register("lore_line_", (player, questId) -> {
-
-            long progress = getProgress(player, questId);
-            long goal = getQuestObjective(player, questId);
-
-            boolean isCompleted = getQuestIsCompleted(player, questId);
-            String line = isCompleted ? Config.loreLinePlaceholderComplete : Config.loreLinePlaceholderActive;
-            progress = isCompleted ? goal : progress;
-
-            line = line.replace("%goal%", String.valueOf(goal));
-            line = line.replace("%progress%", String.valueOf(progress));
-            line = line.replace("%progress-bar%", Config.progressBar.getProgressBar(progress, goal));
-
-            return line;
-        });
+        localPlaceholder.register("lore_line_", this::getLoreLine);
 
         localPlaceholder.register("group_name_", (player, groupKey) -> questManager.getGroup(groupKey).map(QuestsGroup::getDisplayName).orElse("Quests group " + groupKey + " was not found"));
         localPlaceholder.register("group_count_", (player, groupKey) -> String.valueOf(questManager.getGroup(groupKey).map(QuestsGroup::getQuests).map(List::size).orElse(0)));
@@ -92,17 +77,17 @@ public class QuestPlaceholder extends ZUtils {
 
     }
 
-    private long getProgress(Player player, String questId) {
+    public long getProgress(Player player, String questId) {
         UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
         return userQuest.findActive(questId).map(ActiveQuest::getAmount).orElse(0L);
     }
 
-    private String getPercent(Player player, String questId) {
+    public String getPercent(Player player, String questId) {
         Optional<Quest> optional = questManager.getQuest(questId);
         return optional.map(q -> format(getPercent(player, q))).orElse("0");
     }
 
-    private String getProgressBar(Player player, String questId) {
+    public String getProgressBar(Player player, String questId) {
         Optional<Quest> optional = questManager.getQuest(questId);
         long goal = optional.map(Quest::getGoal).orElse(0L);
 
@@ -112,7 +97,7 @@ public class QuestPlaceholder extends ZUtils {
         return Config.progressBar.getProgressBar(amount, goal);
     }
 
-    private double getPercent(Player player, Quest quest) {
+    public double getPercent(Player player, Quest quest) {
         long goal = quest.getGoal();
 
         UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
@@ -121,37 +106,52 @@ public class QuestPlaceholder extends ZUtils {
         return percent(amount, goal);
     }
 
-    private String getQuestName(Player player, String questId) {
+    public String getQuestName(Player player, String questId) {
         Optional<Quest> optional = questManager.getQuest(questId);
         return optional.map(Quest::getName).orElse("Unknown");
     }
 
-    private String getQuestDescription(Player player, String questId) {
+    public String getQuestDescription(Player player, String questId) {
         Optional<Quest> optional = questManager.getQuest(questId);
         return optional.map(Quest::getDescription).orElse("Unknown");
     }
 
-    private boolean getQuestIsCompleted(Player player, String questId) {
+    public boolean getQuestIsCompleted(Player player, String questId) {
         UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
         return userQuest.isQuestCompleted(questId);
     }
 
-    private boolean getQuestIsActive(Player player, String questId) {
+    public boolean getQuestIsActive(Player player, String questId) {
         UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
         return userQuest.isQuestActive(questId);
     }
 
-    private long getQuestObjective(Player player, String questId) {
+    public long getQuestObjective(Player player, String questId) {
         Optional<Quest> optional = questManager.getQuest(questId);
         return optional.map(Quest::getGoal).orElse(0L);
     }
 
-    private long getCompletedQuestsCount(Player player, String groupKey) {
+    public long getCompletedQuestsCount(Player player, String groupKey) {
         var user = questManager.getUserQuest(player.getUniqueId());
         var completedQuests = user.getCompletedQuests();
         var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>());
         if (groupQuests.isEmpty()) return 0;
 
         return completedQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
+    }
+
+    public String getLoreLine(Player player, String questId){
+        long progress = getProgress(player, questId);
+        long goal = getQuestObjective(player, questId);
+
+        boolean isCompleted = getQuestIsCompleted(player, questId);
+        String line = isCompleted ? Config.loreLinePlaceholderComplete : Config.loreLinePlaceholderActive;
+        progress = isCompleted ? goal : progress;
+
+        line = line.replace("%goal%", String.valueOf(goal));
+        line = line.replace("%progress%", String.valueOf(progress));
+        line = line.replace("%progress-bar%", Config.progressBar.getProgressBar(progress, goal));
+
+        return line;
     }
 }
