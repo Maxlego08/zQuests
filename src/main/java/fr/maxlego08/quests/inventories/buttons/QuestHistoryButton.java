@@ -10,10 +10,12 @@ import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
+import fr.maxlego08.quests.save.Config;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class QuestHistoryButton extends ZButton implements PaginateButton {
@@ -70,7 +72,7 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
                 return;
             }
 
-            Placeholders placeholders = createPlaceholder(quest, player);
+            Placeholders placeholders = createPlaceholder(quest, player, questHistory);
 
             for (Integer offsetSlot : this.offsetSlots) {
 
@@ -88,11 +90,15 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
 
     private void displayFav(Player player, QuestHistory questHistory, InventoryDefault inventory, int slot, Placeholders placeholders) {
 
+        var quest = questHistory.getQuest();
         var menuItemStack = questHistory.isActive() ? questHistory.activeQuest.isFavorite() ? this.favConfiguration.enable : this.favConfiguration.disable : this.favConfiguration.completed;
+
+        placeholders.register("quest-lore", quest.canChangeFavorite() ? questHistory.activeQuest.isFavorite() ? this.favConfiguration.loreEnable : this.favConfiguration.loreDisable : this.favConfiguration.loreCancel);
 
         inventory.addItem(slot + this.favConfiguration.offset, menuItemStack.build(player, false, placeholders)).setClick(e -> {
 
             if (!questHistory.isActive()) return;
+            if (!quest.canChangeFavorite()) return;
 
             var activeQuest = questHistory.activeQuest;
             activeQuest.setFavorite(!activeQuest.isFavorite());
@@ -102,7 +108,7 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
         });
     }
 
-    private Placeholders createPlaceholder(Quest quest, Player player) {
+    private Placeholders createPlaceholder(Quest quest, Player player, QuestHistory questHistory) {
         Placeholders placeholders = new Placeholders();
         placeholders.register("quest-name", quest.getName());
         placeholders.register("quest-description", quest.getDescription());
@@ -113,6 +119,10 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
         placeholders.register("quest-progress-bar", this.plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
         placeholders.register("quest-percent", this.plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
         placeholders.register("quest-progress", String.valueOf(this.plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
+
+        placeholders.register("quest-started-at", questHistory.getStartedAt());
+        placeholders.register("quest-finished-at", questHistory.getFinishedAt());
+
         return placeholders;
     }
 
@@ -143,9 +153,17 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
         public boolean isActive() {
             return this.activeQuest != null;
         }
+
+        public String getStartedAt() {
+            return Config.simpleDateFormat.format(this.isActive() ? this.activeQuest.getCreatedAt() : this.completedQuest.startedAt());
+        }
+
+        public String getFinishedAt() {
+            return Config.simpleDateFormat.format(this.isActive() ? new Date() : this.completedQuest.completedAt());
+        }
     }
 
-    public record FavConfiguration(int offset, MenuItemStack enable, MenuItemStack disable, MenuItemStack completed) {
+    public record FavConfiguration(int offset, MenuItemStack enable, MenuItemStack disable, MenuItemStack completed, String loreEnable, String loreDisable, String loreCancel) {
 
     }
 }

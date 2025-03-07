@@ -131,3 +131,5 @@ events:
   - event: QuestPostProgressEvent # Triggered after quest progress is made
     enabled: true # Indicates if the event is active
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+
+date-format: "dd/MM/yyyy HH:mm:ss"

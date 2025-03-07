@@ -51,7 +51,10 @@ public class QuestHistoryLoader implements ButtonLoader {
                 configuration.getInt(path + "favorite.offset", 0),
                 load(configuration, path + "favorite.enable.", file),
                 load(configuration, path + "favorite.disable.", file),
-                load(configuration, path + "favorite.completed.", file)
+                load(configuration, path + "favorite.completed.", file),
+                configuration.getString(path + "favorite.lore-enable", "&cClic to disable"),
+                configuration.getString(path + "favorite.lore-disable", "&aClic to enable"),
+                configuration.getString(path + "favorite.lore-cancel", "&cYou cant change the favorite status")
         );
 
         return new QuestHistoryButton(this.plugin, offsetSlots, completedQuest, enabledCompleted, offsetCustomModelId, favConfiguration);

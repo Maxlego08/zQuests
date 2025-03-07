@@ -5,6 +5,7 @@ import fr.maxlego08.quests.api.utils.EventConfiguration;
 import fr.maxlego08.quests.api.utils.ProgressBarConfig;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ public class Config {
     public static String loreLinePlaceholderActive;
     public static String loreLinePlaceholderComplete;
     public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
+    public static SimpleDateFormat simpleDateFormat;
 
     /**
      * static Singleton instance.
@@ -46,6 +48,7 @@ public class Config {
         enableDebug = configuration.getBoolean("enable-debug", false);
         enableDebugTime = configuration.getBoolean("enable-debug-time", false);
         progressBar = loadProgressBarConfig(configuration, "progress-bar");
+        simpleDateFormat = new SimpleDateFormat(configuration.getString("date-format", "dd/MM/yyyy HH:mm:ss"));
 
         loreLinePlaceholderActive = configuration.getString("lore-line-placeholder.active", "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘");
         loreLinePlaceholderComplete = configuration.getString("lore-line-placeholder.complete", "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔");

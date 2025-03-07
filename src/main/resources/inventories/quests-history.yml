@@ -43,24 +43,30 @@ items:
       model-id: '%quest-model-id%'
       lore:
         - "%quest-lore-line%"
+        - "&f%quest-started-at%"
     completed-item:
       material: BARRIER
       name: "&f%quest-name% &7Completed"
       model-id: '%quest-model-id%'
       lore:
         - "&f%quest-description%"
+        - "&f%quest-started-at%"
+        - "&f%quest-finished-at%"
     favorite:
       offset: 3
+      lore-enable: "&cClic to disable"
+      lore-disable: "&aClic to enable"
+      lore-cancel: "&cYou cant change the favorite status"
       enable:
         material: GREEN_DYE
         name: "%quest-name% &aFav Enable"
         lore:
-          - "&cClic to disable"
+          - "%quest-lore%"
       disable:
         material: RED_DYE
         name: "%quest-name% &cFav Disable"
         lore:
-          - "&aClic to enable"
+          - "%quest-lore%"
       completed:
         material: GRAY_DYE
         name: "%quest-name% &cFav Completed"
