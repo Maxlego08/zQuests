@@ -234,7 +234,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
             this.usersQuests.put(player.getUniqueId(), userQuest);
 
-            handleDefaultQuest(player.getUniqueId());
+            this.plugin.getScheduler().runNextTick(w -> handleDefaultQuest(player.getUniqueId()));
         });
     }
 
