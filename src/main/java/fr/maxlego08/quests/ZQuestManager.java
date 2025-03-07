@@ -4,7 +4,7 @@ import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.menu.exceptions.InventoryException;
-import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
+import fr.maxlego08.quests.actions.InventoryContentAction;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
@@ -260,7 +260,6 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
             if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
                 if (activeQuest.increment(amount)) { // Increment the progress of the quest
-                    // iterator.remove(); // If the quest is complete, remove it from the list
                     userQuest.removeActiveQuest(activeQuest);
                     this.completeQuest(activeQuest);
                     count++;
@@ -282,23 +281,62 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object) {
+        return this.handleStaticQuests(uuid, type, amount, object, null);
+    }
+
+    @Override
+    public int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer) {
         int count = 0;
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(uuid);
 
         // Stream through the active quests of the user
-        var iterator = userQuest.getActiveQuests().iterator();
-        while (iterator.hasNext()) {
-            ActiveQuest activeQuest = iterator.next();
+        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
             if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
                 if (activeQuest.incrementStatic(amount)) { // Increment the progress of the quest
-                    iterator.remove(); // If the quest is complete, remove it from the list
+                    userQuest.removeActiveQuest(activeQuest);
                     this.completeQuest(activeQuest);
                     count++;
+
+                    if (consumer != null) {
+                        consumer.accept(activeQuest);
+                    }
                 }
                 this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
             }
         }
+        return count;
+    }
+
+    @Override
+    public int handleInventoryQuests(Player player) {
+
+        int count = 0;
+        // Retrieve the user's quest data or create a new ZUserQuest if not found
+        var userQuest = getUserQuest(player.getUniqueId());
+
+        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
+            if (activeQuest.getQuest().getType() == QuestType.INVENTORY_CONTENT && !activeQuest.isComplete() && activeQuest.isQuestAction(player)) {
+
+                var optional = activeQuest.getQuest().getActions().stream().filter(e -> e instanceof InventoryContentAction).map(e -> (InventoryContentAction) e).findFirst();
+                if (optional.isEmpty()) continue;
+
+                var inventoryContentAction = optional.get();
+                int amount = inventoryContentAction.countItems(player);
+                if (amount == 0) continue;
+
+                if (activeQuest.increment(amount)) { // Increment the progress of the quest
+                    userQuest.removeActiveQuest(activeQuest);
+                    this.completeQuest(activeQuest);
+                    count++;
+                    amount = (int) activeQuest.getQuest().getGoal();
+                }
+
+                inventoryContentAction.removeItems(player, amount);
+                this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
+            }
+        }
+
         return count;
     }
 

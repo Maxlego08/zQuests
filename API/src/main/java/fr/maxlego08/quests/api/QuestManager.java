@@ -98,6 +98,28 @@ public interface QuestManager {
      */
     int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
 
+    int handleInventoryQuests(Player player);
+
+    /**
+     * Handle static quests (quests that can be completed multiple times)
+     * for a user.
+     * <p>
+     * This method is similar to {@link #handleQuests(UUID, QuestType, int, Object, Consumer)}
+     * but it won't remove the active quest from the player's active quests
+     * if it is complete.
+     *
+     * @param uuid     the unique identifier of the user
+     * @param type     the type of quest
+     * @param amount   the amount to increment
+     * @param object   additional data for the quest action
+     * @param consumer a consumer that will be called with the
+     *                 updated active quest, if the quest is complete
+     *                 it will be called after the quest has been
+     *                 completed
+     * @return the number of active quests that were completed
+     */
+    int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
+
     /**
      * Add a quest to a player's active quests.
      *
