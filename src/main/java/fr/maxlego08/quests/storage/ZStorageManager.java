@@ -111,6 +111,7 @@ public class ZStorageManager implements StorageManager {
             table.uuid("unique_id", activeQuest.getUniqueId()).primary();
             table.string("name", activeQuest.getQuest().getName()).primary();
             table.bigInt("amount", activeQuest.getAmount());
+            table.bool("is_favorite", activeQuest.isFavorite());
         };
     }
 
@@ -169,7 +170,7 @@ public class ZStorageManager implements StorageManager {
             List<ActiveQuestDTO> activeQuestDTOS = requestHelper.select("%prefix%" + Tables.ACTIVE_QUESTS, ActiveQuestDTO.class, table -> table.where("unique_id", uuid));
             List<CompletedQuestDTO> completedQuestDTOS = requestHelper.select("%prefix%" + Tables.COMPLETED_QUESTS, CompletedQuestDTO.class, table -> table.where("unique_id", uuid));
 
-            List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(uuid, quest, dto.amount())).orElse(null));
+            List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(uuid, quest, dto.amount(), dto.is_favorite())).orElse(null));
             List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at())).orElse(null));
 
             activeQuests.removeIf(ActiveQuest::isComplete);

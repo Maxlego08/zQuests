@@ -110,4 +110,24 @@ quests-groups:
       - "block-break-2"
       - "block-break-3"
 
+# Manages quest-related events
+events:
+  - event: QuestStartEvent # Triggered when a quest begins
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
 
+  - event: QuestProgressEvent # Triggered when quest progress is made
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+
+  - event: QuestCompleteEvent # Triggered when a quest is completed
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+
+  - event: QuestFavoriteChangeEvent # Triggered when a quest's favorite status changes
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+
+  - event: QuestPostProgressEvent # Triggered after quest progress is made
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs

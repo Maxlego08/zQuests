@@ -11,6 +11,7 @@ public class ActiveQuestsCreateMigration extends Migration {
             table.uuid("unique_id").primary();
             table.string("name", 255).primary();
             table.bigInt("amount");
+            table.bool("is_favorite").defaultValue(false);
         });
     }
 }

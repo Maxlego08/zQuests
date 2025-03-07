@@ -13,11 +13,13 @@ public class ZActiveQuest implements ActiveQuest {
     private final UUID uniqueId;
     private final Quest quest;
     private long amount;
+    private boolean isFavorite;
 
-    public ZActiveQuest(UUID uniqueId, Quest quest, long amount) {
+    public ZActiveQuest(UUID uniqueId, Quest quest, long amount, boolean isFavorite) {
         this.uniqueId = uniqueId;
         this.quest = quest;
         this.amount = amount;
+        this.isFavorite = isFavorite;
     }
 
     @Override
@@ -93,5 +95,15 @@ public class ZActiveQuest implements ActiveQuest {
     @Override
     public boolean isQuestAction(Object object) {
         return this.quest.getActions().stream().anyMatch(questAction -> questAction.isAction(object));
+    }
+
+    @Override
+    public boolean isFavorite() {
+        return this.isFavorite;
+    }
+
+    @Override
+    public void setFavorite(boolean favorite) {
+        this.isFavorite = favorite;
     }
 }

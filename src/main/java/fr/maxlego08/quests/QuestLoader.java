@@ -63,6 +63,8 @@ public class QuestLoader extends ZUtils {
             long goal = accessor.getLong("goal", 1);
             boolean autoAccept = accessor.getBoolean("auto-accept", false);
             boolean useGlobalRewards = accessor.getBoolean("use-global-rewards", true);
+            boolean canChangeFavorite = accessor.getBoolean("can-change-favorite", true);
+            boolean isFavorite = accessor.getBoolean("favorite", false);
 
             List<Map<String, Object>> rewardsMap = accessor.contains("rewards") ? (List<Map<String, Object>>) accessor.getList("rewards") : new ArrayList<>();
             List<Action> rewards = plugin.getButtonManager().loadActions(rewardsMap, "quests", file);
@@ -94,7 +96,7 @@ public class QuestLoader extends ZUtils {
                 }
             }
 
-            return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, questActions, useGlobalRewards);
+            return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, questActions, useGlobalRewards, canChangeFavorite, isFavorite);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;

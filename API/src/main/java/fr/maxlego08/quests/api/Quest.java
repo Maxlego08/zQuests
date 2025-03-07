@@ -87,4 +87,18 @@ public interface Quest {
      */
     boolean useGlobalRewards();
 
+    /**
+     * Checks if the quest can be marked or unmarked as favorite.
+     *
+     * @return true if the quest can be marked or unmarked as favorite, false otherwise
+     */
+    boolean canChangeFavorite();
+
+    /**
+     * Checks if the quest is marked as favorite.
+     *
+     * @return true if the quest is marked as favorite, false otherwise
+     */
+    boolean isFavorite();
+
 }

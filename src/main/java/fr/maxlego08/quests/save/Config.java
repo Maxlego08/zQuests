@@ -1,7 +1,12 @@
 package fr.maxlego08.quests.save;
 
+import fr.maxlego08.menu.api.utils.TypedMapAccessor;
+import fr.maxlego08.quests.api.utils.EventConfiguration;
 import fr.maxlego08.quests.api.utils.ProgressBarConfig;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Config {
 
@@ -10,6 +15,7 @@ public class Config {
     public static ProgressBarConfig progressBar;
     public static String loreLinePlaceholderActive;
     public static String loreLinePlaceholderComplete;
+    public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
 
     /**
      * static Singleton instance.
@@ -43,6 +49,8 @@ public class Config {
 
         loreLinePlaceholderActive = configuration.getString("lore-line-placeholder.active", "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘");
         loreLinePlaceholderComplete = configuration.getString("lore-line-placeholder.complete", "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔");
+
+        this.loadEventConfiguration(configuration);
     }
 
     private ProgressBarConfig loadProgressBarConfig(FileConfiguration configuration, String path) {
@@ -53,6 +61,27 @@ public class Config {
         int size = configuration.getInt(path + ".size", 10);
 
         return new ProgressBarConfig(icon, notCompletedIcon, progressColor, color, size);
+    }
+
+    private void loadEventConfiguration(FileConfiguration configuration) {
+
+        eventConfigurations.clear();
+
+        for (Map<?, ?> map : configuration.getMapList("events")) {
+            TypedMapAccessor accessor = new TypedMapAccessor((Map<String, Object>) map);
+            String className = accessor.getString("event");
+            boolean enabled = accessor.getBoolean("enabled", true);
+            boolean updateScoreboard = accessor.getBoolean("update-scoreboard", false);
+
+            try {
+                Class<?> classz = Class.forName(String.format("fr.maxlego08.quests.api.event.events.%s", className));
+                eventConfigurations.put(classz, new EventConfiguration(className, enabled, updateScoreboard));
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        System.out.println(eventConfigurations);
     }
 
 }

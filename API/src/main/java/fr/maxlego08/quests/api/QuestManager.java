@@ -263,4 +263,14 @@ public interface QuestManager {
      * @param quests the list of quests to start
      */
     void startQuests(UUID uuid, List<Quest> quests);
+
+    /**
+     * Set a quest as favorite for a player.
+     *
+     * @param sender    the command sender
+     * @param player    the player to set the favorite for
+     * @param questName the name of the quest to set as favorite
+     * @param amount    true if the quest should be marked as favorite, false otherwise
+     */
+    void setFavorite(CommandSender sender, Player player, String questName, boolean amount);
 }

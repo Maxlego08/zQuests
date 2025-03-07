@@ -25,8 +25,10 @@ public class ZQuest implements Quest {
     private final List<Action> rewards;
     private final List<QuestAction> actions;
     private final boolean useGlobalRewards;
+    private final boolean canChangeFavorite;
+    private final boolean isFavorite;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions, boolean useGlobalRewards) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -38,6 +40,8 @@ public class ZQuest implements Quest {
         this.rewards = rewards;
         this.actions = actions;
         this.useGlobalRewards = useGlobalRewards;
+        this.canChangeFavorite = canChangeFavorite;
+        this.isFavorite = isFavorite;
     }
 
     @Override
@@ -97,5 +101,15 @@ public class ZQuest implements Quest {
     @Override
     public boolean useGlobalRewards() {
         return this.useGlobalRewards;
+    }
+
+    @Override
+    public boolean canChangeFavorite() {
+        return this.canChangeFavorite;
+    }
+
+    @Override
+    public boolean isFavorite() {
+        return this.isFavorite;
     }
 }

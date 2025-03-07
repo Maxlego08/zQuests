@@ -30,6 +30,7 @@ public class CommandQuests extends VCommand {
         this.addSubCommand(new CommandQuestsSetProgress(plugin));
         this.addSubCommand(new CommandQuestsHelp(plugin));
         this.addSubCommand(new CommandQuestsProgressInventory(plugin));
+        this.addSubCommand(new CommandQuestsSetFavorite(plugin));
 
         plugin.getConfig().getMapList("main-command-page").forEach(map -> {
             TypedMapAccessor typedMapAccessor = new TypedMapAccessor((Map<String, Object>) map);

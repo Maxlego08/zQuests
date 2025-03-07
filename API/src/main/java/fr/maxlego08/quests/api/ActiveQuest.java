@@ -96,4 +96,18 @@ public interface ActiveQuest {
      * @return true if it is a quest action, false otherwise
      */
     boolean isQuestAction(Object object);
+
+    /**
+     * Checks if the quest is marked as favorite.
+     *
+     * @return true if the quest is marked as favorite, false otherwise
+     */
+    boolean isFavorite();
+
+    /**
+     * Sets whether the quest is marked as favorite or not.
+     *
+     * @param favorite true if the quest should be marked as favorite, false otherwise
+     */
+    void setFavorite(boolean favorite);
 }

@@ -6,11 +6,13 @@ import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.menu.api.pattern.PatternManager;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.hooks.BlockHook;
+import fr.maxlego08.quests.api.hooks.ScoreboardHook;
 import fr.maxlego08.quests.api.hooks.StackerHook;
 import fr.maxlego08.quests.api.storage.StorageManager;
 import fr.maxlego08.quests.commands.commands.CommandQuests;
 import fr.maxlego08.quests.hooks.blocks.BlockTrackerHook;
 import fr.maxlego08.quests.hooks.blocks.EmptyBlockHook;
+import fr.maxlego08.quests.hooks.scoreboard.EmptyScoreboardHook;
 import fr.maxlego08.quests.hooks.stacker.EmptyStackerHook;
 import fr.maxlego08.quests.hooks.stacker.WildStackerHook;
 import fr.maxlego08.quests.listeners.IslandListener;
@@ -35,6 +37,7 @@ public class QuestsPlugin extends ZPlugin {
     private final QuestManager questManager = new ZQuestManager(this);
     private BlockHook blockHook = new EmptyBlockHook();
     private StackerHook stackerHook = new EmptyStackerHook();
+    private ScoreboardHook scoreboardHook = new EmptyScoreboardHook();
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
     private PatternManager patternManager;
@@ -148,5 +151,9 @@ public class QuestsPlugin extends ZPlugin {
         if (Config.enableDebug) {
             this.getLogger().info(string);
         }
+    }
+
+    public ScoreboardHook getScoreboardHook() {
+        return scoreboardHook;
     }
 }

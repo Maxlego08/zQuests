@@ -12,12 +12,19 @@ import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.api.UserQuest;
+import fr.maxlego08.quests.api.event.QuestEvent;
+import fr.maxlego08.quests.api.event.events.QuestCompleteEvent;
+import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeEvent;
+import fr.maxlego08.quests.api.event.events.QuestPostProgressEvent;
+import fr.maxlego08.quests.api.event.events.QuestProgressEvent;
 import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
+import fr.maxlego08.quests.inventories.loader.QuestHistoryLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
 import fr.maxlego08.quests.messages.Message;
+import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -36,6 +43,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class ZQuestManager extends ZUtils implements QuestManager {
@@ -56,6 +64,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         var buttonManager = this.plugin.getButtonManager();
         buttonManager.registerAction(new StartQuestLoader(this.plugin));
         buttonManager.register(new QuestCompleteLoader(this.plugin));
+        buttonManager.register(new QuestHistoryLoader(this.plugin));
     }
 
     @Override
@@ -85,6 +94,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         if (!folder.exists()) {
             folder.mkdirs();
             this.plugin.saveResource("inventories/quests.yml", false);
+            this.plugin.saveResource("inventories/quests-history.yml", false);
         }
 
         files(folder, file -> {
@@ -171,7 +181,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 Optional<Quest> optionalQuest = this.getQuest(activeQuest.getQuest().getName());
                 if (optionalQuest.isPresent()) {
                     Quest quest = optionalQuest.get();
-                    activeQuests.set(i, new ZActiveQuest(activeQuest.getUniqueId(), quest, activeQuest.getAmount()));
+                    activeQuests.set(i, new ZActiveQuest(activeQuest.getUniqueId(), quest, activeQuest.getAmount(), activeQuest.isFavorite()));
                 }
             }
 
@@ -250,28 +260,59 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.plugin.getStorageManager().upsert(userQuest.getActiveQuests());
     }
 
-    @Override
-    public int handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer) {
-        int count = 0;
+    public int handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer, boolean isStatic) {
+
+        AtomicInteger count = new AtomicInteger();
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(uuid);
+
+        Consumer<ActiveQuest> after = activeQuest -> {
+
+            QuestCompleteEvent completeEvent = new QuestCompleteEvent(uuid, activeQuest);
+            if (callQuestEvent(uuid, completeEvent)) return;
+
+            userQuest.removeActiveQuest(activeQuest);
+            this.completeQuest(activeQuest);
+            count.getAndIncrement();
+
+            if (consumer != null) {
+                consumer.accept(activeQuest);
+            }
+        };
 
         // Stream through the active quests of the user
         for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
             if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
-                if (activeQuest.increment(amount)) { // Increment the progress of the quest
-                    userQuest.removeActiveQuest(activeQuest);
-                    this.completeQuest(activeQuest);
-                    count++;
 
-                    if (consumer != null) {
-                        consumer.accept(activeQuest);
+                QuestProgressEvent progressEvent = new QuestProgressEvent(uuid, activeQuest, amount);
+                if (callQuestEvent(uuid, progressEvent)) return count.get();
+
+                amount = progressEvent.getAmount();
+
+                if (isStatic) {
+                    if (activeQuest.incrementStatic(amount)) {
+                        after.accept(activeQuest);
+                    }
+                } else {
+                    if (activeQuest.increment(amount)) {
+                        after.accept(activeQuest);
                     }
                 }
                 this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
             }
         }
-        return count;
+
+        if (count.get() > 0) {
+            callQuestEvent(uuid, new QuestPostProgressEvent(uuid, count.get()));
+        }
+
+        return count.get();
+
+    }
+
+    @Override
+    public int handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer) {
+        return this.handleQuests(uuid, type, amount, object, consumer, false);
     }
 
     @Override
@@ -286,26 +327,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer) {
-        int count = 0;
-        // Retrieve the user's quest data or create a new ZUserQuest if not found
-        var userQuest = getUserQuest(uuid);
-
-        // Stream through the active quests of the user
-        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
-            if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
-                if (activeQuest.incrementStatic(amount)) { // Increment the progress of the quest
-                    userQuest.removeActiveQuest(activeQuest);
-                    this.completeQuest(activeQuest);
-                    count++;
-
-                    if (consumer != null) {
-                        consumer.accept(activeQuest);
-                    }
-                }
-                this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
-            }
-        }
-        return count;
+        return this.handleQuests(uuid, type, amount, object, consumer, true);
     }
 
     @Override
@@ -325,16 +347,29 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 int amount = inventoryContentAction.countItems(player);
                 if (amount == 0) continue;
 
+                QuestProgressEvent progressEvent = new QuestProgressEvent(player.getUniqueId(), activeQuest, amount);
+                if (callQuestEvent(player.getUniqueId(), progressEvent)) continue;
+
+                amount = progressEvent.getAmount();
+
                 if (activeQuest.increment(amount)) { // Increment the progress of the quest
+
+                    QuestCompleteEvent completeEvent = new QuestCompleteEvent(player.getUniqueId(), activeQuest);
+                    if (callQuestEvent(player.getUniqueId(), completeEvent)) continue;
+
                     userQuest.removeActiveQuest(activeQuest);
                     this.completeQuest(activeQuest);
                     count++;
                     amount = (int) activeQuest.getQuest().getGoal();
                 }
 
-                inventoryContentAction.removeItems(player, amount);
+                inventoryContentAction.removeItems(player, (int) amount);
                 this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
             }
+        }
+
+        if (count > 0) {
+            callQuestEvent(player.getUniqueId(), new QuestPostProgressEvent(player.getUniqueId(), count));
         }
 
         return count;
@@ -343,7 +378,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public Optional<ActiveQuest> addQuestToPlayer(UUID uuid, Quest quest, boolean store) {
         // Create a new active quest for the player
-        ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, 0);
+        ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, 0, quest.isFavorite());
         var userQuest = getUserQuest(uuid);
 
         // Check if the user already completes the quest
@@ -352,8 +387,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
 
         QuestStartEvent event = new QuestStartEvent(uuid, activeQuest);
-        event.call();
-        if (event.isCancelled()) return Optional.empty();
+        if (callQuestEvent(uuid, event)) return Optional.empty();
 
         // Add the active quest to the user's active quests
         userQuest.getActiveQuests().add(event.getActiveQuest());
@@ -582,5 +616,52 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public Optional<QuestsGroup> getGroup(String key) {
         return Optional.ofNullable(this.groups.get(key));
+    }
+
+    @Override
+    public void setFavorite(CommandSender sender, Player player, String questName, boolean newValue) {
+
+        var userQuest = getUserQuest(player.getUniqueId());
+
+        var optional = userQuest.findActive(questName);
+        if (optional.isEmpty()) {
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
+
+        var activeQuest = optional.get();
+        if (!activeQuest.getQuest().canChangeFavorite()) {
+            message(sender, Message.QUEST_CANT_CHANGE_FAVORITE, "%name%", questName);
+            return;
+        }
+
+        QuestFavoriteChangeEvent event = new QuestFavoriteChangeEvent(player, activeQuest, newValue);
+        if (callQuestEvent(player.getUniqueId(), event)) return;
+
+        activeQuest.setFavorite(event.isFavorite());
+        this.plugin.getStorageManager().upsert(activeQuest);
+
+        message(sender, Message.QUEST_SET_FAVORITE_SUCCESS, "%name%", questName, "%player%", player.getName(), "%favorite%", newValue);
+    }
+
+    private boolean callQuestEvent(UUID playerUniqueId, QuestEvent event) {
+
+        var configuration = Config.eventConfigurations.get(event.getClass());
+        System.out.println(event.getClass() + " - " + configuration);
+
+        boolean isCancelled = false;
+
+        if (configuration != null) {
+
+            if (configuration.enabled()) {
+                isCancelled = !event.callEvent();
+            }
+
+            if (configuration.updateScoreboard() && playerUniqueId != null) {
+                this.plugin.getScoreboardHook().updateScoreboard(playerUniqueId);
+            }
+        }
+
+        return isCancelled;
     }
 }
