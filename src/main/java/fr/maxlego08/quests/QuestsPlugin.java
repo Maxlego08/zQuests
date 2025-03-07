@@ -13,6 +13,7 @@ import fr.maxlego08.quests.commands.commands.CommandQuests;
 import fr.maxlego08.quests.hooks.blocks.BlockTrackerHook;
 import fr.maxlego08.quests.hooks.blocks.EmptyBlockHook;
 import fr.maxlego08.quests.hooks.scoreboard.EmptyScoreboardHook;
+import fr.maxlego08.quests.hooks.scoreboard.ZEssentialsScoreboardHook;
 import fr.maxlego08.quests.hooks.stacker.EmptyStackerHook;
 import fr.maxlego08.quests.hooks.stacker.WildStackerHook;
 import fr.maxlego08.quests.listeners.IslandListener;
@@ -35,9 +36,9 @@ public class QuestsPlugin extends ZPlugin {
 
     private final StorageManager storageManager = new ZStorageManager(this);
     private final QuestManager questManager = new ZQuestManager(this);
+    private ScoreboardHook scoreboardHook = new EmptyScoreboardHook();
     private BlockHook blockHook = new EmptyBlockHook();
     private StackerHook stackerHook = new EmptyStackerHook();
-    private final ScoreboardHook scoreboardHook = new EmptyScoreboardHook();
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
     private PatternManager patternManager;
@@ -93,6 +94,11 @@ public class QuestsPlugin extends ZPlugin {
         if (isEnable(Plugins.SUPERIORSKYBLOCK2)) {
             getLogger().info("Using SuperiorSkyBlock2");
             this.addListener(new IslandListener(this.questManager));
+        }
+
+        if (isEnable(Plugins.ZESSENTIALS)) {
+            getLogger().info("Using zEssentials");
+            this.scoreboardHook = new ZEssentialsScoreboardHook();
         }
 
         this.questPlaceholder = new QuestPlaceholder();

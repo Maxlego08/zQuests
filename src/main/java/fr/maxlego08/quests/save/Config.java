@@ -2,6 +2,7 @@ package fr.maxlego08.quests.save;
 
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.api.utils.EventConfiguration;
+import fr.maxlego08.quests.api.utils.PlaceholderFavorite;
 import fr.maxlego08.quests.api.utils.ProgressBarConfig;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -18,6 +19,7 @@ public class Config {
     public static String loreLinePlaceholderComplete;
     public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
     public static SimpleDateFormat simpleDateFormat;
+    public static PlaceholderFavorite placeholderFavorite;
 
     /**
      * static Singleton instance.
@@ -52,6 +54,13 @@ public class Config {
 
         loreLinePlaceholderActive = configuration.getString("lore-line-placeholder.active", "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘");
         loreLinePlaceholderComplete = configuration.getString("lore-line-placeholder.complete", "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔");
+
+        placeholderFavorite = new PlaceholderFavorite(
+                configuration.getInt("placeholder-favorite.limit", 3),
+                configuration.getString("placeholder-favorite.empty", "&cNo favorite quests"),
+                configuration.getString("placeholder-favorite.result", "&f%name%\n&e%progress%&8/&6%goal%"),
+                configuration.getString("placeholder-favorite.between", "\n")
+        );
 
         this.loadEventConfiguration(configuration);
     }

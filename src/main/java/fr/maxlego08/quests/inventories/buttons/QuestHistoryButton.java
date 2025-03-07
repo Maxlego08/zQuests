@@ -11,6 +11,7 @@ import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.save.Config;
+import fr.maxlego08.quests.zcore.utils.QuestPlaceholderUtil;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -56,11 +57,7 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
         quests.addAll(userQuests.getActiveQuests().stream().map(e -> new QuestHistory(e, null)).toList());
         quests.addAll(userQuests.getCompletedQuests().stream().map(e -> new QuestHistory(null, e)).toList());
 
-        quests = quests.stream()
-                .sorted(Comparator.comparingInt(QuestHistory::sortActive))
-                .sorted(Comparator.comparingInt(QuestHistory::sortFav).reversed())
-                .sorted(Comparator.comparingInt(QuestHistory::sortCompletedDate))
-                .toList();
+        quests = quests.stream().sorted(Comparator.comparingInt(QuestHistory::sortActive)).sorted(Comparator.comparingInt(QuestHistory::sortFav).reversed()).sorted(Comparator.comparingInt(QuestHistory::sortCompletedDate)).toList();
 
         this.paginate(quests, inventory, (slot, questHistory) -> {
 
@@ -93,7 +90,7 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
         var quest = questHistory.getQuest();
         var menuItemStack = questHistory.isActive() ? questHistory.activeQuest.isFavorite() ? this.favConfiguration.enable : this.favConfiguration.disable : this.favConfiguration.completed;
 
-        placeholders.register("quest-lore", quest.canChangeFavorite() ? questHistory.activeQuest.isFavorite() ? this.favConfiguration.loreEnable : this.favConfiguration.loreDisable : this.favConfiguration.loreCancel);
+        placeholders.register("quest-lore", quest.canChangeFavorite() && questHistory.isActive() ? questHistory.activeQuest.isFavorite() ? this.favConfiguration.loreEnable : this.favConfiguration.loreDisable : this.favConfiguration.loreCancel);
 
         inventory.addItem(slot + this.favConfiguration.offset, menuItemStack.build(player, false, placeholders)).setClick(e -> {
 
@@ -109,16 +106,7 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
     }
 
     private Placeholders createPlaceholder(Quest quest, Player player, QuestHistory questHistory) {
-        Placeholders placeholders = new Placeholders();
-        placeholders.register("quest-name", quest.getName());
-        placeholders.register("quest-description", quest.getDescription());
-        placeholders.register("quest-thumbnail", quest.getThumbnail().name());
-        placeholders.register("quest-type", quest.getType().name());
-        placeholders.register("quest-objective", String.valueOf(quest.getGoal()));
-        placeholders.register("quest-lore-line", this.plugin.getQuestPlaceholder().getLoreLine(player, quest.getName()));
-        placeholders.register("quest-progress-bar", this.plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
-        placeholders.register("quest-percent", this.plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
-        placeholders.register("quest-progress", String.valueOf(this.plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
+        Placeholders placeholders = QuestPlaceholderUtil.createPlaceholder(this.plugin, player, quest);
 
         placeholders.register("quest-started-at", questHistory.getStartedAt());
         placeholders.register("quest-finished-at", questHistory.getFinishedAt());
@@ -163,7 +151,8 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
         }
     }
 
-    public record FavConfiguration(int offset, MenuItemStack enable, MenuItemStack disable, MenuItemStack completed, String loreEnable, String loreDisable, String loreCancel) {
+    public record FavConfiguration(int offset, MenuItemStack enable, MenuItemStack disable, MenuItemStack completed,
+                                   String loreEnable, String loreDisable, String loreCancel) {
 
     }
 }

@@ -68,4 +68,9 @@ public class ZUserQuest implements UserQuest {
     public void removeActiveQuest(ActiveQuest activeQuest) {
         this.activeQuests.remove(activeQuest);
     }
+
+    @Override
+    public List<ActiveQuest> getFavoriteQuests() {
+        return this.activeQuests.stream().filter(ActiveQuest::isFavorite).toList();
+    }
 }

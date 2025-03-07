@@ -76,4 +76,11 @@ public interface UserQuest {
      * @param activeQuest the active quest to remove
      */
     void removeActiveQuest(ActiveQuest activeQuest);
+
+    /**
+     * Retrieves the list of active quests that are marked as favorite.
+     *
+     * @return a list of favorite active quests
+     */
+    List<ActiveQuest> getFavoriteQuests();
 }

@@ -18,6 +18,7 @@ import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeEvent;
 import fr.maxlego08.quests.api.event.events.QuestPostProgressEvent;
 import fr.maxlego08.quests.api.event.events.QuestProgressEvent;
 import fr.maxlego08.quests.api.event.events.QuestStartEvent;
+import fr.maxlego08.quests.api.event.events.QuestUserLoadEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
@@ -242,6 +243,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         UserQuest userQuest = getUserQuest(uuid);
         var quests = this.quests.stream().filter(Quest::isAutoAccept).filter(quest -> userQuest.getActiveQuests().stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest)));
         this.startQuests(uuid, quests.toList());
+
+        this.callQuestEvent(uuid, new QuestUserLoadEvent(userQuest));
     }
 
     @Override
@@ -527,10 +530,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public void setQuestProgress(CommandSender sender, Player player, String questName, int amount) {
         ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
-        if (activeQuest == null) {
-            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
-            return;
-        }
+        if (activeQuest == null) return;
 
         activeQuest.setAmount(amount);
         this.plugin.getStorageManager().upsert(activeQuest);
@@ -541,10 +541,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public void addQuestProgress(CommandSender sender, Player player, String questName, int amount) {
         ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
-        if (activeQuest == null) {
-            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
-            return;
-        }
+        if (activeQuest == null) return;
 
         if (activeQuest.increment(amount)) {
             getUserQuest(player.getUniqueId()).getActiveQuests().remove(activeQuest);
