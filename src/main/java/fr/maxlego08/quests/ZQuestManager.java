@@ -34,6 +34,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -181,7 +182,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 Optional<Quest> optionalQuest = this.getQuest(activeQuest.getQuest().getName());
                 if (optionalQuest.isPresent()) {
                     Quest quest = optionalQuest.get();
-                    activeQuests.set(i, new ZActiveQuest(activeQuest.getUniqueId(), quest, activeQuest.getAmount(), activeQuest.isFavorite()));
+                    activeQuests.set(i, new ZActiveQuest(activeQuest.getUniqueId(), quest, activeQuest.getCreatedAt(), activeQuest.getAmount(), activeQuest.isFavorite()));
                 }
             }
 
@@ -191,7 +192,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 Optional<Quest> optionalQuest = this.getQuest(completedQuest.quest().getName());
                 if (optionalQuest.isPresent()) {
                     Quest quest = optionalQuest.get();
-                    completedQuests.set(i, new CompletedQuest(quest, completedQuest.completedAt()));
+                    completedQuests.set(i, new CompletedQuest(quest, completedQuest.completedAt(), completedQuest.startedAt()));
                 }
             }
         }
@@ -378,7 +379,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public Optional<ActiveQuest> addQuestToPlayer(UUID uuid, Quest quest, boolean store) {
         // Create a new active quest for the player
-        ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, 0, quest.isFavorite());
+        ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, new Date(), 0, quest.isFavorite());
         var userQuest = getUserQuest(uuid);
 
         // Check if the user already completes the quest

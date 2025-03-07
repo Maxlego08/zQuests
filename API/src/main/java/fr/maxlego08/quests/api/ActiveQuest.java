@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.api;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -110,4 +111,11 @@ public interface ActiveQuest {
      * @param favorite true if the quest should be marked as favorite, false otherwise
      */
     void setFavorite(boolean favorite);
+
+    /**
+     * Gets the date when this active quest was created.
+     *
+     * @return the creation date
+     */
+    Date getCreatedAt();
 }

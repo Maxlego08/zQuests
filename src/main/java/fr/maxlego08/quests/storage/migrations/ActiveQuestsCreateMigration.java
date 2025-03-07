@@ -12,6 +12,7 @@ public class ActiveQuestsCreateMigration extends Migration {
             table.string("name", 255).primary();
             table.bigInt("amount");
             table.bool("is_favorite").defaultValue(false);
+            table.timestamps();
         });
     }
 }

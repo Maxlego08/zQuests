@@ -12,12 +12,14 @@ public class ZActiveQuest implements ActiveQuest {
 
     private final UUID uniqueId;
     private final Quest quest;
+    private final Date createdAt;
     private long amount;
     private boolean isFavorite;
 
-    public ZActiveQuest(UUID uniqueId, Quest quest, long amount, boolean isFavorite) {
+    public ZActiveQuest(UUID uniqueId, Quest quest, Date createdAt, long amount, boolean isFavorite) {
         this.uniqueId = uniqueId;
         this.quest = quest;
+        this.createdAt = createdAt;
         this.amount = amount;
         this.isFavorite = isFavorite;
     }
@@ -89,7 +91,7 @@ public class ZActiveQuest implements ActiveQuest {
 
     @Override
     public CompletedQuest complete() {
-        return new CompletedQuest(this.quest, new Date());
+        return new CompletedQuest(this.quest, new Date(), this.createdAt);
     }
 
     @Override
@@ -105,5 +107,10 @@ public class ZActiveQuest implements ActiveQuest {
     @Override
     public void setFavorite(boolean favorite) {
         this.isFavorite = favorite;
+    }
+
+    @Override
+    public Date getCreatedAt() {
+        return this.createdAt;
     }
 }

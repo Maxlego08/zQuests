@@ -130,6 +130,7 @@ public class ZStorageManager implements StorageManager {
             table.uuid("unique_id", uuid);
             table.string("name", completedQuest.quest().getName());
             table.object("completed_at", completedQuest.completedAt());
+            table.object("started_at", completedQuest.startedAt());
         }));
     }
 
@@ -170,8 +171,8 @@ public class ZStorageManager implements StorageManager {
             List<ActiveQuestDTO> activeQuestDTOS = requestHelper.select("%prefix%" + Tables.ACTIVE_QUESTS, ActiveQuestDTO.class, table -> table.where("unique_id", uuid));
             List<CompletedQuestDTO> completedQuestDTOS = requestHelper.select("%prefix%" + Tables.COMPLETED_QUESTS, CompletedQuestDTO.class, table -> table.where("unique_id", uuid));
 
-            List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(uuid, quest, dto.amount(), dto.is_favorite())).orElse(null));
-            List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at())).orElse(null));
+            List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(uuid, quest, dto.created_at(), dto.amount(), dto.is_favorite())).orElse(null));
+            List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at(), dto.started_at())).orElse(null));
 
             activeQuests.removeIf(ActiveQuest::isComplete);
             consumer.accept(new ZUserQuest(activeQuests, completedQuests));
