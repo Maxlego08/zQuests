@@ -101,4 +101,11 @@ public interface Quest {
      */
     boolean isFavorite();
 
+    /**
+     * Retrieves the custom model ID associated with the quest.
+     *
+     * @return the custom model ID
+     */
+    int getCustomModelId();
+
 }

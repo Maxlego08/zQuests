@@ -1,9 +1,27 @@
-name: "&8Quest History"
+name: "&8Quest History &7%page%/%maxPage%"
 size: 54
 items:
+
+  previous:
+    type: PREVIOUS
+    slot: 8
+    item:
+      material: PAPER
+      # customModelData: 10
+      name: ":left_click: #edacfc???? ??????????"
+
+  next:
+    type: NEXT
+    slot: 53
+    item:
+      material: PAPER
+      # customModelData: 10
+      name: "&f%img_left_click% #edacfc???? s???????"
+
   history:
     type: ZQUESTS_HISTORY
     enable-completed: true
+    offset-custom-model-id: 10
     offset-slots:
       - -4
       - -3
@@ -21,11 +39,31 @@ items:
       - 49
     item:
       material: PAPER
-      name: "&f%quest-name% &7Active"
+      name: "%quest-description%"
+      model-id: '%quest-model-id%'
       lore:
-        - "&f%quest-description%"
+        - "%quest-lore-line%"
     completed-item:
-      material: PAPER
+      material: BARRIER
       name: "&f%quest-name% &7Completed"
+      model-id: '%quest-model-id%'
       lore:
         - "&f%quest-description%"
+    favorite:
+      offset: 3
+      enable:
+        material: GREEN_DYE
+        name: "%quest-name% &aFav Enable"
+        lore:
+          - "&cClic to disable"
+      disable:
+        material: RED_DYE
+        name: "%quest-name% &cFav Disable"
+        lore:
+          - "&aClic to enable"
+      completed:
+        material: GRAY_DYE
+        name: "%quest-name% &cFav Completed"
+        lore:
+          - "&7You cant fav a completed quest"
+

@@ -22,13 +22,17 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
     private final List<Integer> offsetSlots;
     private final MenuItemStack completedItem;
     private final boolean enableCompleted;
+    private final int offsetCustomModelId;
+    private final FavConfiguration favConfiguration;
     private final QuestManager manager;
 
-    public QuestHistoryButton(QuestsPlugin plugin, List<Integer> offsetSlots, MenuItemStack completedItem, boolean enableCompleted) {
+    public QuestHistoryButton(QuestsPlugin plugin, List<Integer> offsetSlots, MenuItemStack completedItem, boolean enableCompleted, int offsetCustomModelId, FavConfiguration favConfiguration) {
         this.plugin = plugin;
         this.offsetSlots = offsetSlots;
         this.completedItem = completedItem;
         this.enableCompleted = enableCompleted;
+        this.offsetCustomModelId = offsetCustomModelId;
+        this.favConfiguration = favConfiguration;
         this.manager = this.plugin.getQuestManager();
     }
 
@@ -58,31 +62,58 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
 
         this.paginate(quests, inventory, (slot, questHistory) -> {
 
-            var menuItemStack = questHistory.activeQuest != null ? this.getItemStack() : this.completedItem;
+            var menuItemStack = questHistory.isActive() ? this.getItemStack() : this.completedItem;
+
             var quest = questHistory.getQuest();
             if (quest == null) {
                 this.plugin.getLogger().info("Quest is null ! " + questHistory);
                 return;
             }
 
-            Placeholders placeholders = new Placeholders();
-            placeholders.register("quest-name", quest.getName());
-            placeholders.register("quest-description", quest.getDescription());
-            placeholders.register("quest-thumbnail", quest.getThumbnail().name());
-            placeholders.register("quest-type", quest.getType().name());
-            placeholders.register("quest-objective", String.valueOf(quest.getGoal()));
-            placeholders.register("quest-lore-line", this.plugin.getQuestPlaceholder().getLoreLine(player, quest.getName()));
-            placeholders.register("quest-progress-bar", this.plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
-            placeholders.register("quest-percent", this.plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
-            placeholders.register("quest-progress", String.valueOf(this.plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
+            Placeholders placeholders = createPlaceholder(quest, player);
 
             for (Integer offsetSlot : this.offsetSlots) {
+
+                placeholders.register("quest-model-id", String.valueOf(offsetSlot == 0 ? quest.getCustomModelId() : this.offsetCustomModelId));
 
                 inventory.addItem(slot + offsetSlot, menuItemStack.build(player, false, placeholders)).setClick(e -> {
 
                 });
             }
+
+            // Fav Configuration
+            this.displayFav(player, questHistory, inventory, slot, placeholders);
         });
+    }
+
+    private void displayFav(Player player, QuestHistory questHistory, InventoryDefault inventory, int slot, Placeholders placeholders) {
+
+        var menuItemStack = questHistory.isActive() ? questHistory.activeQuest.isFavorite() ? this.favConfiguration.enable : this.favConfiguration.disable : this.favConfiguration.completed;
+
+        inventory.addItem(slot + this.favConfiguration.offset, menuItemStack.build(player, false, placeholders)).setClick(e -> {
+
+            if (!questHistory.isActive()) return;
+
+            var activeQuest = questHistory.activeQuest;
+            activeQuest.setFavorite(!activeQuest.isFavorite());
+            this.plugin.getStorageManager().upsert(activeQuest);
+
+            this.plugin.getInventoryManager().updateInventory(player);
+        });
+    }
+
+    private Placeholders createPlaceholder(Quest quest, Player player) {
+        Placeholders placeholders = new Placeholders();
+        placeholders.register("quest-name", quest.getName());
+        placeholders.register("quest-description", quest.getDescription());
+        placeholders.register("quest-thumbnail", quest.getThumbnail().name());
+        placeholders.register("quest-type", quest.getType().name());
+        placeholders.register("quest-objective", String.valueOf(quest.getGoal()));
+        placeholders.register("quest-lore-line", this.plugin.getQuestPlaceholder().getLoreLine(player, quest.getName()));
+        placeholders.register("quest-progress-bar", this.plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
+        placeholders.register("quest-percent", this.plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
+        placeholders.register("quest-progress", String.valueOf(this.plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
+        return placeholders;
     }
 
     @Override
@@ -108,5 +139,13 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
         public Quest getQuest() {
             return this.activeQuest != null ? this.activeQuest.getQuest() : this.completedQuest.quest();
         }
+
+        public boolean isActive() {
+            return this.activeQuest != null;
+        }
+    }
+
+    public record FavConfiguration(int offset, MenuItemStack enable, MenuItemStack disable, MenuItemStack completed) {
+
     }
 }

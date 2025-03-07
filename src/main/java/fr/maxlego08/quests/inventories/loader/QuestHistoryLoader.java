@@ -43,14 +43,27 @@ public class QuestHistoryLoader implements ButtonLoader {
 
         List<Integer> offsetSlots = configuration.getIntegerList(path + "offset-slots");
         boolean enabledCompleted = configuration.getBoolean(path + "enable-completed", true);
-        Loader<MenuItemStack> loader = new MenuItemStackLoader(this.plugin.getInventoryManager());
-        MenuItemStack completedQuest = null;
-        try {
-            completedQuest = loader.load(configuration, path + "completed-item.", new File(plugin.getDataFolder(), "inventories/quest-history.yml"));
-        } catch (InventoryException e) {
-            throw new RuntimeException(e);
-        }
+        int offsetCustomModelId = configuration.getInt(path + "offset-custom-model-id", 0);
 
-        return new QuestHistoryButton(this.plugin, offsetSlots, completedQuest, enabledCompleted);
+        File file = new File(plugin.getDataFolder(), "inventories/quest-history.yml");
+        MenuItemStack completedQuest = load(configuration, path + "completed-item.", file);
+        QuestHistoryButton.FavConfiguration favConfiguration = new QuestHistoryButton.FavConfiguration(
+                configuration.getInt(path + "favorite.offset", 0),
+                load(configuration, path + "favorite.enable.", file),
+                load(configuration, path + "favorite.disable.", file),
+                load(configuration, path + "favorite.completed.", file)
+        );
+
+        return new QuestHistoryButton(this.plugin, offsetSlots, completedQuest, enabledCompleted, offsetCustomModelId, favConfiguration);
+    }
+
+    private MenuItemStack load(YamlConfiguration configuration, String path, File file) {
+        try {
+            Loader<MenuItemStack> loader = new MenuItemStackLoader(this.plugin.getInventoryManager());
+            return loader.load(configuration, path, file);
+        } catch (InventoryException exception) {
+            exception.printStackTrace();
+        }
+        return null;
     }
 }

@@ -28,6 +28,9 @@ public class QuestPlaceholder extends ZUtils {
 
         localPlaceholder.register("name_", this::getQuestName);
         localPlaceholder.register("description_", this::getQuestDescription);
+        localPlaceholder.register("model_id_", (p, q) -> String.valueOf(this.getQuestModelId(p, q)));
+        localPlaceholder.register("is_favorite_", (p, q) -> String.valueOf(this.isFavorite(p, q)));
+        localPlaceholder.register("can_change_favorite_", (p, q) -> String.valueOf(this.canChangeFavorite(p, q)));
 
         localPlaceholder.register("thumbnail_", (player, questId) -> {
             Optional<Quest> optional = questManager.getQuest(questId);
@@ -116,6 +119,21 @@ public class QuestPlaceholder extends ZUtils {
         return optional.map(Quest::getDescription).orElse("Unknown");
     }
 
+    public int getQuestModelId(Player player, String questId) {
+        Optional<Quest> optional = questManager.getQuest(questId);
+        return optional.map(Quest::getCustomModelId).orElse(0);
+    }
+
+    public boolean canChangeFavorite(Player player, String questId) {
+        Optional<Quest> optional = questManager.getQuest(questId);
+        return optional.map(Quest::canChangeFavorite).orElse(false);
+    }
+
+    public boolean isFavorite(Player player, String questId) {
+        Optional<Quest> optional = questManager.getQuest(questId);
+        return optional.map(Quest::isFavorite).orElse(false);
+    }
+
     public boolean getQuestIsCompleted(Player player, String questId) {
         UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
         return userQuest.isQuestCompleted(questId);
@@ -140,7 +158,7 @@ public class QuestPlaceholder extends ZUtils {
         return completedQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
     }
 
-    public String getLoreLine(Player player, String questId){
+    public String getLoreLine(Player player, String questId) {
         long progress = getProgress(player, questId);
         long goal = getQuestObjective(player, questId);
 
