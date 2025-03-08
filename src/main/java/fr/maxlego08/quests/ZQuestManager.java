@@ -20,6 +20,7 @@ import fr.maxlego08.quests.api.event.events.QuestProgressEvent;
 import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.event.events.QuestUserLoadEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
+import fr.maxlego08.quests.api.utils.InventoryContent;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.QuestHistoryLoader;
@@ -28,6 +29,7 @@ import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -45,7 +47,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -235,12 +236,26 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.plugin.getStorageManager().load(player.getUniqueId(), userQuest -> {
             this.usersQuests.put(player.getUniqueId(), userQuest);
 
-            // this.plugin.getScheduler().runLater(w -> handleDefaultQuest(player.getUniqueId()), 500, TimeUnit.MILLISECONDS);
-            this.plugin.getScheduler().runNextTick(w -> handleDefaultQuest(player.getUniqueId()));
+            this.plugin.getScheduler().runNextTick(w -> {
+
+                var iterator = userQuest.getActiveQuests().listIterator();
+
+                while (iterator.hasNext()) {
+                    ActiveQuest activeQuest = iterator.next();
+                    if (activeQuest.isComplete()) {
+                        iterator.remove();
+                        activeQuest.getQuest().onComplete(activeQuest);
+                        this.completeQuest(activeQuest);
+                    }
+                }
+
+                handleDefaultQuest(player.getUniqueId());
+            });
         });
     }
 
     private void handleDefaultQuest(UUID uuid) {
+
         UserQuest userQuest = getUserQuest(uuid);
         var quests = this.quests.stream().filter(Quest::isAutoAccept).filter(quest -> userQuest.getActiveQuests().stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest)));
         this.startQuests(uuid, quests.toList());
@@ -336,14 +351,16 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public int handleInventoryQuests(Player player) {
+    public int handleInventoryQuests(InventoryContent inventoryContent) {
 
         int count = 0;
+        var player = inventoryContent.player();
+
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(player.getUniqueId());
 
         for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
-            if (activeQuest.getQuest().getType() == QuestType.INVENTORY_CONTENT && !activeQuest.isComplete() && activeQuest.isQuestAction(player)) {
+            if (activeQuest.getQuest().getType() == QuestType.INVENTORY_CONTENT && !activeQuest.isComplete() && activeQuest.isQuestAction(inventoryContent)) {
 
                 var optional = activeQuest.getQuest().getActions().stream().filter(e -> e instanceof InventoryContentAction).map(e -> (InventoryContentAction) e).findFirst();
                 if (optional.isEmpty()) continue;
@@ -455,10 +472,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public void completeQuest(CommandSender sender, Player player, String questName) {
 
         ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
-        if (activeQuest == null) {
-            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
-            return;
-        }
+        if (activeQuest == null) return;
 
         activeQuest.increment(activeQuest.getQuest().getGoal());
         getUserQuest(player.getUniqueId()).getActiveQuests().remove(activeQuest);
@@ -580,7 +594,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     private void handleCustomReward(UserQuest userQuest, ActiveQuest activeQuest) {
 
         Player player = Bukkit.getPlayer(activeQuest.getUniqueId());
-        if (player == null) return;
+        if (player == null) {
+            this.plugin.getLogger().severe("[CUSTOM REWARD] Player not found: " + activeQuest.getUniqueId() + ", unable to handle custom reward for quest " + activeQuest.getQuest().getName());
+            return;
+        }
 
         var quest = activeQuest.getQuest();
         Placeholders placeholders = new Placeholders();
@@ -647,7 +664,6 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public boolean callQuestEvent(UUID playerUniqueId, QuestEvent event) {
 
         var configuration = Config.eventConfigurations.get(event.getClass());
-        System.out.println(event.getClass() + " - " + configuration);
 
         boolean isCancelled = false;
 
@@ -659,10 +675,27 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
             if (configuration.updateScoreboard() && playerUniqueId != null) {
                 this.plugin.getScheduler().runLater(w -> this.plugin.getScoreboardHook().updateScoreboard(playerUniqueId), 1);
-                // this.plugin.getScoreboardHook().updateScoreboard(playerUniqueId);
             }
         }
 
         return isCancelled;
+    }
+
+    @Override
+    public void restartUserQuest(CommandSender sender, OfflinePlayer player, String questName) {
+
+        var userQuest = getUserQuest(player.getUniqueId());
+
+        var optional = userQuest.findComplete(questName);
+        if (optional.isEmpty()) {
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
+
+        var completedQuest = optional.get();
+        userQuest.getCompletedQuests().remove(completedQuest);
+        this.plugin.getStorageManager().delete(player.getUniqueId(), completedQuest);
+
+        message(sender, Message.QUEST_RESTART_SUCCESS, "%name%", questName, "%player%", player.getName());
     }
 }

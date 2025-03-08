@@ -43,6 +43,7 @@ public enum Message {
     DESCRIPTION_COMPLETE_ALL("Complete a quest group for a player"),
     DESCRIPTION_DELETE_ALL("Delete all quests for a player"),
     DESCRIPTION_DELETE("Delete a quest for a player"),
+    DESCRIPTION_RESTART("Restart a quest for a player"),
     DESCRIPTION_SET_PROGRESS("Set the progress of a quest for a player"),
     DESCRIPTION_SET_FAVORITE("Set a quest as favorite for a player"),
     DESCRIPTION_ADD_PROGRESS("Add a number to the progress of a quest for a player"),
@@ -63,7 +64,8 @@ public enum Message {
 
     PROGRESS_INVENTORY_INFO("&aThe player &f%player% &ahas finished &f%amount% &aquests in the inventory&a."),
     QUEST_CANT_CHANGE_FAVORITE("&cYou can not change the favorite of the quest &f%name%&c."),
-    QUEST_SET_FAVORITE_SUCCESS("&aYou have just set the favorite of the quest &f%name%&a for the player &f%player%&a."),;
+    QUEST_SET_FAVORITE_SUCCESS("&aYou have just set the favorite of the quest &f%name%&a for the player &f%player%&a."),
+    QUEST_RESTART_SUCCESS("&aThe player &f%player% &ahas just restarted the quest &f%name%&a."),;
 
     private ZPlugin plugin;
     private List<ZMessage> messages = new ArrayList<>();

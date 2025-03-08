@@ -24,11 +24,12 @@ public class InventoryContentQuestLoader implements QuestActionLoader {
 
     @Override
     public QuestAction load(TypedMapAccessor accessor, QuestType questType, File file) {
+        String citizenName = accessor.contains("citizen-name") ? accessor.getString("citizen-name") : null;
         Material material = accessor.contains("material") ? Material.valueOf(accessor.getString("material").toUpperCase()) : null;
         Tag<Material> materialTag = accessor.contains("tag") ? TagRegistry.getTag(accessor.getString("tag").toUpperCase()) : null;
         int customModelId = accessor.getInt("custom-model-id", 0);
 
-        return new InventoryContentAction(material, materialTag, customModelId);
+        return new InventoryContentAction(citizenName, material, materialTag, customModelId);
     }
 
     @Override

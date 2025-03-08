@@ -58,8 +58,8 @@ public interface StorageManager {
     /**
      * Upsert a completed quest for a user.
      *
-     * @param uuid            the unique identifier of the user
-     * @param completedQuest  the completed quest to upsert
+     * @param uuid           the unique identifier of the user
+     * @param completedQuest the completed quest to upsert
      */
     void upsert(UUID uuid, CompletedQuest completedQuest);
 
@@ -77,4 +77,12 @@ public interface StorageManager {
      * @param activeQuests the active quests to upsert
      */
     void upsert(List<ActiveQuest> activeQuests);
+
+    /**
+     * Delete a completed quest from the storage.
+     *
+     * @param uniqueId       the unique identifier of the user
+     * @param completedQuest the completed quest to delete
+     */
+    void delete(UUID uniqueId, CompletedQuest completedQuest);
 }

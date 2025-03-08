@@ -4,6 +4,7 @@ import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import fr.maxlego08.quests.commands.VCommand;
+import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.zcore.enums.Permission;
 import fr.maxlego08.quests.zcore.utils.commands.CommandType;
 import org.bukkit.entity.Player;
@@ -31,6 +32,7 @@ public class CommandQuests extends VCommand {
         this.addSubCommand(new CommandQuestsHelp(plugin));
         this.addSubCommand(new CommandQuestsProgressInventory(plugin));
         this.addSubCommand(new CommandQuestsSetFavorite(plugin));
+        this.addSubCommand(new CommandQuestsRestart(plugin));
 
         plugin.getConfig().getMapList("main-command-page").forEach(map -> {
             TypedMapAccessor typedMapAccessor = new TypedMapAccessor((Map<String, Object>) map);
@@ -45,7 +47,7 @@ public class CommandQuests extends VCommand {
             var result = this.questInventoryPages.stream()
                     .filter(questInventoryPage -> player.hasPermission(questInventoryPage.permission()))
                     .max(Comparator.comparingInt(QuestInventoryPage::priority))
-                    .orElse(new QuestInventoryPage("", "quests", 1, 0));
+                    .orElse(new QuestInventoryPage("", Config.mainCommandInventoryName, 1, 0));
             plugin.getQuestManager().openQuestInventory(player, result);
         } else syntaxMessage();
 

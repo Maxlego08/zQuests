@@ -2,6 +2,7 @@ package fr.maxlego08.quests.actions;
 
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.api.utils.InventoryContent;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;
@@ -11,11 +12,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class InventoryContentAction implements QuestAction {
 
+    private final String citizenName;
     private final Material material;
     private final Tag<Material> materialTag;
     private final int customModelId;
 
-    public InventoryContentAction(Material material, Tag<Material> materialTag, int customModelId) {
+    public InventoryContentAction(String citizenName, Material material, Tag<Material> materialTag, int customModelId) {
+        this.citizenName = citizenName;
         this.material = material;
         this.materialTag = materialTag;
         this.customModelId = customModelId;
@@ -28,9 +31,15 @@ public class InventoryContentAction implements QuestAction {
     @Override
     public boolean isAction(Object target) {
 
-        if (target instanceof Player player) {
+        if (target instanceof InventoryContent inventoryContent) {
+
+            Player player = inventoryContent.player();
+
+            if (inventoryContent.citizenName() != null && !inventoryContent.citizenName().equals(this.citizenName)) {
+                return false;
+            }
+
             int amount = this.countItems(player);
-            System.out.println("amount: " + amount);
             return amount > 0;
         }
 

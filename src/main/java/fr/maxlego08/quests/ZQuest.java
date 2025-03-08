@@ -60,8 +60,12 @@ public class ZQuest implements Quest {
     public void onComplete(ActiveQuest activeQuest) {
 
         Player player = Bukkit.getPlayer(activeQuest.getUniqueId());
-        if (player == null) return;
+        if (player == null) {
+            this.plugin.getLogger().severe("[COMPLETE] Player not found: " + activeQuest.getUniqueId() + ", unable to handle rewards for quest " + activeQuest.getQuest().getName());
+            return;
+        }
 
+        System.out.println("Rewards: " + rewards.size() + " - " + rewards);
         this.rewards.forEach(reward -> reward.preExecute(player, null, this.plugin.getInventoryManager().getFakeInventory(), new Placeholders()));
     }
 

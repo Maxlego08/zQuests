@@ -60,6 +60,8 @@ main-command-aliases:
   - rankup
   - q
 
+main-command-inventory-name: "quests"
+
 main-command-page:
   - permission: "quests.page.2"
     inventory: "quests"

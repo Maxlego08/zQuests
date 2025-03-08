@@ -18,6 +18,7 @@ import fr.maxlego08.quests.api.actions.LocationAction;
 import fr.maxlego08.quests.api.actions.MaterialAction;
 import fr.maxlego08.quests.api.actions.ResurrectAction;
 import fr.maxlego08.quests.api.actions.VoteAction;
+import fr.maxlego08.quests.api.utils.InventoryContent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Egg;
@@ -77,7 +78,7 @@ public enum QuestType {
             case CUBOID -> new LocationAction(this, (Location) target);
             case CUSTOM -> new CustomAction((String) target);
             case INVENTORY_OPEN -> new InventoryOpenAction((String) target);
-            case INVENTORY_CONTENT -> new InventoryContentAction();
+            case INVENTORY_CONTENT -> new InventoryContentAction((InventoryContent) target);
         };
     }
 

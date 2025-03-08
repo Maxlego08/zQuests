@@ -17,6 +17,7 @@ public class Config {
     public static ProgressBarConfig progressBar;
     public static String loreLinePlaceholderActive;
     public static String loreLinePlaceholderComplete;
+    public static String mainCommandInventoryName;
     public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
     public static SimpleDateFormat simpleDateFormat;
     public static PlaceholderFavorite placeholderFavorite;
@@ -51,6 +52,7 @@ public class Config {
         enableDebugTime = configuration.getBoolean("enable-debug-time", false);
         progressBar = loadProgressBarConfig(configuration, "progress-bar");
         simpleDateFormat = new SimpleDateFormat(configuration.getString("date-format", "dd/MM/yyyy HH:mm:ss"));
+        mainCommandInventoryName = configuration.getString("main-command-inventory-name", "quests");
 
         loreLinePlaceholderActive = configuration.getString("lore-line-placeholder.active", "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘");
         loreLinePlaceholderComplete = configuration.getString("lore-line-placeholder.complete", "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔");

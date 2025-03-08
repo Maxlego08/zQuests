@@ -2,7 +2,9 @@ package fr.maxlego08.quests.api;
 
 import fr.maxlego08.quests.api.event.QuestEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
+import fr.maxlego08.quests.api.utils.InventoryContent;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -99,7 +101,13 @@ public interface QuestManager {
      */
     int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
 
-    int handleInventoryQuests(Player player);
+    /**
+     * Handle inventory quests for the player.
+     *
+     * @param inventoryContent the player's current inventory content
+     * @return the number of active quests that were completed
+     */
+    int handleInventoryQuests(InventoryContent inventoryContent);
 
     /**
      * Handle static quests (quests that can be completed multiple times)
@@ -275,5 +283,22 @@ public interface QuestManager {
      */
     void setFavorite(CommandSender sender, Player player, String questName, boolean amount);
 
+    /**
+     * Call a quest event. This method will call the event and return
+     * whether or not the event was cancelled.
+     *
+     * @param playerUniqueId the uuid of the player that the event is for
+     * @param event          the event to call
+     * @return true if the event was cancelled, false otherwise
+     */
     boolean callQuestEvent(UUID playerUniqueId, QuestEvent event);
+
+    /**
+     * Restarts a quest for a player.
+     *
+     * @param sender        the command sender
+     * @param offlinePlayer the player to restart the quest for
+     * @param questName     the name of the quest to restart
+     */
+    void restartUserQuest(CommandSender sender, OfflinePlayer offlinePlayer, String questName);
 }

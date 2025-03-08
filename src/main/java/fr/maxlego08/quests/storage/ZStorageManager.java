@@ -148,6 +148,14 @@ public class ZStorageManager implements StorageManager {
     }
 
     @Override
+    public void delete(UUID uniqueId, CompletedQuest completedQuest) {
+        executor.execute(() -> this.requestHelper.delete("%prefix%" + Tables.COMPLETED_QUESTS, table -> {
+            table.where("unique_id", uniqueId);
+            table.where("name", completedQuest.quest().getName());
+        }));
+    }
+
+    @Override
     public void deleteQuest(@NotNull UUID uniqueId, String name) {
         executor.execute(() -> {
             this.requestHelper.delete("%prefix%" + Tables.ACTIVE_QUESTS, table -> table.where("unique_id", uniqueId).where("name", name));
@@ -174,7 +182,7 @@ public class ZStorageManager implements StorageManager {
             List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(uuid, quest, dto.created_at(), dto.amount(), dto.is_favorite())).orElse(null));
             List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at(), dto.started_at())).orElse(null));
 
-            activeQuests.removeIf(ActiveQuest::isComplete);
+            // activeQuests.removeIf(ActiveQuest::isComplete);
             consumer.accept(new ZUserQuest(activeQuests, completedQuests));
         });
     }
@@ -182,7 +190,7 @@ public class ZStorageManager implements StorageManager {
     /**
      * Maps a list of {@link T} objects to a list of {@link R} objects, filtering out any null values.
      *
-     * @param list the list of objects to map
+     * @param list   the list of objects to map
      * @param mapper the function to use to map each element of the list
      * @return a list of the mapped objects, with any null values filtered out
      */

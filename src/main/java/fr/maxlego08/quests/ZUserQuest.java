@@ -73,4 +73,9 @@ public class ZUserQuest implements UserQuest {
     public List<ActiveQuest> getFavoriteQuests() {
         return this.activeQuests.stream().filter(ActiveQuest::isFavorite).toList();
     }
+
+    @Override
+    public Optional<CompletedQuest> findComplete(String questName) {
+        return this.completedQuests.stream().filter(e -> e.quest().getName().equals(questName)).findFirst();
+    }
 }

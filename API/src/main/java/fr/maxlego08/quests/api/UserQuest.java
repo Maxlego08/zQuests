@@ -83,4 +83,12 @@ public interface UserQuest {
      * @return a list of favorite active quests
      */
     List<ActiveQuest> getFavoriteQuests();
+
+    /**
+     * Finds a completed quest by its name.
+     *
+     * @param questName the name of the quest to find
+     * @return an Optional containing the completed quest if found, otherwise an empty Optional
+     */
+    Optional<CompletedQuest> findComplete(String questName);
 }
