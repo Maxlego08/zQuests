@@ -65,7 +65,6 @@ public class ZQuest implements Quest {
             return;
         }
 
-        System.out.println("Rewards: " + rewards.size() + " - " + rewards);
         this.rewards.forEach(reward -> reward.preExecute(player, null, this.plugin.getInventoryManager().getFakeInventory(), new Placeholders()));
     }
 
