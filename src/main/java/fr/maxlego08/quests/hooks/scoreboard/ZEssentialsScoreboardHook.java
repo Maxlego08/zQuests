@@ -13,11 +13,9 @@ public class ZEssentialsScoreboardHook implements ScoreboardHook {
     public void updateScoreboard(UUID playerUniqueId) {
 
         var player = Bukkit.getPlayer(playerUniqueId);
-        System.out.println("Update : " + player);
         if (player == null) return;
 
         EssentialsPlugin essentialsPlugin = (EssentialsPlugin) Bukkit.getPluginManager().getPlugin(Plugins.ZESSENTIALS.getName());
-        System.out.println("Update 2 " + essentialsPlugin);
         if (essentialsPlugin == null) return;
 
         var manager = essentialsPlugin.getScoreboardManager();

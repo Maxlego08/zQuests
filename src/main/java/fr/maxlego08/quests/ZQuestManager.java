@@ -45,6 +45,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -232,9 +233,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public void handleJoin(Player player) {
         this.plugin.getStorageManager().load(player.getUniqueId(), userQuest -> {
-
             this.usersQuests.put(player.getUniqueId(), userQuest);
 
+            // this.plugin.getScheduler().runLater(w -> handleDefaultQuest(player.getUniqueId()), 500, TimeUnit.MILLISECONDS);
             this.plugin.getScheduler().runNextTick(w -> handleDefaultQuest(player.getUniqueId()));
         });
     }
@@ -642,7 +643,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         message(sender, Message.QUEST_SET_FAVORITE_SUCCESS, "%name%", questName, "%player%", player.getName(), "%favorite%", newValue);
     }
 
-    private boolean callQuestEvent(UUID playerUniqueId, QuestEvent event) {
+    @Override
+    public boolean callQuestEvent(UUID playerUniqueId, QuestEvent event) {
 
         var configuration = Config.eventConfigurations.get(event.getClass());
         System.out.println(event.getClass() + " - " + configuration);
@@ -656,7 +658,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             }
 
             if (configuration.updateScoreboard() && playerUniqueId != null) {
-                this.plugin.getScoreboardHook().updateScoreboard(playerUniqueId);
+                this.plugin.getScheduler().runLater(w -> this.plugin.getScoreboardHook().updateScoreboard(playerUniqueId), 1);
+                // this.plugin.getScoreboardHook().updateScoreboard(playerUniqueId);
             }
         }
 

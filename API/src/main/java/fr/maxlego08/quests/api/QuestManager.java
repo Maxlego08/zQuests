@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.api;
 
+import fr.maxlego08.quests.api.event.QuestEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import org.bukkit.command.CommandSender;
@@ -273,4 +274,6 @@ public interface QuestManager {
      * @param amount    true if the quest should be marked as favorite, false otherwise
      */
     void setFavorite(CommandSender sender, Player player, String questName, boolean amount);
+
+    boolean callQuestEvent(UUID playerUniqueId, QuestEvent event);
 }

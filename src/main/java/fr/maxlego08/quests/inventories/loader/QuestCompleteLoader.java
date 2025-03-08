@@ -39,7 +39,7 @@ public class QuestCompleteLoader implements ButtonLoader {
     public Button load(YamlConfiguration configuration, String path, DefaultButtonValue defaultButtonValue) {
 
         List<Quest> quests = configuration.getStringList(path + "quests").stream()
-                .map(questName -> plugin.getQuestManager().getQuest(questName))
+                .map(questName -> this.plugin.getQuestManager().getQuest(questName))
                 .filter(Optional::isPresent).map(Optional::get).toList();
 
         return new QuestCompleteButton(this.plugin, quests);

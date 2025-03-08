@@ -10,6 +10,7 @@ import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
+import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeEvent;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.zcore.utils.QuestPlaceholderUtil;
 import org.bukkit.entity.Player;
@@ -98,7 +99,10 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
             if (!quest.canChangeFavorite()) return;
 
             var activeQuest = questHistory.activeQuest;
-            activeQuest.setFavorite(!activeQuest.isFavorite());
+            QuestFavoriteChangeEvent event = new QuestFavoriteChangeEvent(player, activeQuest, !activeQuest.isFavorite());
+            if (this.plugin.getQuestManager().callQuestEvent(player.getUniqueId(), event)) return;
+
+            activeQuest.setFavorite(event.isFavorite());
             this.plugin.getStorageManager().upsert(activeQuest);
 
             this.plugin.getInventoryManager().updateInventory(player);
