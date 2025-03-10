@@ -10,12 +10,15 @@ public class ZQuestsGroup implements QuestsGroup {
 
     private final String name;
     private final String displayName;
-    private final List<Quest> quests;
+    private final List<String> questNames;
+    private final int defaultCustomModelId;
+    private List<Quest> quests;
 
-    public ZQuestsGroup(String name, String displayName, List<Quest> quests) {
+    public ZQuestsGroup(String name, String displayName, List<String> quests, int defaultCustomModelId) {
         this.name = name;
         this.displayName = displayName;
-        this.quests = quests;
+        this.questNames = quests;
+        this.defaultCustomModelId = defaultCustomModelId;
     }
 
     public String getName() {
@@ -30,6 +33,16 @@ public class ZQuestsGroup implements QuestsGroup {
     @Override
     public List<Quest> getQuests() {
         return quests;
+    }
+
+    @Override
+    public void setQuests(List<Quest> quests) {
+        this.quests = quests;
+    }
+
+    @Override
+    public List<String> getQuestNames() {
+        return this.questNames;
     }
 
     @Override
@@ -51,5 +64,10 @@ public class ZQuestsGroup implements QuestsGroup {
         }
 
         return false;
+    }
+
+    @Override
+    public int getDefaultCustomModelId() {
+        return this.defaultCustomModelId;
     }
 }

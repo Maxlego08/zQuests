@@ -128,13 +128,15 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             this.plugin.saveResource("quests/example_craft.yml", false);
         }
 
+        // Load groups before quests
+        this.loadGroups();
+
         this.quests.clear();
         this.customRewards.clear();
 
         this.files(folder, file -> this.quests.addAll(this.loadQuests(file)));
 
         // Check quests names
-
         Set<String> questNames = new HashSet<>();
         Iterator<Quest> iterator = this.quests.iterator();
         while (iterator.hasNext()) {
@@ -152,7 +154,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.loadCustomRewards(this.plugin.getConfig(), new File(this.plugin.getDataFolder(), "config.yml"));
         this.plugin.getLogger().info(this.customRewards.size() + " custom rewards loaded");
 
-        this.loadGroups();
+        for (QuestsGroup value : this.groups.values()) {
+            value.setQuests(value.getQuestNames().stream().map(this::getQuest).filter(Optional::isPresent).map(Optional::get).toList());
+        }
     }
 
     private void loadGroups() {
@@ -170,9 +174,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             if (currentSection == null) continue;
 
             String displayName = currentSection.getString("display-name", key);
-            List<Quest> quests = currentSection.getStringList("quests").stream().map(this::getQuest).filter(Optional::isPresent).map(Optional::get).toList();
+            int customModelId = currentSection.getInt("custom-model-id", 0);
+            List<String> quests = currentSection.getStringList("quests");
 
-            this.groups.put(key, new ZQuestsGroup(key, displayName, quests));
+            this.groups.put(key, new ZQuestsGroup(key, displayName, quests, customModelId));
         }
     }
 

@@ -11,6 +11,7 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestActionLoader;
 import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.loader.BrewQuestLoader;
 import fr.maxlego08.quests.loader.CommandQuestLoader;
 import fr.maxlego08.quests.loader.CraftQuestLoader;
@@ -56,7 +57,8 @@ public class QuestLoader extends ZUtils {
         try {
 
             QuestType questType = QuestType.valueOf(accessor.getString("type", QuestType.BLOCK_BREAK.name()).toUpperCase());
-            String name = accessor.getString("name");
+            String name = accessor.getString("name", "default-quest-name");
+
             String displayName = accessor.getString("display-name", name);
             String description = accessor.getString("description", "no description");
             Material thumbnail = accessor.contains("thumbnail") ? Material.valueOf(accessor.getString("thumbnail").toUpperCase()) : null;
@@ -65,7 +67,8 @@ public class QuestLoader extends ZUtils {
             boolean useGlobalRewards = accessor.getBoolean("use-global-rewards", true);
             boolean canChangeFavorite = accessor.getBoolean("can-change-favorite", true);
             boolean isFavorite = accessor.getBoolean("favorite", false);
-            int customModelId = accessor.getInt("custom-model-id", accessor.getInt("custom-model-data", 0));
+
+            int customModelId = accessor.getInt("custom-model-id", accessor.getInt("custom-model-data", getDefaultCustomModelId(name)));
 
             List<Map<String, Object>> rewardsMap = accessor.contains("rewards") ? (List<Map<String, Object>>) accessor.getList("rewards") : new ArrayList<>();
             List<Action> rewards = plugin.getButtonManager().loadActions(rewardsMap, "quests", file);
@@ -102,6 +105,10 @@ public class QuestLoader extends ZUtils {
             exception.printStackTrace();
             return null;
         }
+    }
+
+    private int getDefaultCustomModelId(String questName) {
+        return this.plugin.getQuestManager().getGroups().values().stream().filter(e -> e.getQuestNames().contains(questName)).findFirst().map(QuestsGroup::getDefaultCustomModelId).orElse(0);
     }
 
 }
