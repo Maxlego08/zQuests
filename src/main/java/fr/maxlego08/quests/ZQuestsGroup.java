@@ -12,13 +12,15 @@ public class ZQuestsGroup implements QuestsGroup {
     private final String displayName;
     private final List<String> questNames;
     private final int defaultCustomModelId;
+    private final boolean isProgression;
     private List<Quest> quests;
 
-    public ZQuestsGroup(String name, String displayName, List<String> quests, int defaultCustomModelId) {
+    public ZQuestsGroup(String name, String displayName, List<String> quests, int defaultCustomModelId, boolean isProgression) {
         this.name = name;
         this.displayName = displayName;
         this.questNames = quests;
         this.defaultCustomModelId = defaultCustomModelId;
+        this.isProgression = isProgression;
     }
 
     public String getName() {
@@ -69,5 +71,10 @@ public class ZQuestsGroup implements QuestsGroup {
     @Override
     public int getDefaultCustomModelId() {
         return this.defaultCustomModelId;
+    }
+
+    @Override
+    public boolean isProgression() {
+        return isProgression;
     }
 }

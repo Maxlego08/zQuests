@@ -257,7 +257,7 @@ public interface QuestManager {
      * @param key the name of the quest group to retrieve
      * @return an Optional containing the quest group if found, otherwise an empty Optional
      */
-    Optional<QuestsGroup> getGroup(String key);
+    Optional<QuestsGroup> getGroups(String key);
 
     /**
      * Retrieve all quest groups.
@@ -305,6 +305,14 @@ public interface QuestManager {
 
     /**
      * Retrieves the quest group of the given quest.
+     *
+     * @param quest the quest to get the group of
+     * @return an Optional containing the quest group if found, otherwise an empty Optional
+     */
+    List<QuestsGroup> getGroups(Quest quest);
+
+    /**
+     * Retrieves the quest group that the given quest is part of.
      *
      * @param quest the quest to get the group of
      * @return an Optional containing the quest group if found, otherwise an empty Optional

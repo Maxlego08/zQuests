@@ -35,7 +35,7 @@ public class ChangeQuestGroupButton extends ZButton {
         String currentGroup = userQuest.getCurrentGroup();
 
         for (String groupName : groups) {
-            var optional = this.plugin.getQuestManager().getGroup(groupName);
+            var optional = this.plugin.getQuestManager().getGroups(groupName);
             String displayName = groupName.equalsIgnoreCase("all") ? (currentGroup == null ? this.enableText : this.disableText).replace("%display-name%", Config.globalGroupName) : optional.map(group -> (groupName.equals(currentGroup) ? this.enableText : this.disableText).replace("%display-name%", group.getDisplayName())).orElse(groupName);
 
             placeholders.register(groupName, displayName);

@@ -54,4 +54,14 @@ public interface QuestsGroup {
      * @return the default custom model ID for the quest group
      */
     int getDefaultCustomModelId();
+
+    /**
+     * Checks if the quest group is a progression group.
+     *
+     * A progression group is a group of quests that must be completed in order.
+     * The order is determined by the order of the quests in the list returned by {@link #getQuests()}.
+     *
+     * @return true if the quest group is a progression group, false otherwise
+     */
+    boolean isProgression();
 }
