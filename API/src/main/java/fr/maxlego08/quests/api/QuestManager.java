@@ -3,6 +3,7 @@ package fr.maxlego08.quests.api;
 import fr.maxlego08.quests.api.event.QuestEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
 import fr.maxlego08.quests.api.utils.InventoryContent;
+import fr.maxlego08.quests.api.utils.QuestHistory;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -301,4 +302,20 @@ public interface QuestManager {
      * @param questName     the name of the quest to restart
      */
     void restartUserQuest(CommandSender sender, OfflinePlayer offlinePlayer, String questName);
+
+    /**
+     * Retrieves the quest group of the given quest.
+     *
+     * @param quest the quest to get the group of
+     * @return an Optional containing the quest group if found, otherwise an empty Optional
+     */
+    Optional<QuestsGroup> getGroup(Quest quest);
+
+    /**
+     * Retrieves a list of quests to display for the given player.
+     *
+     * @param player the player for whom the quests will be displayed
+     * @return a list of QuestHistory objects representing the quests to display
+     */
+    List<QuestHistory> getDisplayQuests(Player player);
 }

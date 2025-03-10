@@ -21,7 +21,9 @@ import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.event.events.QuestUserLoadEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
 import fr.maxlego08.quests.api.utils.InventoryContent;
+import fr.maxlego08.quests.api.utils.QuestHistory;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
+import fr.maxlego08.quests.inventories.loader.ChangeQuestGroupLoader;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.QuestHistoryLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
@@ -68,6 +70,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         buttonManager.registerAction(new StartQuestLoader(this.plugin));
         buttonManager.register(new QuestCompleteLoader(this.plugin));
         buttonManager.register(new QuestHistoryLoader(this.plugin));
+        buttonManager.register(new ChangeQuestGroupLoader(this.plugin));
     }
 
     @Override
@@ -399,9 +402,20 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public Optional<ActiveQuest> addQuestToPlayer(UUID uuid, Quest quest, boolean store) {
-        // Create a new active quest for the player
-        ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, new Date(), 0, quest.isFavorite());
+
         var userQuest = getUserQuest(uuid);
+
+        boolean isFavorite = quest.isFavorite();
+        if (!isFavorite) {
+            var optional = getGroup(quest);
+            if (optional.isPresent()) {
+                var group = optional.get();
+                isFavorite = group.needFavorite(quest, userQuest);
+            }
+        }
+
+        // Create a new active quest for the player
+        ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, new Date(), 0, isFavorite);
 
         // Check if the user already completes the quest
         if (userQuest.getCompletedQuests().stream().anyMatch(completedQuest -> completedQuest.quest().equals(quest))) {
@@ -422,6 +436,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
+    public Optional<QuestsGroup> getGroup(Quest quest) {
+        return this.groups.values().stream().filter(e -> e.getQuests().contains(quest)).findFirst();
+    }
+
+    @Override
     public List<ActiveQuest> getQuestsFromPlayer(UUID uuid) {
         return getUserQuest(uuid).getActiveQuests();
     }
@@ -430,6 +449,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public Optional<Quest> getQuest(String name) {
         return this.quests.stream().filter(quest -> quest.getName().equalsIgnoreCase(name)).findFirst();
     }
+
 
     @Override
     public void completeQuest(ActiveQuest activeQuest) {
@@ -697,5 +717,22 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.plugin.getStorageManager().delete(player.getUniqueId(), completedQuest);
 
         message(sender, Message.QUEST_RESTART_SUCCESS, "%name%", questName, "%player%", player.getName());
+    }
+
+    @Override
+    public List<QuestHistory> getDisplayQuests(Player player) {
+        var userQuests = this.getUserQuest(player.getUniqueId());
+        var currentGroup = userQuests.getCurrentGroup();
+
+        List<QuestHistory> quests = new ArrayList<>();
+        quests.addAll(userQuests.getActiveQuests().stream().filter(e -> isQuestGroup(e.getQuest(), currentGroup)).map(e -> new QuestHistory(e, null)).toList());
+        quests.addAll(userQuests.getCompletedQuests().stream().filter(e -> isQuestGroup(e.quest(), currentGroup)).map(e -> new QuestHistory(null, e)).toList());
+
+        return quests;
+    }
+
+    private boolean isQuestGroup(Quest quest, String currentGroupName) {
+        var optional = getGroup(quest);
+        return currentGroupName == null || optional.isPresent() && optional.get().getName().equals(currentGroupName);
     }
 }

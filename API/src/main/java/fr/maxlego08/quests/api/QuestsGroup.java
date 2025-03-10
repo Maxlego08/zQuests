@@ -4,10 +4,34 @@ import java.util.List;
 
 public interface QuestsGroup {
 
+    /**
+     * Retrieves the unique name of the quest group.
+     *
+     * @return the name of the quest group
+     */
     String getName();
 
+    /**
+     * Gets the display name of the quest group.
+     *
+     * @return the display name of the quest group
+     */
     String getDisplayName();
 
+    /**
+     * Gets the list of quests associated with this quest group.
+     *
+     * @return the list of quests associated with this quest group
+     */
     List<Quest> getQuests();
+
+    /**
+     * Determines if a quest needs to be marked as a favorite for a user.
+     *
+     * @param quest the quest to check
+     * @param userQuest the user's quest data
+     * @return true if the quest needs to be marked as a favorite, false otherwise
+     */
+    boolean needFavorite(Quest quest, UserQuest userQuest);
 
 }

@@ -21,6 +21,7 @@ public class Config {
     public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
     public static SimpleDateFormat simpleDateFormat;
     public static PlaceholderFavorite placeholderFavorite;
+    public static String globalGroupName;
 
     /**
      * static Singleton instance.
@@ -53,6 +54,7 @@ public class Config {
         progressBar = loadProgressBarConfig(configuration, "progress-bar");
         simpleDateFormat = new SimpleDateFormat(configuration.getString("date-format", "dd/MM/yyyy HH:mm:ss"));
         mainCommandInventoryName = configuration.getString("main-command-inventory-name", "quests");
+        globalGroupName = configuration.getString("global-group-display-name", "Global");
 
         loreLinePlaceholderActive = configuration.getString("lore-line-placeholder.active", "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘");
         loreLinePlaceholderComplete = configuration.getString("lore-line-placeholder.complete", "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔");

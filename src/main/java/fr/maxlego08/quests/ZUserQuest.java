@@ -13,6 +13,7 @@ public class ZUserQuest implements UserQuest {
 
     private final List<ActiveQuest> activeQuests;
     private final List<CompletedQuest> completedQuests;
+    private String currentGroup;
 
     public ZUserQuest() {
         this.activeQuests = new ArrayList<>();
@@ -65,6 +66,11 @@ public class ZUserQuest implements UserQuest {
     }
 
     @Override
+    public Optional<ActiveQuest> findActive(Quest quest) {
+        return findActive(quest.getName());
+    }
+
+    @Override
     public void removeActiveQuest(ActiveQuest activeQuest) {
         this.activeQuests.remove(activeQuest);
     }
@@ -77,5 +83,20 @@ public class ZUserQuest implements UserQuest {
     @Override
     public Optional<CompletedQuest> findComplete(String questName) {
         return this.completedQuests.stream().filter(e -> e.quest().getName().equals(questName)).findFirst();
+    }
+
+    @Override
+    public Optional<CompletedQuest> findComplete(Quest quest) {
+        return this.findComplete(quest.getName());
+    }
+
+    @Override
+    public void setCurrentGroup(String currentGroup) {
+        this.currentGroup = currentGroup;
+    }
+
+    @Override
+    public String getCurrentGroup() {
+        return this.currentGroup;
     }
 }

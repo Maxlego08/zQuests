@@ -114,6 +114,8 @@ quests-groups:
       - "block-break-2"
       - "block-break-3"
 
+global-group-display-name: "Global"
+
 # Manages quest-related events
 events:
   - event: QuestStartEvent # Triggered when a quest begins

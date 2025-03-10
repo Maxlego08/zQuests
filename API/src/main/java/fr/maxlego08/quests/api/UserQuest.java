@@ -71,6 +71,14 @@ public interface UserQuest {
     Optional<ActiveQuest> findActive(String questName);
 
     /**
+     * Finds an active quest by its quest object.
+     *
+     * @param quest the quest object to find
+     * @return an Optional containing the active quest if found, otherwise an empty Optional
+     */
+    Optional<ActiveQuest> findActive(Quest quest);
+
+    /**
      * Removes an active quest from the user's active quests.
      *
      * @param activeQuest the active quest to remove
@@ -91,4 +99,26 @@ public interface UserQuest {
      * @return an Optional containing the completed quest if found, otherwise an empty Optional
      */
     Optional<CompletedQuest> findComplete(String questName);
+
+    /**
+     * Finds a completed quest by its quest object.
+     *
+     * @param quest the quest object to find
+     * @return an Optional containing the completed quest if found, otherwise an empty Optional
+     */
+    Optional<CompletedQuest> findComplete(Quest quest);
+
+    /**
+     * Retrieves the current quest group for the user.
+     *
+     * @return the name of the current quest group
+     */
+    String getCurrentGroup();
+
+    /**
+     * Sets the current quest group for the user.
+     *
+     * @param group the name of the new current quest group
+     */
+    void setCurrentGroup(String group);
 }
