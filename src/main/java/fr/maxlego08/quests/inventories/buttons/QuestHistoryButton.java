@@ -52,8 +52,6 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
 
         var quests = this.manager.getDisplayQuests(player);
 
-        quests = quests.stream().sorted(Comparator.comparingInt(QuestHistory::sortActive)).sorted(Comparator.comparingInt(QuestHistory::sortFav).reversed()).sorted(Comparator.comparingInt(QuestHistory::sortCompletedDate)).toList();
-
         this.paginate(quests, inventory, (slot, questHistory) -> {
 
             var menuItemStack = questHistory.isActive() ? this.getItemStack() : this.completedItem;

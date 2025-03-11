@@ -13,6 +13,7 @@ import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,7 +83,7 @@ public class QuestPlaceholder extends ZUtils {
 
         placeholder.register("favorite_quests", player -> {
             var user = questManager.getUserQuest(player.getUniqueId());
-            var favoriteQuests = user.getFavoriteQuests().stream().limit(Config.placeholderFavorite.limit()).toList();
+            var favoriteQuests = user.getFavoriteQuests().stream().sorted(Comparator.comparing(ActiveQuest::getCreatedAt)).limit(Config.placeholderFavorite.limit()).toList();
             if (favoriteQuests.isEmpty()) return Config.placeholderFavorite.empty();
 
             StringBuilder builder = new StringBuilder();

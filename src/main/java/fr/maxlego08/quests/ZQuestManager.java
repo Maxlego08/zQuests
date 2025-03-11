@@ -39,6 +39,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -752,7 +753,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         quests.addAll(userQuests.getActiveQuests().stream().filter(e -> isQuestGroup(e.getQuest(), currentGroup)).map(e -> new QuestHistory(e, null)).toList());
         quests.addAll(userQuests.getCompletedQuests().stream().filter(e -> isQuestGroup(e.quest(), currentGroup)).map(e -> new QuestHistory(null, e)).toList());
 
-        return quests;
+        return quests.stream() //
+                .sorted(Comparator.comparingInt(QuestHistory::sortActive)) // Sort Active
+                .sorted(Comparator.comparingInt(QuestHistory::sortFav).reversed()) // Sort Fav
+                .sorted(Comparator.comparingInt(QuestHistory::sortCompletedDate)) // Sort completed date
+                .toList();
     }
 
     private boolean isQuestGroup(Quest quest, String currentGroupName) {
