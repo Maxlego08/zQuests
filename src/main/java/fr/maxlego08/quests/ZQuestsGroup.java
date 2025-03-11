@@ -11,14 +11,16 @@ public class ZQuestsGroup implements QuestsGroup {
     private final String name;
     private final String displayName;
     private final List<String> questNames;
+    private final List<QuestsGroup> subGroups;
     private final int defaultCustomModelId;
     private final boolean isProgression;
     private List<Quest> quests;
 
-    public ZQuestsGroup(String name, String displayName, List<String> quests, int defaultCustomModelId, boolean isProgression) {
+    public ZQuestsGroup(String name, String displayName, List<String> quests, List<QuestsGroup> subGroups, int defaultCustomModelId, boolean isProgression) {
         this.name = name;
         this.displayName = displayName;
         this.questNames = quests;
+        this.subGroups = subGroups;
         this.defaultCustomModelId = defaultCustomModelId;
         this.isProgression = isProgression;
     }
@@ -76,5 +78,15 @@ public class ZQuestsGroup implements QuestsGroup {
     @Override
     public boolean isProgression() {
         return isProgression;
+    }
+
+    @Override
+    public boolean contains(String groupName) {
+        return this.name.equalsIgnoreCase(groupName) || this.subGroups.stream().anyMatch(e -> e.contains(groupName));
+    }
+
+    @Override
+    public List<QuestsGroup> getSubGroups() {
+        return subGroups;
     }
 }

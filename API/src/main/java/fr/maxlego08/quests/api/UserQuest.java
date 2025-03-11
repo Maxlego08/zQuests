@@ -121,4 +121,8 @@ public interface UserQuest {
      * @param group the name of the new current quest group
      */
     void setCurrentGroup(String group);
+
+    boolean isExtend();
+
+    void setExtend(boolean extend);
 }

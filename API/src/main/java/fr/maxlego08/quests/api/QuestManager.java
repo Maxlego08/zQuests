@@ -257,14 +257,14 @@ public interface QuestManager {
      * @param key the name of the quest group to retrieve
      * @return an Optional containing the quest group if found, otherwise an empty Optional
      */
-    Optional<QuestsGroup> getGroups(String key);
+    Optional<QuestsGroup> getGroup(String key);
 
     /**
      * Retrieve all quest groups.
      *
      * @return a map where the keys are group names and the values are the corresponding quest groups
      */
-    Map<String, QuestsGroup> getGroups();
+    Map<String, QuestsGroup> getGroup();
 
     /**
      * Starts all the given quests for the player with the given uuid.

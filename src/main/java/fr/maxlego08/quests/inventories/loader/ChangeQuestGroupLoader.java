@@ -38,8 +38,10 @@ public class ChangeQuestGroupLoader implements ButtonLoader {
 
         String enableText = configuration.getString(path + "enable-text", "&a%display-name%");
         String disableText = configuration.getString(path + "disable-text", "&c%display-name%");
+        String extendEnableText = configuration.getString(path + "extend-enable-text", "  &a%display-name%");
+        String extendDisableText = configuration.getString(path + "extend-disable-text", "  &c%display-name%");
         List<String> groups = configuration.getStringList(path + "groups");
 
-        return new ChangeQuestGroupButton(this.plugin, enableText, disableText, groups);
+        return new ChangeQuestGroupButton(this.plugin, enableText, disableText, extendEnableText, extendDisableText, groups);
     }
 }

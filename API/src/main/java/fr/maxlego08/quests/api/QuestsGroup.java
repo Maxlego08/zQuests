@@ -64,4 +64,8 @@ public interface QuestsGroup {
      * @return true if the quest group is a progression group, false otherwise
      */
     boolean isProgression();
+
+    boolean contains(String groupName);
+
+    List<QuestsGroup> getSubGroups();
 }

@@ -191,7 +191,12 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             var isProgression = currentSection.getBoolean("progression", false);
             List<String> quests = currentSection.getStringList("quests");
 
-            this.groups.put(key, new ZQuestsGroup(key, displayName, quests, customModelId, isProgression));
+            List<QuestsGroup> subGroups = new ArrayList<>();
+            for (String subGroupName : currentSection.getStringList("sub-groups")) {
+                getGroup(subGroupName).ifPresentOrElse(subGroups::add, () -> this.plugin.getLogger().severe("The group " + subGroupName + " doesn't exist !"));
+            }
+
+            this.groups.put(key, new ZQuestsGroup(key, displayName, quests, subGroups, customModelId, isProgression));
         }
     }
 
@@ -523,7 +528,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public void completeQuestGroup(CommandSender sender, Player player, String groupName) {
 
-        var optional = getGroups(groupName);
+        var optional = getGroup(groupName);
         if (optional.isEmpty()) {
             message(sender, Message.GROUP_NOT_FOUND, "%name%", groupName);
             return;
@@ -664,12 +669,12 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public Map<String, QuestsGroup> getGroups() {
+    public Map<String, QuestsGroup> getGroup() {
         return this.groups;
     }
 
     @Override
-    public Optional<QuestsGroup> getGroups(String key) {
+    public Optional<QuestsGroup> getGroup(String key) {
         return Optional.ofNullable(this.groups.get(key));
     }
 

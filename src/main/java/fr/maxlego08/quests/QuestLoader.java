@@ -108,7 +108,7 @@ public class QuestLoader extends ZUtils {
     }
 
     private int getDefaultCustomModelId(String questName) {
-        return this.plugin.getQuestManager().getGroups().values().stream().filter(e -> e.getQuestNames().contains(questName)).findFirst().map(QuestsGroup::getDefaultCustomModelId).orElse(0);
+        return this.plugin.getQuestManager().getGroup().values().stream().filter(e -> e.getQuestNames().contains(questName)).findFirst().map(QuestsGroup::getDefaultCustomModelId).orElse(0);
     }
 
 }

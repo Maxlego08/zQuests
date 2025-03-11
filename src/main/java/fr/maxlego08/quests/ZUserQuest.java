@@ -14,6 +14,7 @@ public class ZUserQuest implements UserQuest {
     private final List<ActiveQuest> activeQuests;
     private final List<CompletedQuest> completedQuests;
     private String currentGroup;
+    private boolean isExtend;
 
     public ZUserQuest() {
         this.activeQuests = new ArrayList<>();
@@ -91,12 +92,22 @@ public class ZUserQuest implements UserQuest {
     }
 
     @Override
-    public void setCurrentGroup(String currentGroup) {
-        this.currentGroup = currentGroup;
+    public boolean isExtend() {
+        return this.isExtend;
+    }
+
+    @Override
+    public void setExtend(boolean extend) {
+        this.isExtend = extend;
     }
 
     @Override
     public String getCurrentGroup() {
         return this.currentGroup;
+    }
+
+    @Override
+    public void setCurrentGroup(String currentGroup) {
+        this.currentGroup = currentGroup;
     }
 }
