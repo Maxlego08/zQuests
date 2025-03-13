@@ -14,7 +14,6 @@ import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.zcore.utils.QuestPlaceholderUtil;
 import org.bukkit.entity.Player;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class QuestHistoryButton extends ZButton implements PaginateButton {
@@ -22,18 +21,22 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
     private final QuestsPlugin plugin;
     private final List<Integer> offsetSlots;
     private final MenuItemStack completedItem;
-    private final boolean enableCompleted;
     private final int offsetCustomModelId;
     private final FavConfiguration favConfiguration;
+    private final MenuItemStack additionalInformationItem;
+    private final int additionalInformationOffset;
+    private final boolean enableAdditionalInformation;
     private final QuestManager manager;
 
-    public QuestHistoryButton(QuestsPlugin plugin, List<Integer> offsetSlots, MenuItemStack completedItem, boolean enableCompleted, int offsetCustomModelId, FavConfiguration favConfiguration) {
+    public QuestHistoryButton(QuestsPlugin plugin, List<Integer> offsetSlots, MenuItemStack completedItem, int offsetCustomModelId, FavConfiguration favConfiguration, MenuItemStack additionalInformation, int additionalInformationOffset, boolean enableAdditionalInformation) {
         this.plugin = plugin;
         this.offsetSlots = offsetSlots;
         this.completedItem = completedItem;
-        this.enableCompleted = enableCompleted;
         this.offsetCustomModelId = offsetCustomModelId;
         this.favConfiguration = favConfiguration;
+        this.additionalInformationItem = additionalInformation;
+        this.additionalInformationOffset = additionalInformationOffset;
+        this.enableAdditionalInformation = enableAdditionalInformation;
         this.manager = this.plugin.getQuestManager();
     }
 
@@ -68,13 +71,15 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
 
                 placeholders.register("quest-model-id", String.valueOf(offsetSlot == 0 ? quest.getCustomModelId() : this.offsetCustomModelId));
 
-                inventory.addItem(slot + offsetSlot, menuItemStack.build(player, false, placeholders)).setClick(e -> {
-
-                });
+                inventory.addItem(slot + offsetSlot, menuItemStack.build(player, false, placeholders)).setClick(e -> super.onClick(player, e, inventory, slot, placeholders));
             }
 
             // Fav Configuration
             this.displayFav(player, questHistory, inventory, slot, placeholders);
+            
+            if (this.enableAdditionalInformation) {
+                inventory.addItem(slot + this.additionalInformationOffset, this.additionalInformationItem.build(player, false, placeholders));
+            }
         });
     }
 

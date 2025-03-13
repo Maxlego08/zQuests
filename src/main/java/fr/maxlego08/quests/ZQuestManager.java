@@ -769,4 +769,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public Optional<QuestsGroup> getGroup(Quest quest) {
         return this.groups.values().stream().filter(e -> e.getQuests().contains(quest) && e.isProgression()).findFirst();
     }
+
+    @Override
+    public Optional<QuestsGroup> getGlobalGroup(Quest quest) {
+        return this.groups.values().stream().filter(e -> e.getQuests().contains(quest) && !e.isProgression()).findFirst();
+    }
 }

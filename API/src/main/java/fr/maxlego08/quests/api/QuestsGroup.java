@@ -65,7 +65,20 @@ public interface QuestsGroup {
      */
     boolean isProgression();
 
+    /**
+     * Checks if the quest group contains a subgroup with the specified name.
+     *
+     * @param groupName the name of the subgroup to check for
+     * @return true if the subgroup with the specified name exists, false otherwise
+     */
     boolean contains(String groupName);
 
+    /**
+     * Gets the list of subgroups associated with this quest group.
+     *
+     * A subgroup is a quest group that contains other quest groups.
+     *
+     * @return the list of subgroups associated with this quest group
+     */
     List<QuestsGroup> getSubGroups();
 }

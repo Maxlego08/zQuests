@@ -84,7 +84,7 @@ public class InventoryContentAction implements QuestAction {
 
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack itemStack = inventory.getItem(i);
-            if (itemStack == null || itemStack.getType().isAir()) continue;
+            if (itemStack == null || itemStack.getType().isAir() || !isItemStack(itemStack)) continue;
 
             int itemAmount = itemStack.getAmount();
             int remove = Math.min(itemAmount, amountToRemove - removed);

@@ -320,6 +320,18 @@ public interface QuestManager {
     Optional<QuestsGroup> getGroup(Quest quest);
 
     /**
+     * Retrieves the global quest group that the given quest is part of.
+     * <p>
+     * This method returns an empty Optional if the quest is not part of a global group.
+     * <p>
+     * A global group is a group that is not associated with any player.
+     *
+     * @param quest the quest to get the global group of
+     * @return an Optional containing the global quest group if found, otherwise an empty Optional
+     */
+    Optional<QuestsGroup> getGlobalGroup(Quest quest);
+
+    /**
      * Retrieves a list of quests to display for the given player.
      *
      * @param player the player for whom the quests will be displayed

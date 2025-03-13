@@ -3,11 +3,12 @@ package fr.maxlego08.quests.zcore.utils;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.Quest;
+import fr.maxlego08.quests.api.QuestsGroup;
 import org.bukkit.entity.Player;
 
 public class QuestPlaceholderUtil {
 
-    public static Placeholders createPlaceholder(QuestsPlugin plugin, Player player, Quest quest){
+    public static Placeholders createPlaceholder(QuestsPlugin plugin, Player player, Quest quest) {
         Placeholders placeholders = new Placeholders();
 
         placeholders.register("quest-name", quest.getName());
@@ -20,6 +21,9 @@ public class QuestPlaceholderUtil {
         placeholders.register("quest-progress-bar", plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
         placeholders.register("quest-percent", plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
         placeholders.register("quest-progress", String.valueOf(plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
+
+        var optional = plugin.getQuestManager().getGlobalGroup(quest);
+        placeholders.register("quest-global-group-name", optional.map(QuestsGroup::getDisplayName).orElse("Impossible de trouver le groupe global"));
 
         return placeholders;
     }
