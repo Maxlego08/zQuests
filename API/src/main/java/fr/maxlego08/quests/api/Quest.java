@@ -108,4 +108,13 @@ public interface Quest {
      */
     int getCustomModelId();
 
+
+    /**
+     * Checks if the quest can be activated only once. For example, when talking to an NPC,
+     * this quest will interrupt the activation of other quests.
+     *
+     * @return true if the quest can be activated only once, false otherwise
+     */
+    boolean isUnique();
+
 }

@@ -10,8 +10,8 @@ public class CompletedQuestsCreateMigration extends Migration {
         this.create("%prefix%" + Tables.COMPLETED_QUESTS, table -> {
             table.uuid("unique_id").primary();
             table.string("name", 255).primary();
-            table.timestamp("started_at");
-            table.timestamp("completed_at");
+            table.timestamp("started_at").defaultValue("CURRENT_TIMESTAMP");
+            table.timestamp("completed_at").defaultValue("CURRENT_TIMESTAMP");
         });
     }
 }
