@@ -9,7 +9,7 @@ enable-debug-time: true
 # Storage:
 # SQLITE - For the launch of the plugin only.
 # MYSQL - Allows creating a simple connection to the database, only for small servers.
-# HIKARICP - HikariCP is a fast and lightweight JDBC connection pool. It optimizes database connections, ensuring quick acquisition and low latency. This improves performance and reliability, making it ideal for high-demand applications.
+# HIKARICP - RECOMMENDED - HikariCP is a fast and lightweight JDBC connection pool. It optimizes database connections, ensuring quick acquisition and low latency. This improves performance and reliability, making it ideal for high-demand applications.
 #
 # We advise you to use MYSQL or HIKARICP, the SQLITE storage is only there to install the plugin and do some tests, not all features are available with SQLITE yet.
 # The plugin will work, but some features like sanctions update when launching the plugin will not work.
@@ -17,9 +17,9 @@ enable-debug-time: true
 storage-type: SQLITE
 
 # Configuration of your database, it is recommended to use the database to store your data.
-# JSON does not support everything
 database-configuration:
-  # The prefix that will be applied to all tables, if you have several plugins with the same database you must have one.
+  # The prefix that will be applied to all tables,
+  # if you have several plugins with the same database, you must have one.
   # It is advisable not to change this value
   table-prefix: "zquests_"
   # IP Address of the machine the database is hosted on
@@ -60,8 +60,10 @@ main-command-aliases:
   - rankup
   - q
 
+# Name of the file to open the inventory with the main command
 main-command-inventory-name: "quests"
 
+# Permission that the player must have to change the page with the main command
 main-command-page:
   - permission: "quests.page.2"
     inventory: "quests"
@@ -114,6 +116,7 @@ quests-groups:
       - "block-break-2"
       - "block-break-3"
 
+# The name of the group by default.
 global-group-display-name: "Global"
 
 # Manages quest-related events
@@ -142,10 +145,28 @@ events:
     enabled: true # Indicates if the event is active
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
 
+# The format of dates used for placeholders that will display a date
 date-format: "dd/MM/yyyy HH:mm:ss"
 
+# Allows creating a placeholder that will group multiple favorite quests.
+# This can be used in a scoreboard or an inventory.
 placeholder-favorite:
+  # The number of favorite quests to display
   limit: 3
+  # The message to display when there are no favorite quests
   empty: "&cNo favorite quests"
-  result: "&f%quest-name%\n&e%quest-progress%&8/&6%quest-objective%"
-  between: "\n"
+  # The result for each quest, you can use the following placeholders:
+  # %quest-name% - The name of the quest
+  # %quest-display-name% - The display name of the quest
+  # %quest-description% - The description of the quest
+  # %quest-thumbnail% - The icon of the quest
+  # %quest-type% - The type of the quest
+  # %quest-objective% - The objective of the quest
+  # %quest-lore-line% - The placeholder lore-line-placeholder
+  # %quest-progress-bar% - The progress bar of the quest
+  # %quest-percent% - The percentage of the quest's progress
+  # %quest-progress% - The progress of the quest
+  # %quest-global-group-name% - The global group name of the quest
+  result: "&f%quest-description%\n&8%quest-display-name%\n#fcd600%quest-progress%&8/&f%quest-objective%"
+  # The string that will be placed between two quests
+  between: "\n\n"
