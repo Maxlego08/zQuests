@@ -346,6 +346,14 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 }
                 count++;
                 this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
+
+                // If the quest is unique, stop the others.
+                // This allows you to only have one active quest at a time.
+                // If you have multiple quests that are triggered by the same action (e.g. talking to a citizen),
+                // you can use this method to ensure that only one of them is active at a time.
+                if (activeQuest.getQuest().isUnique()) {
+                    break;
+                }
             }
         }
 
@@ -415,6 +423,14 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 count++;
                 inventoryContentAction.removeItems(player, amount);
                 this.plugin.getStorageManager().softUpsert(activeQuest); // Soft update the quest in storage
+
+                // If the quest is unique, stop the others.
+                // This allows you to only have one active quest at a time.
+                // If you have multiple quests that are triggered by the same action (e.g. talking to a citizen),
+                // you can use this method to ensure that only one of them is active at a time.
+                if (activeQuest.getQuest().isUnique()) {
+                    break;
+                }
             }
         }
 
@@ -519,6 +535,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
         if (activeQuest == null) return;
 
+        if (callQuestEvent(player.getUniqueId(), new QuestCompleteEvent(player.getUniqueId(), activeQuest))) {
+            return;
+        }
+
         activeQuest.increment(activeQuest.getQuest().getGoal());
         getUserQuest(player.getUniqueId()).getActiveQuests().remove(activeQuest);
         completeQuest(activeQuest);
@@ -536,6 +556,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
 
         var group = optional.get();
+        int amount = 0;
         for (Quest quest : group.getQuests()) {
 
             var userQuest = getUserQuest(player.getUniqueId());
@@ -544,10 +565,18 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             if (optionalActiveQuest.isEmpty()) continue;
 
             var activeQuest = optionalActiveQuest.get();
+
+            if (callQuestEvent(player.getUniqueId(), new QuestCompleteEvent(player.getUniqueId(), activeQuest))) {
+                continue;
+            }
+
             activeQuest.increment(activeQuest.getQuest().getGoal());
             getUserQuest(player.getUniqueId()).getActiveQuests().remove(activeQuest);
             completeQuest(activeQuest);
+            amount++;
         }
+
+        this.callQuestEvent(player.getUniqueId(), new QuestPostProgressEvent(player.getUniqueId(), amount));
 
         message(sender, Message.GROUP_COMPLETE_SUCCESS, "%name%", group.getDisplayName(), "%player%", player.getName());
     }
@@ -595,6 +624,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         activeQuest.setAmount(amount);
         this.plugin.getStorageManager().upsert(activeQuest);
 
+        this.callQuestEvent(player.getUniqueId(), new QuestPostProgressEvent(player.getUniqueId(), 1));
+
         message(sender, Message.QUEST_SET_PROGRESS_SUCCESS, "%name%", questName, "%player%", player.getName(), "%progress%", amount);
     }
 
@@ -609,6 +640,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         } else {
             this.plugin.getStorageManager().upsert(activeQuest);
         }
+
+        this.callQuestEvent(player.getUniqueId(), new QuestPostProgressEvent(player.getUniqueId(), 1));
 
         message(sender, Message.QUEST_ADD_PROGRESS_SUCCESS, "%name%", questName, "%player%", player.getName(), "%progress%", amount);
     }

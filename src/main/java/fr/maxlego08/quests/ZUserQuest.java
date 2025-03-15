@@ -6,6 +6,7 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.UserQuest;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public class ZUserQuest implements UserQuest {
 
     @Override
     public List<ActiveQuest> getActiveQuests() {
-        return this.activeQuests;
+        return this.activeQuests.stream().sorted(Comparator.comparingInt(q -> q.getQuest().isUnique() ? 0 : 1)).toList();
     }
 
     @Override
