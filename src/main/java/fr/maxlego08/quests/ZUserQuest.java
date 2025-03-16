@@ -29,6 +29,11 @@ public class ZUserQuest implements UserQuest {
 
     @Override
     public List<ActiveQuest> getActiveQuests() {
+        return this.activeQuests;
+    }
+
+    @Override
+    public List<ActiveQuest> getSortActiveQuests() {
         return this.activeQuests.stream().sorted(Comparator.comparingInt(q -> q.getQuest().isUnique() ? 0 : 1)).toList();
     }
 

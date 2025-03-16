@@ -58,13 +58,15 @@ public enum QuestType {
     CUSTOM,
     INVENTORY_OPEN,
     INVENTORY_CONTENT,
+    SHEAR,
     ;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, PURCHASE, ITEM_BREAK, ITEM_MENDING, SMITHING -> new MaterialAction(this, (Material) target);
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, PURCHASE, ITEM_BREAK, ITEM_MENDING,
+                 SMITHING -> new MaterialAction(this, (Material) target);
             case CRAFT -> new ItemStackAction(this, (ItemStack) target);
-            case ENTITY_KILL, TAME -> new EntityAction(this, (EntityType) target);
+            case ENTITY_KILL, TAME, SHEAR -> new EntityAction(this, (EntityType) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
             case BREW -> new BrewAction(this, (BrewEvent) target);
             case VOTE -> new VoteAction(this);
@@ -84,13 +86,14 @@ public enum QuestType {
 
     public boolean isMaterial() {
         return switch (this) {
-            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING, PURCHASE -> true;
+            case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING,
+                 PURCHASE -> true;
             default -> false;
         };
     }
 
     public boolean isEntityType() {
-        return this == ENTITY_KILL || this == TAME;
+        return this == ENTITY_KILL || this == TAME || this == SHEAR;
     }
 
 }

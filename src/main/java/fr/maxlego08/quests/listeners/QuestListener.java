@@ -44,6 +44,7 @@ import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -126,7 +127,6 @@ public class QuestListener implements Listener {
         if (isNPC(player)) return;
 
         Material material = block.getType();
-
         this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_PLACE, 1, material);
     }
 
@@ -157,6 +157,14 @@ public class QuestListener implements Listener {
 
             this.manager.handleQuests(player.getUniqueId(), QuestType.ENTITY_KILL, amount, entity.getType());
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onShear(PlayerShearEntityEvent event) {
+
+        var entity = event.getEntity();
+        var player = event.getPlayer();
+        this.manager.handleQuests(player.getUniqueId(), QuestType.SHEAR, 1, entity.getType());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -427,12 +435,11 @@ public class QuestListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onInventoryOpen(PlayerOpenInventoryEvent event){
+    public void onInventoryOpen(PlayerOpenInventoryEvent event) {
 
         var player = event.getPlayer();
         if (isNPC(player)) return;
 
         this.manager.handleQuests(player.getUniqueId(), QuestType.INVENTORY_OPEN, 1, event.getInventory());
     }
-
 }

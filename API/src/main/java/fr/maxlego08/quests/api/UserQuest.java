@@ -16,6 +16,13 @@ public interface UserQuest {
     List<ActiveQuest> getActiveQuests();
 
     /**
+     * Gets the list of active quests for the user sorted by the sortActiveQuests method.
+     *
+     * @return the list of active quests sorted by the sortActiveQuests method
+     */
+    List<ActiveQuest> getSortActiveQuests();
+
+    /**
      * Gets the list of completed quests for the user.
      *
      * @return the list of completed quests
