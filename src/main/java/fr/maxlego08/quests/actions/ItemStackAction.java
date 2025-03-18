@@ -28,11 +28,9 @@ public class ItemStackAction implements QuestAction {
         if (target instanceof ItemStack itemStack) {
 
             if (itemStack.getType() != this.target) return false;
-            System.out.println(itemStack);
             if (itemStack.hasItemMeta()) {
                 var meta = itemStack.getItemMeta();
                 if (meta instanceof FireworkMeta fireworkMeta && this.fireworkPower > 0) {
-                    System.out.println(fireworkMeta.getPower() + " - " + fireworkPower +" -- " + (fireworkMeta.getPower() < this.fireworkPower));
                     if (fireworkMeta.getPower() < this.fireworkPower) return false;
                 }
             }

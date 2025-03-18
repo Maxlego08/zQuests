@@ -222,7 +222,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 Optional<Quest> optionalQuest = this.getQuest(completedQuest.quest().getName());
                 if (optionalQuest.isPresent()) {
                     Quest quest = optionalQuest.get();
-                    completedQuests.set(i, new CompletedQuest(quest, completedQuest.completedAt(), completedQuest.startedAt()));
+                    completedQuests.set(i, new CompletedQuest(quest, completedQuest.completedAt(), completedQuest.startedAt(), completedQuest.isFavorite()));
                 }
             }
         }
@@ -499,7 +499,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         CompletedQuest completedQuest = activeQuest.complete();
         userQuest.getCompletedQuests().add(completedQuest);
-        this.plugin.getStorageManager().upsert(activeQuest.getUniqueId(), completedQuest);
+        this.plugin.getStorageManager().insert(activeQuest.getUniqueId(), completedQuest);
         this.plugin.getStorageManager().delete(activeQuest);
 
         this.handleCustomReward(userQuest, activeQuest);

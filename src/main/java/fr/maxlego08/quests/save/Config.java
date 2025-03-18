@@ -96,8 +96,6 @@ public class Config {
                 exception.printStackTrace();
             }
         }
-
-        System.out.println(eventConfigurations);
     }
 
 }

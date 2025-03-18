@@ -12,6 +12,7 @@ public class CompletedQuestsCreateMigration extends Migration {
             table.string("name", 255).primary();
             table.timestamp("started_at").defaultValue("CURRENT_TIMESTAMP");
             table.timestamp("completed_at").defaultValue("CURRENT_TIMESTAMP");
+            table.bool("is_favorite").defaultValue(false);
         });
     }
 }

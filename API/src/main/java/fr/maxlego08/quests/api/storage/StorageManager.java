@@ -61,7 +61,7 @@ public interface StorageManager {
      * @param uuid           the unique identifier of the user
      * @param completedQuest the completed quest to upsert
      */
-    void upsert(UUID uuid, CompletedQuest completedQuest);
+    void insert(UUID uuid, CompletedQuest completedQuest);
 
     /**
      * Delete a quest by unique identifier and name.

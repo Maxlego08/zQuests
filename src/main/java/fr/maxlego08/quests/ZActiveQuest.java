@@ -91,7 +91,7 @@ public class ZActiveQuest implements ActiveQuest {
 
     @Override
     public CompletedQuest complete() {
-        return new CompletedQuest(this.quest, new Date(), this.createdAt);
+        return new CompletedQuest(this.quest, new Date(), this.createdAt, this.isFavorite);
     }
 
     @Override

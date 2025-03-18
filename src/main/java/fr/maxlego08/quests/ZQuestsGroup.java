@@ -52,7 +52,8 @@ public class ZQuestsGroup implements QuestsGroup {
     @Override
     public boolean needFavorite(Quest quest, UserQuest userQuest) {
 
-        for (Quest groupQuest : quests) {
+        boolean previousValue = false;
+        for (Quest groupQuest : this.quests) {
 
             var optional = userQuest.findActive(groupQuest);
             if (optional.isPresent()) {
@@ -62,8 +63,13 @@ public class ZQuestsGroup implements QuestsGroup {
                 }
             }
 
+            var optionalCompleted = userQuest.findComplete(groupQuest);
+            if (optionalCompleted.isPresent()) {
+                previousValue = optionalCompleted.get().isFavorite();
+            }
+
             if (quest == groupQuest) {
-                return false;
+                return previousValue;
             }
         }
 
