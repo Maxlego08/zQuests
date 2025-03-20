@@ -117,4 +117,11 @@ public interface Quest {
      */
     boolean isUnique();
 
+    /**
+     * Checks if the quest is hidden.
+     *
+     * @return true if the quest is hidden, false otherwise
+     */
+    boolean isHidden();
+
 }

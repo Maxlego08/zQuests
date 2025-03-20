@@ -68,6 +68,7 @@ public class QuestLoader extends ZUtils {
             boolean canChangeFavorite = accessor.getBoolean("can-change-favorite", true);
             boolean isFavorite = accessor.getBoolean("favorite", false);
             boolean isUnique = accessor.getBoolean("unique", false);
+            boolean isHidden = accessor.getBoolean("hidden", false);
 
             int customModelId = accessor.getInt("custom-model-id", accessor.getInt("custom-model-data", getDefaultCustomModelId(name)));
 
@@ -101,7 +102,7 @@ public class QuestLoader extends ZUtils {
                 }
             }
 
-            return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique);
+            return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;

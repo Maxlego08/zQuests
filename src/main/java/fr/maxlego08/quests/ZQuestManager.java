@@ -783,7 +783,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         var currentGroup = userQuests.getCurrentGroup();
 
         List<QuestHistory> quests = new ArrayList<>();
-        quests.addAll(userQuests.getActiveQuests().stream().filter(e -> isQuestGroup(e.getQuest(), currentGroup)).map(e -> new QuestHistory(e, null)).toList());
+        quests.addAll(userQuests.getActiveQuests().stream().filter(e -> !e.getQuest().isHidden() && isQuestGroup(e.getQuest(), currentGroup)).map(e -> new QuestHistory(e, null)).toList());
         quests.addAll(userQuests.getCompletedQuests().stream().filter(e -> isQuestGroup(e.quest(), currentGroup)).map(e -> new QuestHistory(null, e)).toList());
 
         return quests.stream() //

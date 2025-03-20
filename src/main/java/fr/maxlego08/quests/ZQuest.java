@@ -29,8 +29,9 @@ public class ZQuest implements Quest {
     private final boolean isFavorite;
     private final int customModelId;
     private final boolean isUnique;
+    private final boolean isHidden;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -46,6 +47,7 @@ public class ZQuest implements Quest {
         this.isFavorite = isFavorite;
         this.customModelId = customModelId;
         this.isUnique = isUnique;
+        this.isHidden = isHidden;
     }
 
     @Override
@@ -128,5 +130,10 @@ public class ZQuest implements Quest {
     @Override
     public boolean isUnique() {
         return this.isUnique;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return this.isHidden;
     }
 }
