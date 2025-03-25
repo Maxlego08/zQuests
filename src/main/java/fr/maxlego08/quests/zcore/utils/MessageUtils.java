@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 public abstract class MessageUtils extends LocationUtils {
 
-    public static String getString(String message, Object[] newArgs) {
+    private String getString(String message, Object[] newArgs) {
         if (newArgs.length % 2 != 0) {
             throw new IllegalArgumentException("Number of invalid arguments. Arguments must be in pairs.");
         }
