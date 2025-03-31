@@ -21,9 +21,11 @@ public class QuestPlaceholderUtil {
         placeholders.register("quest-progress-bar", plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
         placeholders.register("quest-percent", plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
         placeholders.register("quest-progress", String.valueOf(plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
+        placeholders.register("quest-model-id", String.valueOf(quest.getCustomModelId()));
 
         var optional = plugin.getQuestManager().getGlobalGroup(quest);
-        placeholders.register("quest-global-group-name", optional.map(QuestsGroup::getDisplayName).orElse("Impossible de trouver le groupe global"));
+        placeholders.register("quest-global-group-name", optional.map(QuestsGroup::getDisplayName).orElse(plugin.getQuestManager().getGlobalGroupDisplayName()));
+        placeholders.register("quest-global-group-model-id", String.valueOf(optional.map(QuestsGroup::getDefaultCustomModelId).orElse(plugin.getQuestManager().getGlobalGroupCustomModelId())));
 
         return placeholders;
     }

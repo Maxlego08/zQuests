@@ -338,4 +338,26 @@ public interface QuestManager {
      * @return a list of QuestHistory objects representing the quests to display
      */
     List<QuestHistory> getDisplayQuests(Player player);
+
+    /**
+     * Retrieves the custom model id of the global group.
+     * <p>
+     * The global group is the group that contains all the quests that are not part of a group.
+     * <p>
+     * This method returns the custom model id of the global group, or 0 if the global group does not have a custom model.
+     *
+     * @return the custom model id of the global group
+     */
+    int getGlobalGroupCustomModelId();
+
+    /**
+     * Retrieves the display name of the global group.
+     * <p>
+     * The global group is the group that contains all the quests that are not part of a group.
+     * <p>
+     * This method returns the display name of the global group, or "Global" if the display name is not set.
+     *
+     * @return the display name of the global group
+     */
+    String getGlobalGroupDisplayName();
 }

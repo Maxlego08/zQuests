@@ -116,8 +116,11 @@ quests-groups:
       - "block-break-2"
       - "block-break-3"
 
-# The name of the group by default.
-global-group-display-name: "Global"
+global-group:
+  # The name of the group by default.
+  display-name: "Global"
+  # The custom model id of the group by default.
+  custom-model-id: 10546
 
 # Manages quest-related events
 events:

@@ -59,6 +59,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     private final Map<UUID, UserQuest> usersQuests = new HashMap<>();
     private final List<CustomReward> customRewards = new ArrayList<>();
     private final Map<String, QuestsGroup> groups = new HashMap<>();
+    private int globalGroupCustomModelId;
+    private String globalGroupDisplayName;
     private List<Action> globalRewards = new ArrayList<>();
 
     public ZQuestManager(QuestsPlugin plugin) {
@@ -178,8 +180,13 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.groups.clear();
 
         var config = this.plugin.getInventoryManager().loadYamlConfiguration(new File(this.plugin.getDataFolder(), "config.yml"));
+
+        this.globalGroupCustomModelId = config.getInt("global-group.custom-model-id", 0);
+        this.globalGroupDisplayName = config.getString("global-group.display-name", "Global");
+
         var section = config.getConfigurationSection("quests-groups");
         if (section == null) return;
+
 
         for (String key : section.getKeys(false)) {
 
@@ -791,6 +798,16 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 .sorted(Comparator.comparingInt(QuestHistory::sortFav).reversed()) // Sort Fav
                 .sorted(Comparator.comparingInt(QuestHistory::sortCompletedDate)) // Sort completed date
                 .toList();
+    }
+
+    @Override
+    public int getGlobalGroupCustomModelId() {
+        return this.globalGroupCustomModelId;
+    }
+
+    @Override
+    public String getGlobalGroupDisplayName() {
+        return this.globalGroupDisplayName;
     }
 
     private boolean isQuestGroup(Quest quest, String currentGroupName) {
