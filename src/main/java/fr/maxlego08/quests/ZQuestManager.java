@@ -759,7 +759,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             }
 
             if (configuration.updateScoreboard() && playerUniqueId != null) {
-                this.plugin.getScheduler().runLater(w -> this.plugin.getScoreboardHook().updateScoreboard(playerUniqueId), 1);
+                this.plugin.getScheduler().runLater(w -> this.plugin.getScoreboardHook().updateScoreboard(playerUniqueId), Config.eventTicks);
             }
         }
 

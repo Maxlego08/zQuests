@@ -22,6 +22,7 @@ public class Config {
     public static SimpleDateFormat simpleDateFormat;
     public static PlaceholderFavorite placeholderFavorite;
     public static String globalGroupName;
+    public static int eventTicks;
 
     /**
      * static Singleton instance.
@@ -82,6 +83,8 @@ public class Config {
     private void loadEventConfiguration(FileConfiguration configuration) {
 
         eventConfigurations.clear();
+
+        eventTicks = configuration.getInt("event-ticks", 1);
 
         for (Map<?, ?> map : configuration.getMapList("events")) {
             TypedMapAccessor accessor = new TypedMapAccessor((Map<String, Object>) map);

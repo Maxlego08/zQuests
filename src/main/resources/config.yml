@@ -122,6 +122,9 @@ global-group:
   # The custom model id of the group by default.
   custom-model-id: 10546
 
+# The number of ticks after the event for the scoreboard update
+event-ticks: 1
+
 # Manages quest-related events
 events:
   - event: QuestStartEvent # Triggered when a quest begins
