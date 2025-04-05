@@ -283,6 +283,9 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
             command.setExecutor(this);
             command.setTabCompleter(this);
             command.setAliases(aliases);
+            if (vCommand.getPermission() != null) {
+                command.setPermission(vCommand.getPermission());
+            }
 
             commands.add(vCommand.addSubCommand(string));
             vCommand.addSubCommand(aliases);
