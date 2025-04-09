@@ -118,7 +118,7 @@ public class QuestPlaceholder extends ZUtils {
         UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
         long amount = userQuest.findActive(questId).map(ActiveQuest::getAmount).orElse(0L);
 
-        return Config.progressBar.getProgressBar(amount, goal);
+        return papi(Config.progressBar.getProgressBar(amount, goal), player);
     }
 
     public double getPercent(Player player, Quest quest) {
@@ -191,6 +191,6 @@ public class QuestPlaceholder extends ZUtils {
         line = line.replace("%progress%", String.valueOf(progress));
         line = line.replace("%progress-bar%", Config.progressBar.getProgressBar(progress, goal));
 
-        return line;
+        return papi(line, player);
     }
 }

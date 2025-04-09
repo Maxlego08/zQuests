@@ -96,6 +96,9 @@ public class ChangeQuestGroupButton extends ZButton {
 
     @Override
     public void onClick(Player player, InventoryClickEvent event, InventoryDefault inventory, int slot, Placeholders placeholders) {
+
+        var click = event.getClick();
+
         super.onClick(player, event, inventory, slot, placeholders);
 
         var manager = this.plugin.getQuestManager();
