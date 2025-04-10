@@ -176,3 +176,8 @@ placeholder-favorite:
   result: "&f%quest-description%\n&8%quest-display-name%\n#fcd600%quest-progress%&8/&f%quest-objective%"
   # The string that will be placed between two quests
   between: "\n\n"
+
+# Time in milliseconds for a placed block to no longer be considered as already used.
+# This ensures that quests of type BLOCK_PLACE can verify that players place
+# the desired number of blocks and do not place and break the same block multiple times.
+anti-block-place-abuse: 60000

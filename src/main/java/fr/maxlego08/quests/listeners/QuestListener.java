@@ -5,6 +5,7 @@ import fr.maxlego08.menu.api.event.events.PlayerOpenInventoryEvent;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.save.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -49,6 +50,7 @@ import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.projectiles.ProjectileSource;
@@ -126,8 +128,21 @@ public class QuestListener implements Listener {
 
         if (isNPC(player)) return;
 
+        if (block.hasMetadata("zquests-placed-at")) {
+            var datas = block.getMetadata("zquests-placed-at");
+            if (!datas.isEmpty()) {
+                long lastPlacedAt = datas.getFirst().asLong();
+                if (System.currentTimeMillis() - lastPlacedAt < Config.antiBlockPlaceAbuse) {
+                    return;
+                }
+            }
+        }
+
         Material material = block.getType();
-        this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_PLACE, 1, material);
+        var result = this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_PLACE, 1, material);
+        if (result > 0) {
+            block.setMetadata("zquests-placed-at", new FixedMetadataValue(this.plugin, System.currentTimeMillis()));
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

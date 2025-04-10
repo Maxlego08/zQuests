@@ -23,6 +23,7 @@ public class Config {
     public static PlaceholderFavorite placeholderFavorite;
     public static String globalGroupName;
     public static int eventTicks;
+    public static int antiBlockPlaceAbuse;
 
     /**
      * static Singleton instance.
@@ -56,6 +57,7 @@ public class Config {
         simpleDateFormat = new SimpleDateFormat(configuration.getString("date-format", "dd/MM/yyyy HH:mm:ss"));
         mainCommandInventoryName = configuration.getString("main-command-inventory-name", "quests");
         globalGroupName = configuration.getString("global-group-display-name", "Global");
+        antiBlockPlaceAbuse = configuration.getInt("anti-block-place-abuse", 60000);
 
         loreLinePlaceholderActive = configuration.getString("lore-line-placeholder.active", "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘");
         loreLinePlaceholderComplete = configuration.getString("lore-line-placeholder.complete", "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔");
