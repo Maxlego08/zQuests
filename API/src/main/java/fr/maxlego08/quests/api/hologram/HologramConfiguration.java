@@ -39,7 +39,7 @@ public record HologramConfiguration(Location location, List<String> texts, Displ
                 accessor.getInt("visibility-distance", -1), //
                 configureBackground(accessor), //
                 TextDisplay.TextAlignment.valueOf(accessor.getString("text-alignment", TextDisplay.TextAlignment.CENTER.name()).toUpperCase()), //
-                accessor.getBoolean("text-shadow", false), accessor.getBoolean("see-through", false));
+                accessor.getBoolean("text-shadow", false), accessor.getBoolean("see-through", true));
     }
 
     private static List<String> getTexts(TypedMapAccessor accessor) {
@@ -68,7 +68,7 @@ public record HologramConfiguration(Location location, List<String> texts, Displ
     }
 
     private static TextColor configureBackground(TypedMapAccessor accessor) {
-        String backgroundStr = accessor.getString("text-background", "transparent");
+        String backgroundStr = accessor.getString("text-background", null);
         if (backgroundStr == null || backgroundStr.equalsIgnoreCase("default")) {
             return null;
         } else if (backgroundStr.equalsIgnoreCase("transparent")) {
