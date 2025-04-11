@@ -38,7 +38,9 @@ public class EssentialsHologram implements QuestHologram {
         var hologramConfiguration = quest.getHologramConfiguration();
         this.hologram = hologramManager.createHologram(HologramType.TEXT, configuration, name, name, new SafeLocation(hologramConfiguration.location()));
 
-        this.hologram.addLine(new HologramLine(0, hologramConfiguration.text(), false));
+        for (int i = 0; i < hologramConfiguration.texts().size(); i++) {
+            this.hologram.addLine(new HologramLine(i, hologramConfiguration.texts().get(i), false));
+        }
 
         this.hologram.create();
     }

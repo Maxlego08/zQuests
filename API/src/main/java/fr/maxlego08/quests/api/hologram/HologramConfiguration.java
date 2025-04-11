@@ -10,30 +10,19 @@ import org.bukkit.entity.Display;
 import org.bukkit.entity.TextDisplay;
 import org.joml.Vector3f;
 
+import java.util.List;
 import java.util.Locale;
 
-public record HologramConfiguration(
-        Location location,
-        String text,
-        Display.Billboard billboard,
-        Vector3f scale,
-        Vector3f translation,
-        Display.Brightness brightness,
-        float shadowRadius,
-        float shadowStrength,
-        int visibilityDistance,
-        TextColor background,
-        TextDisplay.TextAlignment textAlignment,
-        boolean textShadow,
-        boolean seeThrough
-) {
+public record HologramConfiguration(Location location, List<String> texts, Display.Billboard billboard, Vector3f scale,
+                                    Vector3f translation, Display.Brightness brightness, float shadowRadius,
+                                    float shadowStrength, int visibilityDistance, TextColor background,
+                                    TextDisplay.TextAlignment textAlignment, boolean textShadow, boolean seeThrough) {
 
     public static HologramConfiguration fromConfiguration(TypedMapAccessor accessor) {
 
-        return new HologramConfiguration(
-                configureLocation(accessor),
-                accessor.getString("text", "Hummm, you need to add a text !"),
-                Display.Billboard.valueOf(accessor.getString("billboard", Display.Billboard.CENTER.name()).toUpperCase()),
+        return new HologramConfiguration(configureLocation(accessor), //
+                getTexts(accessor), //
+                Display.Billboard.valueOf(accessor.getString("billboard", Display.Billboard.CENTER.name()).toUpperCase()), //
                 new Vector3f( //
                         accessor.getFloat("scale-x", 1), //
                         accessor.getFloat("scale-y", 1), //
@@ -43,19 +32,25 @@ public record HologramConfiguration(
                         accessor.getFloat("translation-x", 0), //
                         accessor.getFloat("translation-y", 0), //
                         accessor.getFloat("translation-z", 0) //
-                ),
-                new Display.Brightness(
-                        accessor.getInt("brightness-block", 15),
-                        accessor.getInt("brightness-sky", 15)
-                ),
-                accessor.getFloat("shadow-radius", 0),
-                accessor.getFloat("shadow-strength", 1.0f),
-                accessor.getInt("visibility-distance", -1),
-                configureBackground(accessor),
-                TextDisplay.TextAlignment.valueOf(accessor.getString("text-alignment", TextDisplay.TextAlignment.CENTER.name()).toUpperCase()),
-                accessor.getBoolean("text-shadow", false),
-                accessor.getBoolean("see-through", false)
-        );
+                ), new Display.Brightness(accessor.getInt("brightness-block", 15), //
+                accessor.getInt("brightness-sky", 15)),  //
+                accessor.getFloat("shadow-radius", 0),  //
+                accessor.getFloat("shadow-strength", 1.0f),  //
+                accessor.getInt("visibility-distance", -1), //
+                configureBackground(accessor), //
+                TextDisplay.TextAlignment.valueOf(accessor.getString("text-alignment", TextDisplay.TextAlignment.CENTER.name()).toUpperCase()), //
+                accessor.getBoolean("text-shadow", false), accessor.getBoolean("see-through", false));
+    }
+
+    private static List<String> getTexts(TypedMapAccessor accessor) {
+
+        if (accessor.contains("text")) {
+            return List.of(accessor.getString("text"));
+        } else if (accessor.contains("texts")) {
+            return accessor.getStringList("texts");
+        }
+
+        return List.of("Hummm, you need to add a text !");
     }
 
     private static Location configureLocation(TypedMapAccessor accessor) {
@@ -73,7 +68,7 @@ public record HologramConfiguration(
     }
 
     private static TextColor configureBackground(TypedMapAccessor accessor) {
-        String backgroundStr = accessor.getString("text-background", null);
+        String backgroundStr = accessor.getString("text-background", "transparent");
         if (backgroundStr == null || backgroundStr.equalsIgnoreCase("default")) {
             return null;
         } else if (backgroundStr.equalsIgnoreCase("transparent")) {
