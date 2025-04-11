@@ -29,7 +29,7 @@ public class CommandQuestsProgressInventory extends VCommand {
         Player player = this.argAsPlayer(0);
         String citizenName = this.argAsString(1, null);
 
-        int amount = plugin.getQuestManager().handleInventoryQuests(new InventoryContent(player, citizenName));
+        int amount = plugin.getQuestManager().handleInventoryQuests(new InventoryContent(player, citizenName)).size();
         message(player, Message.PROGRESS_INVENTORY_INFO, "%player%", player.getName(), "%amount%", amount);
 
         return CommandType.SUCCESS;

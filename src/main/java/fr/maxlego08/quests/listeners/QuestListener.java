@@ -140,7 +140,7 @@ public class QuestListener implements Listener {
 
         Material material = block.getType();
         var result = this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_PLACE, 1, material);
-        if (result > 0) {
+        if (!result.isEmpty()) {
             block.setMetadata("zquests-placed-at", new FixedMetadataValue(this.plugin, System.currentTimeMillis()));
         }
     }

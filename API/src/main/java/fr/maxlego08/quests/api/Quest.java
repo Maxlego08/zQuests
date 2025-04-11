@@ -5,6 +5,7 @@ import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import org.bukkit.Material;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Represents a quest with various attributes and behaviors.
@@ -138,5 +139,7 @@ public interface Quest {
      * @return true if the quest has a hologram, false otherwise
      */
     boolean hasHologram();
+
+    String getHologramName(UUID uuid);
 
 }

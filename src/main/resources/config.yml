@@ -122,34 +122,50 @@ global-group:
   # The custom model id of the group by default.
   custom-model-id: 10546
 
-# The number of ticks after the event for the scoreboard update
-event-ticks: 1
+# The number of ticks after the event for the scoreboard and holograms update
+event-ticks: 2
 
 # Manages quest-related events
 events:
   - event: QuestStartEvent # Triggered when a quest begins
     enabled: true # Indicates if the event is active
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
 
   - event: QuestProgressEvent # Triggered when quest progress is made
     enabled: true # Indicates if the event is active
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
 
   - event: QuestCompleteEvent # Triggered when a quest is completed
     enabled: true # Indicates if the event is active
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
 
   - event: QuestFavoriteChangeEvent # Triggered when a quest's favorite status changes
     enabled: true # Indicates if the event is active
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
 
   - event: QuestPostProgressEvent # Triggered after quest progress is made
     enabled: true # Indicates if the event is active
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
 
   - event: QuestUserLoadEvent # Triggered when a user is loaded
     enabled: true # Indicates if the event is active
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+
+  - event: QuestDeleteAllEvent # Triggered when a user is loaded
+    enabled: false # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+
+  - event: QuestDeleteEvent # Triggered when a user is loaded
+    enabled: false # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
 
 # The format of dates used for placeholders that will display a date
 date-format: "dd/MM/yyyy HH:mm:ss"

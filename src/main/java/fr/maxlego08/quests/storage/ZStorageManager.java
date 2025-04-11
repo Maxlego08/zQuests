@@ -190,7 +190,7 @@ public class ZStorageManager implements StorageManager {
             List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at(), dto.started_at(), dto.is_favorite())).orElse(null));
 
             // activeQuests.removeIf(ActiveQuest::isComplete);
-            consumer.accept(new ZUserQuest(activeQuests, completedQuests));
+            consumer.accept(new ZUserQuest(uuid, activeQuests, completedQuests));
         });
     }
 

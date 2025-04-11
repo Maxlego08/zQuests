@@ -10,21 +10,23 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ZUserQuest implements UserQuest {
 
+    private final UUID uniqueId;
     private final List<ActiveQuest> activeQuests;
     private final List<CompletedQuest> completedQuests;
     private final List<QuestHologram> questHolograms = new ArrayList<>();
     private String currentGroup;
     private boolean isExtend;
 
-    public ZUserQuest() {
-        this.activeQuests = new ArrayList<>();
-        this.completedQuests = new ArrayList<>();
+    public ZUserQuest(UUID uniqueId) {
+        this(uniqueId, new ArrayList<>(), new ArrayList<>());
     }
 
-    public ZUserQuest(List<ActiveQuest> activeQuests, List<CompletedQuest> completedQuests) {
+    public ZUserQuest(UUID uniqueId, List<ActiveQuest> activeQuests, List<CompletedQuest> completedQuests) {
+        this.uniqueId = uniqueId;
         this.activeQuests = activeQuests;
         this.completedQuests = completedQuests;
     }
@@ -132,5 +134,16 @@ public class ZUserQuest implements UserQuest {
     @Override
     public void setCurrentGroup(String currentGroup) {
         this.currentGroup = currentGroup;
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return this.uniqueId;
+    }
+
+    @Override
+    public Optional<QuestHologram> getHologram(Quest quest) {
+        String name = quest.getHologramName(this.uniqueId);
+        return this.questHolograms.stream().filter(questHologram -> questHologram.match(name)).findFirst();
     }
 }

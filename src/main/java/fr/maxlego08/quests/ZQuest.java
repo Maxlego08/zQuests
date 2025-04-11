@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ZQuest implements Quest {
 
@@ -148,5 +149,10 @@ public class ZQuest implements Quest {
     @Override
     public boolean hasHologram() {
         return this.hologramConfiguration != null;
+    }
+
+    @Override
+    public String getHologramName(UUID uuid) {
+        return String.format("zquests-%s-%s", this.name, uuid);
     }
 }

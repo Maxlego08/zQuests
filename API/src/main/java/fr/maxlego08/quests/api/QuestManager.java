@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -74,8 +75,9 @@ public interface QuestManager {
      * @param type   the type of quest
      * @param amount the amount to increment
      * @param object additional data for the quest action
+     * @return the active quests that were updated
      */
-    int handleQuests(UUID uuid, QuestType type, int amount, Object object);
+    Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object);
 
     /**
      * Handle quest actions for a user.
@@ -88,8 +90,9 @@ public interface QuestManager {
      *                 updated active quest, if the quest is complete
      *                 it will be called after the quest has been
      *                 completed
+     * @return the active quests that were updated
      */
-    int handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
+    Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
 
     /**
      * Handle static quests (quests that can be completed multiple times)
@@ -99,16 +102,17 @@ public interface QuestManager {
      * @param type   the type of quest
      * @param amount the amount to increment
      * @param object additional data for the quest action
+     * @return the active quests that were updated
      */
-    int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
+    Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
 
     /**
      * Handle inventory quests for the player.
      *
      * @param inventoryContent the player's current inventory content
-     * @return the number of active quests that were completed
+     * @return the active quests that were updated
      */
-    int handleInventoryQuests(InventoryContent inventoryContent);
+    Set<ActiveQuest> handleInventoryQuests(InventoryContent inventoryContent);
 
     /**
      * Handle static quests (quests that can be completed multiple times)
@@ -126,9 +130,9 @@ public interface QuestManager {
      *                 updated active quest, if the quest is complete
      *                 it will be called after the quest has been
      *                 completed
-     * @return the number of active quests that were completed
+     * @return the active quests that were updated
      */
-    int handleStaticQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
+    Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
 
     /**
      * Add a quest to a player's active quests.

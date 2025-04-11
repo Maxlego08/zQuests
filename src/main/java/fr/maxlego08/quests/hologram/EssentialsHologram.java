@@ -15,36 +15,48 @@ public class EssentialsHologram implements QuestHologram {
 
     private final QuestsPlugin plugin;
     private final Quest quest;
+    private final String name;
     private Hologram hologram;
     private EssentialsPlugin essentialsPlugin;
 
-    public EssentialsHologram(QuestsPlugin plugin, Quest quest) {
+    public EssentialsHologram(QuestsPlugin plugin, Quest quest, String name) {
         this.plugin = plugin;
         this.quest = quest;
+        this.name = name;
     }
 
     @Override
-    public void create(Player player) {
+    public void create() {
 
-        if (this.hologram != null) this.delete(player);
+        if (this.hologram != null) {
+            this.hologram.deleteForAllPlayers();
+        }
 
         var hologramManager = this.getEssentialsPlugin().getHologramManager();
         var configuration = this.getConfiguration();
 
-        String name = String.format("zquests-%s-%s", quest.getName(), player.getUniqueId());
         var hologramConfiguration = quest.getHologramConfiguration();
         this.hologram = hologramManager.createHologram(HologramType.TEXT, configuration, name, name, new SafeLocation(hologramConfiguration.location()));
 
-        hologram.addLine(new HologramLine(0, hologramConfiguration.text(), false));
+        this.hologram.addLine(new HologramLine(0, hologramConfiguration.text(), false));
 
         this.hologram.create();
-        this.hologram.create(player);
+    }
+
+    @Override
+    public void create(Player player) {
+        if (this.hologram != null) {
+            this.hologram.create(player);
+        }
     }
 
     @Override
     public void delete(Player player) {
+        System.out.println("Alors l'object " + this.hologram);
         if (this.hologram != null) {
+            System.out.println("Je delete oui ,");
             this.hologram.delete(player);
+            System.out.println("Je delete NORMALEMENT ,");
             this.hologram = null;
         }
     }
@@ -52,6 +64,11 @@ public class EssentialsHologram implements QuestHologram {
     @Override
     public void update(Player player) {
         if (this.hologram != null) this.hologram.update(player);
+    }
+
+    @Override
+    public boolean match(String name) {
+        return this.name.equals(name);
     }
 
     private TextHologramConfiguration getConfiguration() {

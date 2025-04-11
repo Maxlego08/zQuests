@@ -4,6 +4,7 @@ import fr.maxlego08.quests.api.hologram.QuestHologram;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Represents the user's quest data.
@@ -140,4 +141,8 @@ public interface UserQuest {
     void addHologram(QuestHologram questHologram);
 
     void removeHologram(QuestHologram questHologram);
+
+    UUID getUniqueId();
+
+    Optional<QuestHologram> getHologram(Quest quest);
 }
