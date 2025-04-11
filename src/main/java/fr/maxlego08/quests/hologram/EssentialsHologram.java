@@ -1,0 +1,79 @@
+package fr.maxlego08.quests.hologram;
+
+import fr.maxlego08.essentials.api.EssentialsPlugin;
+import fr.maxlego08.essentials.api.hologram.Hologram;
+import fr.maxlego08.essentials.api.hologram.HologramLine;
+import fr.maxlego08.essentials.api.hologram.HologramType;
+import fr.maxlego08.essentials.api.hologram.configuration.TextHologramConfiguration;
+import fr.maxlego08.essentials.api.utils.SafeLocation;
+import fr.maxlego08.quests.QuestsPlugin;
+import fr.maxlego08.quests.api.Quest;
+import fr.maxlego08.quests.api.hologram.QuestHologram;
+import org.bukkit.entity.Player;
+
+public class EssentialsHologram implements QuestHologram {
+
+    private final QuestsPlugin plugin;
+    private final Quest quest;
+    private Hologram hologram;
+    private EssentialsPlugin essentialsPlugin;
+
+    public EssentialsHologram(QuestsPlugin plugin, Quest quest) {
+        this.plugin = plugin;
+        this.quest = quest;
+    }
+
+    @Override
+    public void create(Player player) {
+
+        if (this.hologram != null) this.delete(player);
+
+        var hologramManager = this.getEssentialsPlugin().getHologramManager();
+        var configuration = this.getConfiguration();
+
+        String name = String.format("zquests-%s-%s", quest.getName(), player.getUniqueId());
+        var hologramConfiguration = quest.getHologramConfiguration();
+        this.hologram = hologramManager.createHologram(HologramType.TEXT, configuration, name, name, new SafeLocation(hologramConfiguration.location()));
+
+        hologram.addLine(new HologramLine(0, hologramConfiguration.text(), false));
+
+        this.hologram.create();
+        this.hologram.create(player);
+    }
+
+    @Override
+    public void delete(Player player) {
+        if (this.hologram != null) {
+            this.hologram.delete(player);
+            this.hologram = null;
+        }
+    }
+
+    @Override
+    public void update(Player player) {
+        if (this.hologram != null) this.hologram.update(player);
+    }
+
+    private TextHologramConfiguration getConfiguration() {
+        var configuration = new TextHologramConfiguration();
+        var questHologramConfiguration = this.quest.getHologramConfiguration();
+
+        configuration.setBillboard(questHologramConfiguration.billboard());
+        configuration.setScale(questHologramConfiguration.scale());
+        configuration.setTranslation(questHologramConfiguration.translation());
+        configuration.setBrightness(questHologramConfiguration.brightness());
+        configuration.setShadowRadius(questHologramConfiguration.shadowRadius());
+        configuration.setShadowStrength(questHologramConfiguration.shadowStrength());
+        configuration.setVisibilityDistance(questHologramConfiguration.visibilityDistance());
+        configuration.setTextAlignment(questHologramConfiguration.textAlignment());
+        configuration.setTextShadow(questHologramConfiguration.textShadow());
+        configuration.setSeeThrough(questHologramConfiguration.seeThrough());
+        configuration.setBackground(questHologramConfiguration.background());
+
+        return configuration;
+    }
+
+    private EssentialsPlugin getEssentialsPlugin() {
+        return this.essentialsPlugin == null ? this.essentialsPlugin = this.plugin.getProvider(EssentialsPlugin.class) : this.essentialsPlugin;
+    }
+}

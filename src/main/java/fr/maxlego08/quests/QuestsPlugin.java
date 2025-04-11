@@ -5,11 +5,13 @@ import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.menu.api.pattern.PatternManager;
 import fr.maxlego08.quests.api.QuestManager;
+import fr.maxlego08.quests.api.hologram.HologramManager;
 import fr.maxlego08.quests.api.hooks.BlockHook;
 import fr.maxlego08.quests.api.hooks.ScoreboardHook;
 import fr.maxlego08.quests.api.hooks.StackerHook;
 import fr.maxlego08.quests.api.storage.StorageManager;
 import fr.maxlego08.quests.commands.commands.CommandQuests;
+import fr.maxlego08.quests.hologram.ZHologramManager;
 import fr.maxlego08.quests.hooks.blocks.BlockTrackerHook;
 import fr.maxlego08.quests.hooks.blocks.EmptyBlockHook;
 import fr.maxlego08.quests.hooks.scoreboard.EmptyScoreboardHook;
@@ -36,6 +38,7 @@ public class QuestsPlugin extends ZPlugin {
 
     private final StorageManager storageManager = new ZStorageManager(this);
     private final QuestManager questManager = new ZQuestManager(this);
+    private final HologramManager hologramManager = new ZHologramManager(this);
     private ScoreboardHook scoreboardHook = new EmptyScoreboardHook();
     private BlockHook blockHook = new EmptyBlockHook();
     private StackerHook stackerHook = new EmptyStackerHook();
@@ -68,6 +71,7 @@ public class QuestsPlugin extends ZPlugin {
         this.storageManager.loadDatabase();
 
         this.addListener(new QuestListener(this, this.questManager));
+        this.addListener(this.hologramManager);
 
         if (isEnable(Plugins.BLOCKTRACKER)) {
             getLogger().info("Using BlockTracker");
@@ -170,4 +174,7 @@ public class QuestsPlugin extends ZPlugin {
         return questPlaceholder;
     }
 
+    public HologramManager getHologramManager() {
+        return hologramManager;
+    }
 }

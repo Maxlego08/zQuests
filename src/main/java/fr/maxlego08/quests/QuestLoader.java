@@ -12,6 +12,7 @@ import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestActionLoader;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.QuestsGroup;
+import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import fr.maxlego08.quests.loader.BrewQuestLoader;
 import fr.maxlego08.quests.loader.CommandQuestLoader;
 import fr.maxlego08.quests.loader.CraftQuestLoader;
@@ -102,7 +103,13 @@ public class QuestLoader extends ZUtils {
                 }
             }
 
-            return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden);
+            HologramConfiguration hologramConfiguration =  null;
+            if (accessor.contains("hologram")) {
+                var hologramAccessor = new TypedMapAccessor((Map<String, Object>) accessor.getObject("hologram"));
+                hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);
+            }
+
+            return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden, hologramConfiguration);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;

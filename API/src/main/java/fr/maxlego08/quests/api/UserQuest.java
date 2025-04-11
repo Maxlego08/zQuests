@@ -1,5 +1,7 @@
 package fr.maxlego08.quests.api;
 
+import fr.maxlego08.quests.api.hologram.QuestHologram;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -132,4 +134,10 @@ public interface UserQuest {
     boolean isExtend();
 
     void setExtend(boolean extend);
+
+    List<QuestHologram> getHolograms();
+
+    void addHologram(QuestHologram questHologram);
+
+    void removeHologram(QuestHologram questHologram);
 }

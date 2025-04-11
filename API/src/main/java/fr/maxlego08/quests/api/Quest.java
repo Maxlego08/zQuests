@@ -1,6 +1,7 @@
 package fr.maxlego08.quests.api;
 
 import fr.maxlego08.menu.api.requirement.Action;
+import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import org.bukkit.Material;
 
 import java.util.List;
@@ -123,5 +124,19 @@ public interface Quest {
      * @return true if the quest is hidden, false otherwise
      */
     boolean isHidden();
+
+    /**
+     * Retrieves the hologram configuration associated with the quest.
+     *
+     * @return the hologram configuration
+     */
+    HologramConfiguration getHologramConfiguration();
+
+    /**
+     * Checks if the quest has a hologram associated with it.
+     *
+     * @return true if the quest has a hologram, false otherwise
+     */
+    boolean hasHologram();
 
 }

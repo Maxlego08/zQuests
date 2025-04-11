@@ -6,6 +6,7 @@ import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,8 +31,9 @@ public class ZQuest implements Quest {
     private final int customModelId;
     private final boolean isUnique;
     private final boolean isHidden;
+    private final HologramConfiguration hologramConfiguration;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, HologramConfiguration hologramConfiguration) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -48,6 +50,7 @@ public class ZQuest implements Quest {
         this.customModelId = customModelId;
         this.isUnique = isUnique;
         this.isHidden = isHidden;
+        this.hologramConfiguration = hologramConfiguration;
     }
 
     @Override
@@ -135,5 +138,15 @@ public class ZQuest implements Quest {
     @Override
     public boolean isHidden() {
         return this.isHidden;
+    }
+
+    @Override
+    public HologramConfiguration getHologramConfiguration() {
+        return this.hologramConfiguration;
+    }
+
+    @Override
+    public boolean hasHologram() {
+        return this.hologramConfiguration != null;
     }
 }

@@ -4,6 +4,7 @@ import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.UserQuest;
+import fr.maxlego08.quests.api.hologram.QuestHologram;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,6 +15,7 @@ public class ZUserQuest implements UserQuest {
 
     private final List<ActiveQuest> activeQuests;
     private final List<CompletedQuest> completedQuests;
+    private final List<QuestHologram> questHolograms = new ArrayList<>();
     private String currentGroup;
     private boolean isExtend;
 
@@ -105,6 +107,21 @@ public class ZUserQuest implements UserQuest {
     @Override
     public void setExtend(boolean extend) {
         this.isExtend = extend;
+    }
+
+    @Override
+    public List<QuestHologram> getHolograms() {
+        return this.questHolograms;
+    }
+
+    @Override
+    public void addHologram(QuestHologram questHologram) {
+        this.questHolograms.add(questHologram);
+    }
+
+    @Override
+    public void removeHologram(QuestHologram questHologram) {
+        this.questHolograms.remove(questHologram);
     }
 
     @Override

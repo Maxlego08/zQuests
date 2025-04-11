@@ -763,6 +763,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             }
         }
 
+        if (!isCancelled) {
+            this.plugin.getHologramManager().onQuestEvent(event);
+        }
+
         return isCancelled;
     }
 
