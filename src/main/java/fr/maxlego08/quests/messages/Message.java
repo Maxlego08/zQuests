@@ -48,6 +48,7 @@ public enum Message {
     DESCRIPTION_SET_FAVORITE("Set a quest as favorite for a player"),
     DESCRIPTION_ADD_PROGRESS("Add a number to the progress of a quest for a player"),
     DESCRIPTION_PROGRESS_INVENTORY("Progress inventory content quests for a player"),
+    DESCRIPTION_REFRESH_HOLOGRAM("Update player holograms"),
 
     GROUP_NOT_FOUND("&cUnable to find the group &f%name%&c."),
     QUEST_NOT_FOUND("&cUnable to find the quest &f%name%&c."),
@@ -65,7 +66,8 @@ public enum Message {
     PROGRESS_INVENTORY_INFO("&aThe player &f%player% &ahas finished &f%amount% &aquests in the inventory&a."),
     QUEST_CANT_CHANGE_FAVORITE("&cYou can not change the favorite of the quest &f%name%&c."),
     QUEST_SET_FAVORITE_SUCCESS("&aYou have just set the favorite of the quest &f%name%&a for the player &f%player%&a."),
-    QUEST_RESTART_SUCCESS("&aThe player &f%player% &ahas just restarted the quest &f%name%&a."),;
+    QUEST_RESTART_SUCCESS("&aThe player &f%player% &ahas just restarted the quest &f%name%&a."),
+    HOLOGRAM_REFRESH("&aYou have just refreshed the &f%player%&a's hologram&a."),;
 
     private ZPlugin plugin;
     private List<ZMessage> messages = new ArrayList<>();

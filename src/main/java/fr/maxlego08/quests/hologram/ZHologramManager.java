@@ -31,8 +31,6 @@ public class ZHologramManager implements HologramManager {
     @Override
     public void onQuestEvent(QuestEvent event) {
 
-        this.plugin.getLogger().info("Receive event " + event);
-
         if (event instanceof QuestStartEvent startEvent) {
             this.onQuestStart(startEvent.getActiveQuest(), startEvent.getPlayerUUID());
         } else if (event instanceof QuestUserLoadEvent userLoadEvent) {
@@ -45,6 +43,17 @@ public class ZHologramManager implements HologramManager {
             this.onQuestDeleteAll(questDeleteAllEvent.getUserQuest());
         } else if (event instanceof QuestPostProgressEvent postProgressEvent) {
             this.onQuestsPostProgress(postProgressEvent.getPlayer(), postProgressEvent.getActiveQuests());
+        }
+    }
+
+    @Override
+    public void refreshHologram(Player player) {
+        var userQuests = this.plugin.getQuestManager().getUserQuest(player.getUniqueId());
+        userQuests.getHolograms().forEach(e -> e.delete(player));
+        userQuests.getHolograms().clear();
+
+        for (ActiveQuest activeQuest : userQuests.getActiveQuests()) {
+            this.createHolograms(player, activeQuest.getQuest());
         }
     }
 

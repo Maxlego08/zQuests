@@ -52,11 +52,8 @@ public class EssentialsHologram implements QuestHologram {
 
     @Override
     public void delete(Player player) {
-        System.out.println("Alors l'object " + this.hologram);
         if (this.hologram != null) {
-            System.out.println("Je delete oui ,");
             this.hologram.delete(player);
-            System.out.println("Je delete NORMALEMENT ,");
             this.hologram = null;
         }
     }
