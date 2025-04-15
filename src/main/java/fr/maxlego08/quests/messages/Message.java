@@ -50,6 +50,7 @@ public enum Message {
     DESCRIPTION_PROGRESS_INVENTORY("Progress inventory content quests for a player"),
     DESCRIPTION_REFRESH_HOLOGRAM("Update player holograms"),
     DESCRIPTION_ADD_FAVORITE("Allows a player to bookmark a quest, use this command in a message with a click."),
+    DESCRIPTION_SHOW("Show player's quests"),
 
     GROUP_NOT_FOUND("&cUnable to find the group &f%name%&c."),
     QUEST_NOT_FOUND("&cUnable to find the quest &f%name%&c."),
@@ -73,6 +74,11 @@ public enum Message {
     INVENTORY_CONTENT("#edacfcx%amount% #ff94d7<lang:%material-key%>"),
     INVENTORY_AND(" #77ff77and "),
     INVENTORY_REMOVE("#77ff77you just gave %items%#77ff77."),
+
+    SHOW_LOAD_USER("&7Load &f%player% &7quests..."),
+    SHOW_HEADER("&f%player% #edacfc%active-quests% &7ongoing and #edacfc%completed-quests% &7completed quests"),
+    SHOW_ELEMENT("<hover:show_text:\"%quest-description%<newline><white>%quest-display-name%<newline><newline><white>Start at %started-at%<newline><yellow>%amount%<gray>/<gold>%quest-objective%<newline><white>Favorite: %is-favorite%\">%quest-name%</hover>"),
+    SHOW_INFOS(MessageType.WITHOUT_PREFIX, "%quests%"),
 
     ;
 

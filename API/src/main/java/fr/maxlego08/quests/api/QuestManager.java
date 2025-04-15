@@ -364,4 +364,13 @@ public interface QuestManager {
      * @return the display name of the global group
      */
     String getGlobalGroupDisplayName();
+
+    /**
+     * Sends a message to the given command sender with a list of quests
+     * that the given offline player has completed.
+     *
+     * @param sender        the command sender to send the message to
+     * @param offlinePlayer the offline player whose quests to show
+     */
+    void showQuests(CommandSender sender, OfflinePlayer offlinePlayer);
 }

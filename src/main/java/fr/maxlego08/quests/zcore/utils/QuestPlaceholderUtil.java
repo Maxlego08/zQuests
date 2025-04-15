@@ -17,11 +17,14 @@ public class QuestPlaceholderUtil {
         placeholders.register("quest-thumbnail", quest.getThumbnail().name());
         placeholders.register("quest-type", quest.getType().name());
         placeholders.register("quest-objective", String.valueOf(quest.getGoal()));
-        placeholders.register("quest-lore-line", plugin.getQuestPlaceholder().getLoreLine(player, quest.getName()));
-        placeholders.register("quest-progress-bar", plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
-        placeholders.register("quest-percent", plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
-        placeholders.register("quest-progress", String.valueOf(plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
         placeholders.register("quest-model-id", String.valueOf(quest.getCustomModelId()));
+
+        if (player != null) {
+            placeholders.register("quest-lore-line", plugin.getQuestPlaceholder().getLoreLine(player, quest.getName()));
+            placeholders.register("quest-progress-bar", plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
+            placeholders.register("quest-percent", plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
+            placeholders.register("quest-progress", String.valueOf(plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
+        }
 
         var optional = plugin.getQuestManager().getGlobalGroup(quest);
         placeholders.register("quest-global-group-name", optional.map(QuestsGroup::getDisplayName).orElse(plugin.getQuestManager().getGlobalGroupDisplayName()));

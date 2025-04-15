@@ -41,6 +41,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -54,6 +55,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class ZQuestManager extends ZUtils implements QuestManager {
 
@@ -845,6 +847,37 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     @Override
     public String getGlobalGroupDisplayName() {
         return this.globalGroupDisplayName;
+    }
+
+    @Override
+    public void showQuests(CommandSender sender, OfflinePlayer offlinePlayer) {
+
+        if (this.usersQuests.containsKey(offlinePlayer.getUniqueId())) {
+            showQuests(sender, offlinePlayer, this.usersQuests.get(offlinePlayer.getUniqueId()));
+        } else {
+            message(sender, Message.SHOW_LOAD_USER, "%player%", offlinePlayer.getName());
+            this.plugin.getStorageManager().load(offlinePlayer.getUniqueId(), userQuest -> showQuests(sender, offlinePlayer, userQuest));
+        }
+    }
+
+    private void showQuests(CommandSender sender, OfflinePlayer offlinePlayer, UserQuest userQuest) {
+
+        var activeQuests = userQuest.getActiveQuests();
+        var completedQuests = userQuest.getCompletedQuests();
+
+        var format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        message(sender, Message.SHOW_HEADER, "%player%", offlinePlayer.getName(), "%active-quests%", activeQuests.size(), "%completed-quests%", completedQuests.size());
+        var quests = activeQuests.stream().map(activeQuest -> {
+
+            var placeholders = QuestPlaceholderUtil.createPlaceholder(plugin, null, activeQuest.getQuest());
+            placeholders.register("started-at", format.format(activeQuest.getCreatedAt()));
+            placeholders.register("amount", format(activeQuest.getAmount()));
+            placeholders.register("is-favorite", activeQuest.isFavorite() ? "<green>true" : "<red>false");
+
+            return placeholders.parse(Message.SHOW_ELEMENT.msg());
+        }).collect(Collectors.joining(", "));
+
+        message(sender, Message.SHOW_INFOS, "%quests%", quests);
     }
 
     private boolean isQuestGroup(Quest quest, String currentGroupName) {
