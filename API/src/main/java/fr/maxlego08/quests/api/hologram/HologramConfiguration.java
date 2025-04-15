@@ -39,7 +39,7 @@ public record HologramConfiguration(Location location, List<String> texts, Displ
                 accessor.getInt("visibility-distance", -1), //
                 configureBackground(accessor), //
                 TextDisplay.TextAlignment.valueOf(accessor.getString("text-alignment", TextDisplay.TextAlignment.CENTER.name()).toUpperCase()), //
-                accessor.getBoolean("text-shadow", false), accessor.getBoolean("see-through", true));
+                accessor.getBoolean("text-shadow", false), accessor.getBoolean("see-through", false));
     }
 
     private static List<String> getTexts(TypedMapAccessor accessor) {
