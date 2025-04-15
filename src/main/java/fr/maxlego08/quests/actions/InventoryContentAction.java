@@ -3,6 +3,8 @@ package fr.maxlego08.quests.actions;
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.utils.InventoryContent;
+import fr.maxlego08.quests.messages.Message;
+import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;
@@ -10,7 +12,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class InventoryContentAction implements QuestAction {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class InventoryContentAction extends ZUtils implements QuestAction {
 
     private final String citizenName;
     private final Material material;
@@ -51,26 +57,26 @@ public class InventoryContentAction implements QuestAction {
         return QuestType.INVENTORY_CONTENT;
     }
 
-    private boolean isItemStack(ItemStack itemStack) {
-        if (itemStack == null) return false;
+    private boolean isNotItemStack(ItemStack itemStack) {
+        if (itemStack == null) return true;
 
-        if (this.material != null && itemStack.getType() != this.material) return false;
-        if (this.materialTag != null && !this.materialTag.isTagged(itemStack.getType())) return false;
+        if (this.material != null && itemStack.getType() != this.material) return true;
+        if (this.materialTag != null && !this.materialTag.isTagged(itemStack.getType())) return true;
 
         if (this.needItemMeta()) {
 
-            if (!itemStack.hasItemMeta()) return false;
+            if (!itemStack.hasItemMeta()) return true;
 
             ItemMeta itemMeta = itemStack.getItemMeta();
-            if (itemMeta.getCustomModelData() != this.customModelId) return false;
+            if (itemMeta.getCustomModelData() != this.customModelId) return true;
         }
-        return true;
+        return false;
     }
 
     public int countItems(Player player) {
         int count = 0;
         for (ItemStack itemStack : player.getInventory().getContents()) {
-            if (!isItemStack(itemStack)) continue;
+            if (isNotItemStack(itemStack)) continue;
             count += itemStack.getAmount();
         }
         return count;
@@ -81,10 +87,11 @@ public class InventoryContentAction implements QuestAction {
 
         int removed = 0;
         PlayerInventory inventory = player.getInventory();
+        Map<Material, Integer> map = new HashMap<>();
 
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack itemStack = inventory.getItem(i);
-            if (itemStack == null || itemStack.getType().isAir() || !isItemStack(itemStack)) continue;
+            if (itemStack == null || itemStack.getType().isAir() || isNotItemStack(itemStack)) continue;
 
             int itemAmount = itemStack.getAmount();
             int remove = Math.min(itemAmount, amountToRemove - removed);
@@ -95,9 +102,23 @@ public class InventoryContentAction implements QuestAction {
                 itemStack.setAmount(itemAmount - remove);
             }
 
+            map.put(itemStack.getType(), map.getOrDefault(itemStack.getType(), 0) + remove);
             removed += remove;
             if (removed >= amountToRemove) break;
         }
+
+        String items = map.entrySet().stream().map(entry -> getMessage(Message.INVENTORY_CONTENT, "%amount%", entry.getValue(), "%material-key%", entry.getKey().translationKey(), "%material%", name(entry.getKey()))).collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                sb.append(list.get(i));
+                if (i < list.size() - 1) {
+                    sb.append(i < list.size() - 2 ? ", " : getMessage(Message.INVENTORY_AND));
+                }
+            }
+            return sb.toString();
+        }));
+
+        message(player, Message.INVENTORY_REMOVE, "%items%", items);
     }
 
 }

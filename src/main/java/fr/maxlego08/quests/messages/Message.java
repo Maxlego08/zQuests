@@ -68,7 +68,13 @@ public enum Message {
     QUEST_CANT_CHANGE_FAVORITE("&cYou can not change the favorite of the quest &f%name%&c."),
     QUEST_SET_FAVORITE_SUCCESS("&aYou have just set the favorite of the quest &f%name%&a for the player &f%player%&a."),
     QUEST_RESTART_SUCCESS("&aThe player &f%player% &ahas just restarted the quest &f%name%&a."),
-    HOLOGRAM_REFRESH("&aYou have just refreshed the &f%player%&a's hologram&a."),;
+    HOLOGRAM_REFRESH("&aYou have just refreshed the &f%player%&a's hologram&a."),
+
+    INVENTORY_CONTENT("#edacfcx%amount% #ff94d7<lang:%material-key%>"),
+    INVENTORY_AND(" #77ff77and "),
+    INVENTORY_REMOVE("#77ff77you just gave %items%#77ff77."),
+
+    ;
 
     private ZPlugin plugin;
     private List<ZMessage> messages = new ArrayList<>();
