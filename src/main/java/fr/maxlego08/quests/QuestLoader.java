@@ -74,7 +74,10 @@ public class QuestLoader extends ZUtils {
             int customModelId = accessor.getInt("custom-model-id", accessor.getInt("custom-model-data", getDefaultCustomModelId(name)));
 
             List<Map<String, Object>> rewardsMap = accessor.contains("rewards") ? (List<Map<String, Object>>) accessor.getList("rewards") : new ArrayList<>();
-            List<Action> rewards = plugin.getButtonManager().loadActions(rewardsMap, "quests", file);
+            List<Action> rewards = this.plugin.getButtonManager().loadActions(rewardsMap, "rewards", file);
+
+            List<Map<String, Object>> startActionsMap = accessor.contains("start-actions") ? (List<Map<String, Object>>) accessor.getList("start-actions") : new ArrayList<>();
+            List<Action> startActions = this.plugin.getButtonManager().loadActions(startActionsMap, "start-actions", file);
 
             List<QuestAction> questActions = new ArrayList<>();
             if (accessor.contains("actions")) {
@@ -109,7 +112,7 @@ public class QuestLoader extends ZUtils {
                 hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);
             }
 
-            return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden, hologramConfiguration);
+            return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, startActions, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden, hologramConfiguration);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;

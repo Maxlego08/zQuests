@@ -49,6 +49,7 @@ public enum Message {
     DESCRIPTION_ADD_PROGRESS("Add a number to the progress of a quest for a player"),
     DESCRIPTION_PROGRESS_INVENTORY("Progress inventory content quests for a player"),
     DESCRIPTION_REFRESH_HOLOGRAM("Update player holograms"),
+    DESCRIPTION_ADD_FAVORITE("Allows a player to bookmark a quest, use this command in a message with a click."),
 
     GROUP_NOT_FOUND("&cUnable to find the group &f%name%&c."),
     QUEST_NOT_FOUND("&cUnable to find the quest &f%name%&c."),

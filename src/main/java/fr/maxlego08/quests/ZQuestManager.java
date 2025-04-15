@@ -31,6 +31,7 @@ import fr.maxlego08.quests.inventories.loader.QuestHistoryLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
 import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.save.Config;
+import fr.maxlego08.quests.zcore.utils.QuestPlaceholderUtil;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -477,6 +478,21 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         // Add the active quest to the user's active quests
         userQuest.getActiveQuests().add(event.getActiveQuest());
+
+
+        var offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+        if (offlinePlayer.isOnline()) {
+            var player = offlinePlayer.getPlayer();
+            if (player != null) {
+
+                var placeholders = QuestPlaceholderUtil.createPlaceholder(this.plugin, player, quest);
+                var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
+
+                for (Action action : quest.getStartActions()) {
+                    action.preExecute(player, null, fakeInventory, placeholders);
+                }
+            }
+        }
 
         // Persist the new active quest in storage
         if (store) {

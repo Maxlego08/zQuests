@@ -25,6 +25,7 @@ public class ZQuest implements Quest {
     private final long goal;
     private final boolean autoAccept;
     private final List<Action> rewards;
+    private final List<Action> startActions;
     private final List<QuestAction> actions;
     private final boolean useGlobalRewards;
     private final boolean canChangeFavorite;
@@ -34,7 +35,7 @@ public class ZQuest implements Quest {
     private final boolean isHidden;
     private final HologramConfiguration hologramConfiguration;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, HologramConfiguration hologramConfiguration) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, HologramConfiguration hologramConfiguration) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -44,6 +45,7 @@ public class ZQuest implements Quest {
         this.goal = goal;
         this.autoAccept = autoAccept;
         this.rewards = rewards;
+        this.startActions = startActions;
         this.actions = actions;
         this.useGlobalRewards = useGlobalRewards;
         this.canChangeFavorite = canChangeFavorite;
@@ -104,6 +106,11 @@ public class ZQuest implements Quest {
     @Override
     public List<Action> getRewards() {
         return rewards;
+    }
+
+    @Override
+    public List<Action> getStartActions() {
+        return this.startActions;
     }
 
     @Override

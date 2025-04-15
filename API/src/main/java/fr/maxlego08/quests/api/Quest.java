@@ -62,6 +62,13 @@ public interface Quest {
     List<Action> getRewards();
 
     /**
+     * Gets the list of start actions associated with the quest.
+     *
+     * @return the list of start actions
+     */
+    List<Action> getStartActions();
+
+    /**
      * Gets the type of the quest.
      *
      * @return the type of the quest
