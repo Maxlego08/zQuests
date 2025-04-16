@@ -106,7 +106,7 @@ public class QuestLoader extends ZUtils {
                 }
             }
 
-            HologramConfiguration hologramConfiguration =  null;
+            List<HologramConfiguration> hologramConfiguration =  new ArrayList<>();
             if (accessor.contains("hologram")) {
                 var hologramAccessor = new TypedMapAccessor((Map<String, Object>) accessor.getObject("hologram"));
                 hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);

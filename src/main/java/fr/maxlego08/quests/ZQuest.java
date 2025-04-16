@@ -33,9 +33,9 @@ public class ZQuest implements Quest {
     private final int customModelId;
     private final boolean isUnique;
     private final boolean isHidden;
-    private final HologramConfiguration hologramConfiguration;
+    private final List<HologramConfiguration> hologramConfigurations;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, HologramConfiguration hologramConfiguration) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -53,7 +53,7 @@ public class ZQuest implements Quest {
         this.customModelId = customModelId;
         this.isUnique = isUnique;
         this.isHidden = isHidden;
-        this.hologramConfiguration = hologramConfiguration;
+        this.hologramConfigurations = hologramConfiguration;
     }
 
     @Override
@@ -149,13 +149,13 @@ public class ZQuest implements Quest {
     }
 
     @Override
-    public HologramConfiguration getHologramConfiguration() {
-        return this.hologramConfiguration;
+    public List<HologramConfiguration> getHologramConfigurations() {
+        return this.hologramConfigurations;
     }
 
     @Override
     public boolean hasHologram() {
-        return this.hologramConfiguration != null;
+        return !this.hologramConfigurations.isEmpty();
     }
 
     @Override

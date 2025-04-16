@@ -138,7 +138,7 @@ public interface Quest {
      *
      * @return the hologram configuration
      */
-    HologramConfiguration getHologramConfiguration();
+    List<HologramConfiguration> getHologramConfigurations();
 
     /**
      * Checks if the quest has a hologram associated with it.
