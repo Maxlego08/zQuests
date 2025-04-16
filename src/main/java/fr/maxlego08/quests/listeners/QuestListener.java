@@ -5,7 +5,9 @@ import fr.maxlego08.menu.api.event.events.PlayerOpenInventoryEvent;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.save.Config;
+import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -62,7 +64,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-public class QuestListener implements Listener {
+public class QuestListener extends ZUtils implements Listener {
 
     private static final Set<InventoryType> TRACKABLE_INVENTORIES = EnumSet.of(InventoryType.BREWING, InventoryType.FURNACE, InventoryType.BLAST_FURNACE, InventoryType.SMOKER, InventoryType.CRAFTER);
     private static final Set<Material> TRACKABLE_BLOCKS = EnumSet.of(Material.BREWING_STAND, Material.FURNACE, Material.BLAST_FURNACE, Material.SMOKER, Material.CRAFTER);
@@ -304,14 +306,31 @@ public class QuestListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPreCraft(CraftItemEvent event) {
+
+        if (!Config.disableOffhandCraft) return;
+
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+
+        if (event.getClick() == ClickType.SWAP_OFFHAND) {
+            event.setCancelled(true);
+            message(player, Message.CRAFT_OFFHAND);
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraft(CraftItemEvent event) {
-        if (!isValidCraftEvent(event)) return;
+
+        var isValid = isValidCraftEvent(event);
+        plugin.debug("Try craft " + event.getWhoClicked().getName() + ", isValid: " + isValid + ", result: " + event.getResult() + ", itemStack: " + event.getCurrentItem());
+        if (!isValid) return;
 
         Player player = (Player) event.getWhoClicked();
         ItemStack result = event.getCurrentItem();
 
         int craftAmount = event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP ? calculateMaxCraftAmount(event) : event.getCursor().getType() != Material.AIR ? 0 : result.getAmount();
+        plugin.debug("Craft amount: " + craftAmount + ", isNPC: " + isNPC(player));
 
         if (craftAmount > 0 && !isNPC(player)) {
             this.manager.handleQuests(player.getUniqueId(), QuestType.CRAFT, craftAmount, result);
@@ -319,11 +338,19 @@ public class QuestListener implements Listener {
     }
 
     private boolean isValidCraftEvent(CraftItemEvent event) {
-        return event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && event.getAction() != InventoryAction.NOTHING && !isInvalidDrop(event) && event.getWhoClicked() instanceof Player player && player.getInventory().getItemInOffHand().getAmount() == 0;
+        plugin.debug("isValidCraftEvent = currentItem: " + event.getCurrentItem() + ", action: " + event.getAction() + ", cursor: " + event.getCursor() + ", item in offhand: " + (event.getWhoClicked() instanceof Player player && player.getInventory().getItemInOffHand().getAmount() == 0) + " (item in off hand must be true)");
+        return event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR
+                && event.getAction() != InventoryAction.NOTHING
+                && !isInvalidDrop(event)
+                && event.getWhoClicked() instanceof Player player
+                && (player.getInventory().getItemInOffHand().getAmount() == 0 || Config.disableOffhandCraft);
     }
 
     private boolean isInvalidDrop(CraftItemEvent event) {
-        return (event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getClick() == ClickType.DROP && event.getCursor().getType() != Material.AIR) || (event.getAction() == InventoryAction.DROP_ALL_SLOT && event.getClick() == ClickType.CONTROL_DROP && event.getCursor().getType() != Material.AIR) || (event.getAction() == InventoryAction.UNKNOWN && event.getClick() == ClickType.UNKNOWN);
+        plugin.debug("isInvalidDrop = action: " + event.getAction() + ", click: " + event.getClick() + ", cursor: " + event.getCursor());
+        return (event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getClick() == ClickType.DROP && event.getCursor().getType() != Material.AIR)
+                || (event.getAction() == InventoryAction.DROP_ALL_SLOT && event.getClick() == ClickType.CONTROL_DROP && event.getCursor().getType() != Material.AIR)
+                || (event.getAction() == InventoryAction.UNKNOWN && event.getClick() == ClickType.UNKNOWN);
     }
 
     private int calculateMaxCraftAmount(CraftItemEvent event) {

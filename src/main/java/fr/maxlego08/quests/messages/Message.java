@@ -80,7 +80,7 @@ public enum Message {
     SHOW_ELEMENT("<hover:show_text:\"%quest-description%<newline><white>%quest-display-name%<newline><newline><white>Start at %started-at%<newline><yellow>%amount%<gray>/<gold>%quest-objective%<newline><white>Favorite: %is-favorite%\">%quest-name%</hover>"),
     SHOW_INFOS(MessageType.WITHOUT_PREFIX, "%quests%"),
 
-    ;
+    CRAFT_OFFHAND("&cYou cannot use your secondary hand to craft items.");
 
     private ZPlugin plugin;
     private List<ZMessage> messages = new ArrayList<>();

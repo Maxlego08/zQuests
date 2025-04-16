@@ -24,6 +24,7 @@ public class Config {
     public static String globalGroupName;
     public static int eventTicks;
     public static int antiBlockPlaceAbuse;
+    public static boolean disableOffhandCraft = true;
 
     /**
      * static Singleton instance.
@@ -53,6 +54,7 @@ public class Config {
 
         enableDebug = configuration.getBoolean("enable-debug", false);
         enableDebugTime = configuration.getBoolean("enable-debug-time", false);
+        disableOffhandCraft = configuration.getBoolean("disable-offhand-craft", true);
         progressBar = loadProgressBarConfig(configuration, "progress-bar");
         simpleDateFormat = new SimpleDateFormat(configuration.getString("date-format", "dd/MM/yyyy HH:mm:ss"));
         mainCommandInventoryName = configuration.getString("main-command-inventory-name", "quests");

@@ -6,6 +6,12 @@ enable-debug: true
 # Useful for identifying bottlenecks and optimizing performance.
 enable-debug-time: true
 
+# Allows disabling the action of crafting an item and obtaining it directly in the off-hand.
+# For a quest of type CRAFT, it is impossible to perform this action.
+# We advise you to keep this feature active to avoid any confusion for your players.
+# When they try to do this, a message will be sent to them.
+disable-offhand-craft: true
+
 # Storage:
 # SQLITE - For the launch of the plugin only.
 # MYSQL - Allows creating a simple connection to the database, only for small servers.
