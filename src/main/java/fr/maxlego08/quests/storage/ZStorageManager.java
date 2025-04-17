@@ -121,7 +121,7 @@ public class ZStorageManager implements StorageManager {
         return table -> {
             table.uuid("unique_id", activeQuest.getUniqueId()).primary();
             table.string("name", activeQuest.getQuest().getName()).primary();
-            table.bigInt("limit", activeQuest.getAmount());
+            table.bigInt("amount", activeQuest.getAmount());
             table.bool("is_favorite", activeQuest.isFavorite());
         };
     }

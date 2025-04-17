@@ -13,22 +13,29 @@ public class QuestPlaceholderUtil {
 
         placeholders.register("quest-name", quest.getName());
         placeholders.register("quest-display-name", quest.getDisplayName());
+
         placeholders.register("quest-description", quest.getDescription());
+
         placeholders.register("quest-thumbnail", quest.getThumbnail().name());
         placeholders.register("quest-type", quest.getType().name());
         placeholders.register("quest-objective", String.valueOf(quest.getGoal()));
         placeholders.register("quest-model-id", String.valueOf(quest.getCustomModelId()));
 
-        if (player != null) {
+        if (player != null && plugin != null) {
             placeholders.register("quest-lore-line", plugin.getQuestPlaceholder().getLoreLine(player, quest.getName()));
             placeholders.register("quest-progress-bar", plugin.getQuestPlaceholder().getProgressBar(player, quest.getName()));
             placeholders.register("quest-percent", plugin.getQuestPlaceholder().getPercent(player, quest.getName()));
             placeholders.register("quest-progress", String.valueOf(plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
+            placeholders.register("quest-remaining", String.valueOf(quest.getGoal() - plugin.getQuestPlaceholder().getProgress(player, quest.getName())));
         }
 
-        var optional = plugin.getQuestManager().getGlobalGroup(quest);
-        placeholders.register("quest-global-group-name", optional.map(QuestsGroup::getDisplayName).orElse(plugin.getQuestManager().getGlobalGroupDisplayName()));
-        placeholders.register("quest-global-group-model-id", String.valueOf(optional.map(QuestsGroup::getDefaultCustomModelId).orElse(plugin.getQuestManager().getGlobalGroupCustomModelId())));
+        if (plugin != null) {
+            var optional = plugin.getQuestManager().getGlobalGroup(quest);
+            placeholders.register("quest-global-group-name", optional.map(QuestsGroup::getDisplayName).orElse(plugin.getQuestManager().getGlobalGroupDisplayName()));
+            placeholders.register("quest-global-group-model-id", String.valueOf(optional.map(QuestsGroup::getDefaultCustomModelId).orElse(plugin.getQuestManager().getGlobalGroupCustomModelId())));
+        }
+
+        placeholders.register("quest-placeholder-description", placeholders.parse(quest.getPlaceholderDescription()));
 
         return placeholders;
     }

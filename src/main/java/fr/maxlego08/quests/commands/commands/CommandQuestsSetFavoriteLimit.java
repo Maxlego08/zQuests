@@ -14,7 +14,7 @@ public class CommandQuestsSetFavoriteLimit extends VCommand {
     public CommandQuestsSetFavoriteLimit(QuestsPlugin plugin) {
         super(plugin);
         this.setPermission(Permission.ZQUESTS_SET_FAVORITE_LIMIT);
-        this.addSubCommand("set-favorite-limite");
+        this.addSubCommand("set-favorite-limit");
         this.setDescription(Message.DESCRIPTION_SET_FAVORITE_LIMIT);
         this.addRequireArg("player");
         this.addRequireArg("limit", (sender, args) -> Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));

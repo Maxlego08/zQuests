@@ -31,6 +31,7 @@ public class QuestPlaceholder extends ZUtils {
 
         placeholder.register("name_", this::getQuestName);
         placeholder.register("description_", this::getQuestDescription);
+        placeholder.register("placeholder_description_", this::getQuestPlaceholderDescription);
         placeholder.register("model_id_", (p, q) -> String.valueOf(this.getQuestModelId(p, q)));
         placeholder.register("is_default_favorite_", (p, q) -> String.valueOf(this.isDefaultFavorite(p, q)));
         placeholder.register("is_favorite_", (p, q) -> String.valueOf(this.isFavorite(p, q)));
@@ -144,6 +145,15 @@ public class QuestPlaceholder extends ZUtils {
     public String getQuestDescription(Player player, String questId) {
         Optional<Quest> optional = questManager.getQuest(questId);
         return optional.map(Quest::getDescription).orElse("Unknown");
+    }
+
+    public String getQuestPlaceholderDescription(Player player, String questId) {
+        var userQuest = questManager.getUserQuest(player.getUniqueId());
+        var optional = userQuest.findActive(questId);
+        return optional.map(activeQuest -> {
+            Placeholders placeholders = QuestPlaceholderUtil.createPlaceholder(plugin, player, activeQuest.getQuest());
+            return placeholders.parse(activeQuest.getQuest().getPlaceholderDescription());
+        }).orElse("Unknown");
     }
 
     public int getQuestModelId(Player player, String questId) {

@@ -4,6 +4,7 @@ import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.zcore.utils.QuestPlaceholderUtil;
 
 import java.util.Date;
 import java.util.UUID;

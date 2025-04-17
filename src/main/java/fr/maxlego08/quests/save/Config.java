@@ -22,7 +22,7 @@ public class Config {
     public static String mainCommandInventoryName;
     public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
     public static SimpleDateFormat simpleDateFormat;
-    public static Map<FavoritePlaceholderType, PlaceholderFavorite> placeholderFavorites;
+    public static Map<FavoritePlaceholderType, PlaceholderFavorite> placeholderFavorites = new HashMap<>();
     public static String globalGroupName;
     public static int eventTicks;
     public static int antiBlockPlaceAbuse;

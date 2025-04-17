@@ -62,6 +62,8 @@ public class QuestLoader extends ZUtils {
 
             String displayName = accessor.getString("display-name", name);
             String description = accessor.getString("description", "no description");
+            String placeholderDescription = accessor.getString("placeholder-description", description);
+
             Material thumbnail = accessor.contains("thumbnail") ? Material.valueOf(accessor.getString("thumbnail").toUpperCase()) : null;
             long goal = accessor.getLong("goal", 1);
             boolean autoAccept = accessor.getBoolean("auto-accept", false);
@@ -115,7 +117,7 @@ public class QuestLoader extends ZUtils {
                 hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);
             }
 
-            return new ZQuest(this.plugin, name, questType, displayName, description, thumbnail, goal, autoAccept, rewards, startActions, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden, hologramConfiguration);
+            return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, thumbnail, goal, autoAccept, rewards, startActions, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden, hologramConfiguration);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;

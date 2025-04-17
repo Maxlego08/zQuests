@@ -10,7 +10,7 @@ public class PlayerFavoriteConfigurationMigration extends Migration {
         this.create("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, table -> {
             table.uuid("unique_id").primary();
             table.integer("limit");
-            table.string("placeholder_type", 255).defaultValue(FavoritePlaceholderType.LARGE.name());
+            table.string("placeholder_type", 255);
             table.timestamps();
         });
     }

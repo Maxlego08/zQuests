@@ -21,6 +21,7 @@ public class ZQuest implements Quest {
     private final QuestType type;
     private final String displayName;
     private final String description;
+    private final String placeholderDescription;
     private final Material thumbnail;
     private final long goal;
     private final boolean autoAccept;
@@ -35,12 +36,13 @@ public class ZQuest implements Quest {
     private final boolean isHidden;
     private final List<HologramConfiguration> hologramConfigurations;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
         this.displayName = displayName;
         this.description = description;
+        this.placeholderDescription = placeholderDescription;
         this.thumbnail = thumbnail;
         this.goal = goal;
         this.autoAccept = autoAccept;
@@ -86,6 +88,11 @@ public class ZQuest implements Quest {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getPlaceholderDescription() {
+        return this.placeholderDescription;
     }
 
     @Override

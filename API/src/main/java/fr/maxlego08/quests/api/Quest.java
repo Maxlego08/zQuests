@@ -34,6 +34,14 @@ public interface Quest {
     String getDescription();
 
     /**
+     * Gets the description of the quest.
+     * This description will be updated with the placeholders
+     *
+     * @return the description of the quest
+     */
+    String getPlaceholderDescription();
+
+    /**
      * Gets the thumbnail material of the quest.
      *
      * @return the thumbnail material of the quest
