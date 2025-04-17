@@ -6,6 +6,7 @@ import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.event.events.QuestFavoriteChangePlaceholderTypeEvent;
 import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
+import fr.maxlego08.quests.save.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.Plugin;
@@ -24,16 +25,25 @@ public class ChangeFavoriteTypeButton extends ZButton {
         var manager = this.plugin.getQuestManager();
         var userQuest = manager.getUserQuest(player.getUniqueId());
 
-        var current = userQuest.getFavoritePlaceholderType();
+        var currentPlaceholderType = userQuest.getFavoritePlaceholderType();
         FavoritePlaceholderType[] types = FavoritePlaceholderType.values();
-        int index = (current.ordinal() + 1) % types.length;
-        current = types[index];
+        int index = (currentPlaceholderType.ordinal() + 1) % types.length;
+        currentPlaceholderType = types[index];
 
-        var typeEvent = new QuestFavoriteChangePlaceholderTypeEvent(userQuest, current);
+        var typeEvent = new QuestFavoriteChangePlaceholderTypeEvent(userQuest, currentPlaceholderType);
         if (manager.callQuestEvent(player.getUniqueId(), typeEvent)) return;
 
+        var placeholderFavorite = Config.placeholderFavorites.get(typeEvent.getNewFavoritePlaceholderType());
+        int limit = userQuest.getFavoriteLimit();
+        if (limit < placeholderFavorite.minFavorite()) {
+            limit = placeholderFavorite.minFavorite();
+        } else if (limit > placeholderFavorite.maxFavorite()) {
+            limit = placeholderFavorite.maxFavorite();
+        }
+
+        userQuest.setFavoriteLimit(limit);
         userQuest.setFavoritePlaceholderType(typeEvent.getNewFavoritePlaceholderType());
-        this.plugin.getStorageManager().upsertPlayerFavoriteQuestConfiguration(player.getUniqueId(), userQuest.getFavoriteLimit(), typeEvent.getNewFavoritePlaceholderType());
+        this.plugin.getStorageManager().upsertPlayerFavoriteQuestConfiguration(player.getUniqueId(), limit, typeEvent.getNewFavoritePlaceholderType());
         this.plugin.getInventoryManager().updateInventory(player);
     }
 }

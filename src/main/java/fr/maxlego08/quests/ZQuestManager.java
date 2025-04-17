@@ -29,7 +29,9 @@ import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import fr.maxlego08.quests.api.utils.InventoryContent;
 import fr.maxlego08.quests.api.utils.QuestHistory;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
+import fr.maxlego08.quests.inventories.buttons.AddFavoriteLimitButton;
 import fr.maxlego08.quests.inventories.buttons.ChangeFavoriteTypeButton;
+import fr.maxlego08.quests.inventories.buttons.RemoveFavoriteLimitButton;
 import fr.maxlego08.quests.inventories.loader.ChangeQuestGroupLoader;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.QuestFavoriteLoader;
@@ -91,6 +93,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         buttonManager.register(new SetFavoriteLimitLoader(this.plugin));
         buttonManager.register(new SetFavoriteTypeLoader(this.plugin));
         buttonManager.register(new NoneLoader(this.plugin, ChangeFavoriteTypeButton.class, "ZQUESTS_CHANGE_FAVORITE_TYPE"));
+        buttonManager.register(new NoneLoader(this.plugin, AddFavoriteLimitButton.class, "ZQUESTS_ADD_FAVORITE_LIMIT"));
+        buttonManager.register(new NoneLoader(this.plugin, RemoveFavoriteLimitButton.class, "ZQUESTS_REMOVE_FAVORITE_LIMIT"));
     }
 
     @Override
