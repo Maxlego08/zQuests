@@ -203,3 +203,6 @@ placeholder-favorite:
 # This ensures that quests of type BLOCK_PLACE can verify that players place
 # the desired number of blocks and do not place and break the same block multiple times.
 anti-block-place-abuse: 60000
+
+quest-favorite-icon: "V"
+quest-not-favorite-icon: "X"

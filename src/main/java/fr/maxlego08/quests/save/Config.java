@@ -25,6 +25,8 @@ public class Config {
     public static int eventTicks;
     public static int antiBlockPlaceAbuse;
     public static boolean disableOffhandCraft = true;
+    public static String questFavoriteIcon = "V";
+    public static String questNotFavoriteIcon = "X";
 
     /**
      * static Singleton instance.
@@ -70,6 +72,9 @@ public class Config {
                 configuration.getString("placeholder-favorite.result", "&f%name%\n&e%progress%&8/&6%goal%"),
                 configuration.getString("placeholder-favorite.between", "\n")
         );
+
+        questFavoriteIcon = configuration.getString("quest-favorite-icon", "V");
+        questNotFavoriteIcon = configuration.getString("quest-not-favorite-icon", "X");
 
         this.loadEventConfiguration(configuration);
     }

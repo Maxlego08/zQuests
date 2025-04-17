@@ -146,4 +146,9 @@ public class ZUserQuest implements UserQuest {
         String name = quest.getHologramName(this.uniqueId);
         return this.questHolograms.stream().filter(questHologram -> questHologram.match(name)).findFirst();
     }
+
+    @Override
+    public boolean isFavorite(String questId) {
+        return this.activeQuests.stream().anyMatch(e -> e.getQuest().getName().equals(questId) && e.isFavorite());
+    }
 }

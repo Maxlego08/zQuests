@@ -32,7 +32,9 @@ public class QuestPlaceholder extends ZUtils {
         placeholder.register("name_", this::getQuestName);
         placeholder.register("description_", this::getQuestDescription);
         placeholder.register("model_id_", (p, q) -> String.valueOf(this.getQuestModelId(p, q)));
+        placeholder.register("is_default_favorite_", (p, q) -> String.valueOf(this.isDefaultFavorite(p, q)));
         placeholder.register("is_favorite_", (p, q) -> String.valueOf(this.isFavorite(p, q)));
+        placeholder.register("favorite_icon_", (p, q) -> this.isFavorite(p, q) ? Config.questFavoriteIcon : Config.questNotFavoriteIcon);
         placeholder.register("can_change_favorite_", (p, q) -> String.valueOf(this.canChangeFavorite(p, q)));
 
         placeholder.register("thumbnail_", (player, questId) -> {
@@ -151,6 +153,11 @@ public class QuestPlaceholder extends ZUtils {
     }
 
     public boolean isFavorite(Player player, String questId) {
+        var userQuest = questManager.getUserQuest(player.getUniqueId());
+        return userQuest.isFavorite(questId);
+    }
+
+    public boolean isDefaultFavorite(Player player, String questId) {
         Optional<Quest> optional = questManager.getQuest(questId);
         return optional.map(Quest::isFavorite).orElse(false);
     }

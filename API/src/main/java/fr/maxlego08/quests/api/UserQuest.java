@@ -145,4 +145,6 @@ public interface UserQuest {
     UUID getUniqueId();
 
     Optional<QuestHologram> getHologram(Quest quest);
+
+    boolean isFavorite(String questId);
 }
