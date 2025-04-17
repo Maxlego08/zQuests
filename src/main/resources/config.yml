@@ -173,6 +173,11 @@ events:
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
     update-hologram: false # Determines if the hologram should be updated when this event occurs
 
+  - event: QuestFavoriteChangeAmountEvent # Triggered when a user changes the amount for the favorite placeholder
+    enabled: false # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+
 # The format of dates used for placeholders that will display a date
 date-format: "dd/MM/yyyy HH:mm:ss"
 

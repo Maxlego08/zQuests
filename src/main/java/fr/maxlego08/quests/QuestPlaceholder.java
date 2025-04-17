@@ -84,8 +84,9 @@ public class QuestPlaceholder extends ZUtils {
 
 
         placeholder.register("favorite_quests", player -> {
-            var user = questManager.getUserQuest(player.getUniqueId());
-            var favoriteQuests = user.getFavoriteQuests().stream().sorted(Comparator.comparing(ActiveQuest::getCreatedAt)).limit(Config.placeholderFavorite.limit()).toList();
+            var userQuest = questManager.getUserQuest(player.getUniqueId());
+            int questLimit = userQuest.getFavoriteAmount() < 0 ? Config.placeholderFavorite.limit() : userQuest.getFavoriteAmount();
+            var favoriteQuests = userQuest.getFavoriteQuests().stream().sorted(Comparator.comparing(ActiveQuest::getCreatedAt)).limit(questLimit).toList();
             if (favoriteQuests.isEmpty()) return Config.placeholderFavorite.empty();
 
             StringBuilder builder = new StringBuilder();

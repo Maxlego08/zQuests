@@ -17,7 +17,7 @@ public class CommandQuestsSetFavorite extends VCommand {
         super(plugin);
         this.setPermission(Permission.ZQUESTS_SET_FAVORITE);
         this.addSubCommand("set-favorite");
-        this.setDescription(Message.DESCRIPTION_SET_PROGRESS);
+        this.setDescription(Message.DESCRIPTION_SET_FAVORITE);
         this.addRequireArg("player");
         this.addRequireArg("quest", (sender, args) -> {
 

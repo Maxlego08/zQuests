@@ -39,6 +39,7 @@ public enum Message {
     DESCRIPTION_HELP("Send commands"),
     DESCRIPTION_RELOAD("Reload configuration files"),
     DESCRIPTION_START("Activate a quest for a player"),
+    DESCRIPTION_START_ALL("Activate a quest group for a player"),
     DESCRIPTION_COMPLETE("Complete a quest for a player"),
     DESCRIPTION_COMPLETE_ALL("Complete a quest group for a player"),
     DESCRIPTION_DELETE_ALL("Delete all quests for a player"),
@@ -46,6 +47,7 @@ public enum Message {
     DESCRIPTION_RESTART("Restart a quest for a player"),
     DESCRIPTION_SET_PROGRESS("Set the progress of a quest for a player"),
     DESCRIPTION_SET_FAVORITE("Set a quest as favorite for a player"),
+    DESCRIPTION_SET_FAVORITE_AMOUNT("Set the quest favorite amount for a player"),
     DESCRIPTION_ADD_PROGRESS("Add a number to the progress of a quest for a player"),
     DESCRIPTION_PROGRESS_INVENTORY("Progress inventory content quests for a player"),
     DESCRIPTION_REFRESH_HOLOGRAM("Update player holograms"),
@@ -56,6 +58,7 @@ public enum Message {
     QUEST_NOT_FOUND("&cUnable to find the quest &f%name%&c."),
     QUEST_START_ERROR("&cThe quest &f%name% &cis already completed or active for the player &f%player%&c."),
     QUEST_START_SUCCESS("&aYou have just activated the quest &f%name%&a for the player &f%player%&a."),
+    QUEST_START_GROUP("&aYou have just activated the quest group &f%name%&a for the player &f%player%&a."),
 
     GROUP_COMPLETE_SUCCESS("&aThe player &f%player% &ahas just completed the quest group &f%name%&a!"),
     QUEST_COMPLETE_SUCCESS("&aThe player &f%player% &ahas just completed the quest &f%name%&a!"),
@@ -63,6 +66,7 @@ public enum Message {
     QUEST_DELETE_ALL_SUCCESS("&aAll the quests have just been deleted&a."),
     QUEST_SET_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just set the progress of the quest &f%name% &ato &f%progress%&a."),
     QUEST_ADD_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just added &f%progress% &ato the progress of the quest &f%name%&a."),
+    QUEST_SET_FAVORITE_AMOUNT_SUCCESS("&aThe player &f%player% &ahas just set the favorite amount of the quests &ato &f%amount%&a."),
     INVENTORY_NOT_FOUND("&cUnable to find the inventory &f%inventory%&c."),
 
     PROGRESS_INVENTORY_INFO("&aThe player &f%player% &ahas finished &f%amount% &aquests in the inventory&a."),

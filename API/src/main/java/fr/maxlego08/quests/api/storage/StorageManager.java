@@ -85,4 +85,6 @@ public interface StorageManager {
      * @param completedQuest the completed quest to delete
      */
     void delete(UUID uniqueId, CompletedQuest completedQuest);
+
+    void upsertPlayerFavoriteQuestAmount(UUID uniqueId, int amount);
 }

@@ -147,4 +147,8 @@ public interface UserQuest {
     Optional<QuestHologram> getHologram(Quest quest);
 
     boolean isFavorite(String questId);
+
+    int getFavoriteAmount();
+
+    void setFavoriteAmount(int amount);
 }

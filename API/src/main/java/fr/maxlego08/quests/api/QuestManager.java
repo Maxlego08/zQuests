@@ -187,6 +187,8 @@ public interface QuestManager {
      */
     void activateQuest(CommandSender sender, Player player, String questName);
 
+    void activateQuestGroup(CommandSender sender, Player player, String groupName);
+
     /**
      * Complete a quest for a player.
      *
@@ -376,4 +378,13 @@ public interface QuestManager {
      * @param offlinePlayer the offline player whose quests to show
      */
     void showQuests(CommandSender sender, OfflinePlayer offlinePlayer);
+
+    /**
+     * Sets the number of quests that the given offline player can bookmark.
+     *
+     * @param sender        the command sender
+     * @param offlinePlayer the offline player to set the favorite amount for
+     * @param amount        the number of quests that the player can bookmark
+     */
+    void setFavoriteAmount(CommandSender sender, OfflinePlayer offlinePlayer, int amount);
 }

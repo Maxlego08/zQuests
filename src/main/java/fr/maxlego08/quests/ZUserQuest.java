@@ -5,6 +5,7 @@ import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.UserQuest;
 import fr.maxlego08.quests.api.hologram.QuestHologram;
+import fr.maxlego08.quests.save.Config;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,15 +21,17 @@ public class ZUserQuest implements UserQuest {
     private final List<QuestHologram> questHolograms = new ArrayList<>();
     private String currentGroup;
     private boolean isExtend;
+    private int favoriteAmount;
 
     public ZUserQuest(UUID uniqueId) {
-        this(uniqueId, new ArrayList<>(), new ArrayList<>());
+        this(uniqueId, new ArrayList<>(), new ArrayList<>(), Config.placeholderFavorite.limit());
     }
 
-    public ZUserQuest(UUID uniqueId, List<ActiveQuest> activeQuests, List<CompletedQuest> completedQuests) {
+    public ZUserQuest(UUID uniqueId, List<ActiveQuest> activeQuests, List<CompletedQuest> completedQuests, int favoriteAmount) {
         this.uniqueId = uniqueId;
         this.activeQuests = activeQuests;
         this.completedQuests = completedQuests;
+        this.favoriteAmount = favoriteAmount;
     }
 
     @Override
@@ -150,5 +153,15 @@ public class ZUserQuest implements UserQuest {
     @Override
     public boolean isFavorite(String questId) {
         return this.activeQuests.stream().anyMatch(e -> e.getQuest().getName().equals(questId) && e.isFavorite());
+    }
+
+    @Override
+    public int getFavoriteAmount() {
+        return this.favoriteAmount;
+    }
+
+    @Override
+    public void setFavoriteAmount(int favoriteAmount) {
+        this.favoriteAmount = favoriteAmount;
     }
 }

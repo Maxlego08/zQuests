@@ -14,4 +14,9 @@ public interface Tables {
      */
     String COMPLETED_QUESTS = "completed_quests";
 
+    /**
+     * The table name for the player favorite quest amount.
+     */
+    String PLAYER_FAVORITE_AMOUNT = "player_favorite_amount";
+
 }

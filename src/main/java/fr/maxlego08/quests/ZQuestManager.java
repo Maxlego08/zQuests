@@ -16,6 +16,7 @@ import fr.maxlego08.quests.api.event.QuestEvent;
 import fr.maxlego08.quests.api.event.events.QuestCompleteEvent;
 import fr.maxlego08.quests.api.event.events.QuestDeleteAllEvent;
 import fr.maxlego08.quests.api.event.events.QuestDeleteEvent;
+import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeAmountEvent;
 import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeEvent;
 import fr.maxlego08.quests.api.event.events.QuestPostProgressEvent;
 import fr.maxlego08.quests.api.event.events.QuestProgressEvent;
@@ -29,6 +30,7 @@ import fr.maxlego08.quests.inventories.loader.ChangeQuestGroupLoader;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.QuestFavoriteLoader;
 import fr.maxlego08.quests.inventories.loader.QuestHistoryLoader;
+import fr.maxlego08.quests.inventories.loader.SetFavoriteAmountLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
 import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.save.Config;
@@ -81,6 +83,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         buttonManager.register(new QuestHistoryLoader(this.plugin));
         buttonManager.register(new ChangeQuestGroupLoader(this.plugin));
         buttonManager.register(new QuestFavoriteLoader(this.plugin));
+        buttonManager.register(new SetFavoriteAmountLoader(this.plugin));
     }
 
     @Override
@@ -559,6 +562,25 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
+    public void activateQuestGroup(CommandSender sender, Player player, String groupName) {
+        var optional = getGroup(groupName);
+        if (optional.isEmpty()) {
+            message(sender, Message.GROUP_NOT_FOUND, "%name%", groupName);
+            return;
+        }
+
+        var group = optional.get();
+        UserQuest userQuest = getUserQuest(player.getUniqueId());
+
+        for (Quest quest : group.getQuests()) {
+            if (userQuest.canStartQuest(quest)) {
+                this.addQuestToPlayer(player.getUniqueId(), quest, true);
+            }
+        }
+        message(sender, Message.QUEST_START_GROUP, "%name%", groupName, "%player%", player.getName());
+    }
+
+    @Override
     public void completeQuest(CommandSender sender, Player player, String questName) {
 
         ActiveQuest activeQuest = findActiveQuest(sender, player, questName);
@@ -861,6 +883,20 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             message(sender, Message.SHOW_LOAD_USER, "%player%", offlinePlayer.getName());
             this.plugin.getStorageManager().load(offlinePlayer.getUniqueId(), userQuest -> showQuests(sender, offlinePlayer, userQuest));
         }
+    }
+
+    @Override
+    public void setFavoriteAmount(CommandSender sender, OfflinePlayer offlinePlayer, int amount) {
+
+        var userQuest = this.usersQuests.get(offlinePlayer.getUniqueId());
+
+        var event = new QuestFavoriteChangeAmountEvent(userQuest, amount);
+        if (callQuestEvent(offlinePlayer.getUniqueId(), event)) return;
+
+        userQuest.setFavoriteAmount(event.getNewAmount());
+
+        this.plugin.getStorageManager().upsertPlayerFavoriteQuestAmount(offlinePlayer.getUniqueId(), event.getNewAmount());
+        message(sender, Message.QUEST_SET_FAVORITE_AMOUNT_SUCCESS, "%player%", offlinePlayer.getName(), "%amount%", event.getNewAmount());
     }
 
     private void showQuests(CommandSender sender, OfflinePlayer offlinePlayer, UserQuest userQuest) {

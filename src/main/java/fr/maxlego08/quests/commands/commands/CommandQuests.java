@@ -23,8 +23,9 @@ public class CommandQuests extends VCommand {
         this.setPermission(Permission.ZQUESTS_USE);
         this.addSubCommand(new CommandQuestsReload(plugin));
         this.addSubCommand(new CommandQuestsStart(plugin));
-        this.addSubCommand(new CommandQuestsDeleteAll(plugin));
+        this.addSubCommand(new CommandQuestsStartAll(plugin));
         this.addSubCommand(new CommandQuestsDelete(plugin));
+        this.addSubCommand(new CommandQuestsDeleteAll(plugin));
         this.addSubCommand(new CommandQuestsComplete(plugin));
         this.addSubCommand(new CommandQuestsCompleteAll(plugin));
         this.addSubCommand(new CommandQuestsAddProgress(plugin));
@@ -36,6 +37,7 @@ public class CommandQuests extends VCommand {
         this.addSubCommand(new CommandQuestsRefreshHologram(plugin));
         this.addSubCommand(new CommandQuestsAddFavorite(plugin));
         this.addSubCommand(new CommandQuestsShow(plugin));
+        this.addSubCommand(new CommandQuestsSetFavoriteAmount(plugin));
 
         plugin.getConfig().getMapList("main-command-page").forEach(map -> {
             TypedMapAccessor typedMapAccessor = new TypedMapAccessor((Map<String, Object>) map);
