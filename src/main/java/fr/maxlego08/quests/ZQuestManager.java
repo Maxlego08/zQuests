@@ -319,6 +319,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.plugin.getStorageManager().upsert(userQuest.getActiveQuests());
     }
 
+    @Override
     public Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer, boolean isStatic) {
 
         Set<ActiveQuest> activeQuests = new HashSet<>();

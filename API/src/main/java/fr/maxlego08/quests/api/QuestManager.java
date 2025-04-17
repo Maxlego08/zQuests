@@ -106,6 +106,9 @@ public interface QuestManager {
      */
     Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
 
+
+    Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer, boolean isStatic);
+
     /**
      * Handle inventory quests for the player.
      *
