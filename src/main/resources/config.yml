@@ -188,26 +188,48 @@ date-format: "dd/MM/yyyy HH:mm:ss"
 
 # Allows creating a placeholder that will group multiple favorite quests.
 # This can be used in a scoreboard or an inventory.
-placeholder-favorite:
-  # The number of favorite quests to display
-  limit: 3
-  # The message to display when there are no favorite quests
-  empty: "&cNo favorite quests"
-  # The result for each quest, you can use the following placeholders:
-  # %quest-name% - The name of the quest
-  # %quest-display-name% - The display name of the quest
-  # %quest-description% - The description of the quest
-  # %quest-thumbnail% - The icon of the quest
-  # %quest-type% - The type of the quest
-  # %quest-objective% - The objective of the quest
-  # %quest-lore-line% - The placeholder lore-line-placeholder
-  # %quest-progress-bar% - The progress bar of the quest
-  # %quest-percent% - The percentage of the quest's progress
-  # %quest-progress% - The progress of the quest
-  # %quest-global-group-name% - The global group name of the quest
-  result: "&f%quest-description%\n&8%quest-display-name%\n#fcd600%quest-progress%&8/&f%quest-objective%"
-  # The string that will be placed between two quests
-  between: "\n\n"
+# You can use the following placeholders:
+# %quest-name% - The name of the quest
+# %quest-display-name% - The display name of the quest
+# %quest-description% - The description of the quest
+# %quest-thumbnail% - The icon of the quest
+# %quest-type% - The type of the quest
+# %quest-objective% - The objective of the quest
+# %quest-lore-line% - The placeholder lore-line-placeholder
+# %quest-progress-bar% - The progress bar of the quest
+# %quest-percent% - The percentage of the quest's progress
+# %quest-progress% - The progress of the quest
+# %quest-global-group-name% - The global group name of the quest
+placeholder-favorites:
+  - type: LARGE
+    min: 3
+    max: 3
+    # The message to display when there are no favorite quests
+    empty: "&cNo favorite quests"
+    # The result for each quest
+    result: "&f%quest-description%\n&8%quest-display-name%\n#fcd600%quest-progress%&8/&f%quest-objective%"
+    # The string that will be placed between two quests
+    between: "\n\n"
+  - type: NORMAL
+    # The number of favorite quests to display
+    min: 3
+    max: 6
+    # The message to display when there are no favorite quests
+    empty: "&cNo favorite quests"
+    # The result for each quest
+    result: "&f%quest-description%\n#fcd600%quest-progress%&8/&f%quest-objective%"
+    # The string that will be placed between two quests
+    between: "\n"
+  - type: SMALL
+    # The number of favorite quests to display
+    min: 3
+    max: 8
+    # The message to display when there are no favorite quests
+    empty: "&cNo favorite quests"
+    # The result for each quest
+    result: "&f%quest-description% &8- #fcd600%quest-progress%&8/&f%quest-objective%"
+    # The string that will be placed between two quests
+    between: "\n"
 
 # Time in milliseconds for a placed block to no longer be considered as already used.
 # This ensures that quests of type BLOCK_PLACE can verify that players place

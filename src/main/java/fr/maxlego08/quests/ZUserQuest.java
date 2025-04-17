@@ -26,7 +26,7 @@ public class ZUserQuest implements UserQuest {
     private FavoritePlaceholderType favoritePlaceholderType;
 
     public ZUserQuest(UUID uniqueId) {
-        this(uniqueId, new ArrayList<>(), new ArrayList<>(), Config.placeholderFavorite.limit(), FavoritePlaceholderType.LARGE);
+        this(uniqueId, new ArrayList<>(), new ArrayList<>(), Config.placeholderFavorites.get(FavoritePlaceholderType.LARGE).maxFavorite(), FavoritePlaceholderType.LARGE);
     }
 
     public ZUserQuest(UUID uniqueId, List<ActiveQuest> activeQuests, List<CompletedQuest> completedQuests, int favoriteLimit, FavoritePlaceholderType favoritePlaceholderType) {

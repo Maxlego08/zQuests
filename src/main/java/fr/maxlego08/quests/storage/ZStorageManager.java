@@ -202,7 +202,7 @@ public class ZStorageManager implements StorageManager {
 
             List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(uuid, quest, dto.created_at(), dto.amount(), dto.is_favorite())).orElse(null));
             List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at(), dto.started_at(), dto.is_favorite())).orElse(null));
-            var playerFavoriteAmountDTO = requestHelper.select("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, PlayerFavoriteConfigurationDTO.class, table -> table.where("unique_id", uuid)).stream().findFirst().orElse(new PlayerFavoriteConfigurationDTO(uuid, Config.placeholderFavorite.limit(), FavoritePlaceholderType.LARGE));
+            var playerFavoriteAmountDTO = requestHelper.select("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, PlayerFavoriteConfigurationDTO.class, table -> table.where("unique_id", uuid)).stream().findFirst().orElse(new PlayerFavoriteConfigurationDTO(uuid, Config.placeholderFavorites.get(FavoritePlaceholderType.LARGE).maxFavorite(), FavoritePlaceholderType.LARGE));
 
             // activeQuests.removeIf(ActiveQuest::isComplete);
             consumer.accept(new ZUserQuest(uuid, activeQuests, completedQuests, playerFavoriteAmountDTO.limit(), playerFavoriteAmountDTO.placeholder_type()));

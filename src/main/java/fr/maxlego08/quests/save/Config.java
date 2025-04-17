@@ -2,12 +2,14 @@ package fr.maxlego08.quests.save;
 
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.api.utils.EventConfiguration;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import fr.maxlego08.quests.api.utils.PlaceholderFavorite;
 import fr.maxlego08.quests.api.utils.ProgressBarConfig;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Config {
@@ -20,7 +22,7 @@ public class Config {
     public static String mainCommandInventoryName;
     public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
     public static SimpleDateFormat simpleDateFormat;
-    public static PlaceholderFavorite placeholderFavorite;
+    public static Map<FavoritePlaceholderType, PlaceholderFavorite> placeholderFavorites;
     public static String globalGroupName;
     public static int eventTicks;
     public static int antiBlockPlaceAbuse;
@@ -66,17 +68,26 @@ public class Config {
         loreLinePlaceholderActive = configuration.getString("lore-line-placeholder.active", "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘");
         loreLinePlaceholderComplete = configuration.getString("lore-line-placeholder.complete", "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔");
 
-        placeholderFavorite = new PlaceholderFavorite(
-                configuration.getInt("placeholder-favorite.limit", 3),
-                configuration.getString("placeholder-favorite.empty", "&cNo favorite quests"),
-                configuration.getString("placeholder-favorite.result", "&f%name%\n&e%progress%&8/&6%goal%"),
-                configuration.getString("placeholder-favorite.between", "\n")
-        );
+        this.loadFavorites(configuration.getMapList("placeholder-favorites"));
 
         questFavoriteIcon = configuration.getString("quest-favorite-icon", "V");
         questNotFavoriteIcon = configuration.getString("quest-not-favorite-icon", "X");
 
         this.loadEventConfiguration(configuration);
+    }
+
+    private void loadFavorites(List<Map<?, ?>> maps) {
+        maps.forEach(map -> {
+            TypedMapAccessor accessor = new TypedMapAccessor((Map<String, Object>) map);
+            FavoritePlaceholderType favoritePlaceholderType = FavoritePlaceholderType.valueOf(accessor.getString("type").toUpperCase());
+            int min = accessor.getInt("min", 3);
+            int max = accessor.getInt("max", 3);
+            String empty = accessor.getString("empty", "&cNo favorite quests");
+            String result = accessor.getString("result", "&f%quest-description%\n&8%quest-display-name%\n#fcd600%quest-progress%&8/&f%quest-objective%");
+            String between = accessor.getString("between", "\n\n");
+
+            placeholderFavorites.put(favoritePlaceholderType, new PlaceholderFavorite(min, max, empty, result, between));
+        });
     }
 
     private ProgressBarConfig loadProgressBarConfig(FileConfiguration configuration, String path) {
