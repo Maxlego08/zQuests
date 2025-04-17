@@ -15,13 +15,13 @@ import java.util.List;
 public class QuestFavoriteButton extends ZButton {
 
     private final QuestsPlugin plugin;
-    private final List<String> quests;
+    private final List<String> questNames;
     private final String actionEnable;
     private final String actionDisable;
 
-    public QuestFavoriteButton(QuestsPlugin plugin, List<String> quests, String actionEnable, String actionDisable) {
+    public QuestFavoriteButton(QuestsPlugin plugin, List<String> questNames, String actionEnable, String actionDisable) {
         this.plugin = plugin;
-        this.quests = quests;
+        this.questNames = questNames;
         this.actionEnable = actionEnable;
         this.actionDisable = actionDisable;
     }
@@ -30,12 +30,11 @@ public class QuestFavoriteButton extends ZButton {
     public ItemStack getCustomItemStack(Player player) {
         Placeholders placeholders = new Placeholders();
 
-        var manager = this.plugin.getQuestManager();
-        var userQuest = manager.getUserQuest(player.getUniqueId());
-        var quests = userQuest.getActiveQuests().stream().filter(activeQuest -> this.quests.contains(activeQuest.getQuest().getName())).toList();
-        var favQuests = quests.stream().filter(ActiveQuest::isFavorite).count();
+        List<ActiveQuest> relevantQuests = getRelevantActiveQuests(player);
+        boolean isFavorite = relevantQuests.stream().allMatch(ActiveQuest::isFavorite);
 
-        placeholders.register("action", favQuests >= quests.size() ? this.actionDisable : this.actionEnable);
+        String actionText = isFavorite ? actionDisable : actionEnable;
+        placeholders.register("action", actionText);
 
         return getItemStack().build(player, false, placeholders);
     }
@@ -44,22 +43,22 @@ public class QuestFavoriteButton extends ZButton {
     public void onClick(Player player, InventoryClickEvent event, InventoryDefault inventory, int slot, Placeholders placeholders) {
         super.onClick(player, event, inventory, slot, placeholders);
 
-        var manager = this.plugin.getQuestManager();
-        var userQuest = manager.getUserQuest(player.getUniqueId());
-        var quests = userQuest.getActiveQuests().stream().filter(activeQuest -> this.quests.contains(activeQuest.getQuest().getName())).toList();
-        var favQuests = quests.stream().filter(ActiveQuest::isFavorite).count();
+        List<ActiveQuest> relevantQuests = getRelevantActiveQuests(player);
+        long favoriteCount = relevantQuests.stream().filter(ActiveQuest::isFavorite).count();
+        boolean newFavoriteValue = !relevantQuests.stream().allMatch(ActiveQuest::isFavorite);
 
-        var newValue = favQuests < quests.size();
-
-        for (ActiveQuest activeQuest : quests) {
-
-            QuestFavoriteChangeEvent changeEvent = new QuestFavoriteChangeEvent(player, activeQuest, newValue);
-            if (this.plugin.getQuestManager().callQuestEvent(player.getUniqueId(), changeEvent)) continue;
+        for (ActiveQuest activeQuest : relevantQuests) {
+            QuestFavoriteChangeEvent changeEvent = new QuestFavoriteChangeEvent(player, activeQuest, newFavoriteValue);
+            if (plugin.getQuestManager().callQuestEvent(player.getUniqueId(), changeEvent)) continue;
 
             activeQuest.setFavorite(changeEvent.isFavorite());
-            this.plugin.getStorageManager().upsert(activeQuest);
+            plugin.getStorageManager().upsert(activeQuest);
         }
 
-        this.plugin.getInventoryManager().updateInventory(player);
+        plugin.getInventoryManager().updateInventory(player);
+    }
+
+    private List<ActiveQuest> getRelevantActiveQuests(Player player) {
+        return plugin.getQuestManager().getUserQuest(player.getUniqueId()).getActiveQuests().stream().filter(aq -> questNames.contains(aq.getQuest().getName())).toList();
     }
 }
