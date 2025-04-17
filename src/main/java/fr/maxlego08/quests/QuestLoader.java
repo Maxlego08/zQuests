@@ -89,7 +89,10 @@ public class QuestLoader extends ZUtils {
 
                     var optionalLoader = this.loaders.stream().filter(loader -> loader.getSupportedTypes().contains(questType)).findFirst();
                     if (optionalLoader.isPresent()) {
-                        questActions.add(optionalLoader.get().load(actionAccessor, questType, file));
+                        var result = optionalLoader.get().load(actionAccessor, questType, file);
+                        if (result != null) {
+                            questActions.add(result);
+                        }
                     } else {
                         this.plugin.getLogger().severe("No loader found for " + questType + " in file " + file.getAbsolutePath());
                     }
@@ -106,7 +109,7 @@ public class QuestLoader extends ZUtils {
                 }
             }
 
-            List<HologramConfiguration> hologramConfiguration =  new ArrayList<>();
+            List<HologramConfiguration> hologramConfiguration = new ArrayList<>();
             if (accessor.contains("hologram")) {
                 var hologramAccessor = new TypedMapAccessor((Map<String, Object>) accessor.getObject("hologram"));
                 hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);
