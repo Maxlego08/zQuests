@@ -85,7 +85,10 @@ public class QuestPlaceholder extends ZUtils {
 
 
         placeholder.register("favorite_type", player -> questManager.getUserQuest(player.getUniqueId()).getFavoritePlaceholderType().name());
+        placeholder.register("favorite_type_name", player -> Config.placeholderFavorites.get(questManager.getUserQuest(player.getUniqueId()).getFavoritePlaceholderType()).displayName());
         placeholder.register("favorite_limit", player -> String.valueOf(questManager.getUserQuest(player.getUniqueId()).getFavoriteLimit()));
+        placeholder.register("favorite_max", player -> String.valueOf(Config.placeholderFavorites.get(questManager.getUserQuest(player.getUniqueId()).getFavoritePlaceholderType()).maxFavorite()));
+        placeholder.register("favorite_min", player -> String.valueOf(Config.placeholderFavorites.get(questManager.getUserQuest(player.getUniqueId()).getFavoritePlaceholderType()).minFavorite()));
         placeholder.register("favorite_quests", player -> {
 
             var userQuest = questManager.getUserQuest(player.getUniqueId());

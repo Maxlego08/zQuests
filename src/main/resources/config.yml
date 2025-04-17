@@ -202,6 +202,7 @@ date-format: "dd/MM/yyyy HH:mm:ss"
 # %quest-global-group-name% - The global group name of the quest
 placeholder-favorites:
   - type: LARGE
+    display-name: "Large"
     min: 3
     max: 3
     # The message to display when there are no favorite quests
@@ -211,6 +212,7 @@ placeholder-favorites:
     # The string that will be placed between two quests
     between: "\n\n"
   - type: NORMAL
+    display-name: "Normal"
     # The number of favorite quests to display
     min: 3
     max: 6
@@ -221,6 +223,7 @@ placeholder-favorites:
     # The string that will be placed between two quests
     between: "\n"
   - type: SMALL
+    display-name: "Small"
     # The number of favorite quests to display
     min: 3
     max: 8

@@ -85,8 +85,9 @@ public class Config {
             String empty = accessor.getString("empty", "&cNo favorite quests");
             String result = accessor.getString("result", "&f%quest-description%\n&8%quest-display-name%\n#fcd600%quest-progress%&8/&f%quest-objective%");
             String between = accessor.getString("between", "\n\n");
+            String displayName = accessor.getString("display-name", favoritePlaceholderType.name());
 
-            placeholderFavorites.put(favoritePlaceholderType, new PlaceholderFavorite(min, max, empty, result, between));
+            placeholderFavorites.put(favoritePlaceholderType, new PlaceholderFavorite(min, max, empty, result, between, displayName));
         });
     }
 
