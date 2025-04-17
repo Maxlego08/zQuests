@@ -330,7 +330,7 @@ public class QuestListener extends ZUtils implements Listener {
         ItemStack result = event.getCurrentItem();
 
         int craftAmount = event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP ? calculateMaxCraftAmount(event) : event.getCursor().getType() != Material.AIR ? 0 : result.getAmount();
-        plugin.debug("Craft amount: " + craftAmount + ", isNPC: " + isNPC(player));
+        plugin.debug("Craft limit: " + craftAmount + ", isNPC: " + isNPC(player));
 
         if (craftAmount > 0 && !isNPC(player)) {
             this.manager.handleQuests(player.getUniqueId(), QuestType.CRAFT, craftAmount, result);

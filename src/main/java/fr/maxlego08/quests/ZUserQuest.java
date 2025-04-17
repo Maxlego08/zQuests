@@ -5,6 +5,7 @@ import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.UserQuest;
 import fr.maxlego08.quests.api.hologram.QuestHologram;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import fr.maxlego08.quests.save.Config;
 
 import java.util.ArrayList;
@@ -21,17 +22,19 @@ public class ZUserQuest implements UserQuest {
     private final List<QuestHologram> questHolograms = new ArrayList<>();
     private String currentGroup;
     private boolean isExtend;
-    private int favoriteAmount;
+    private int favoriteLimit;
+    private FavoritePlaceholderType favoritePlaceholderType;
 
     public ZUserQuest(UUID uniqueId) {
-        this(uniqueId, new ArrayList<>(), new ArrayList<>(), Config.placeholderFavorite.limit());
+        this(uniqueId, new ArrayList<>(), new ArrayList<>(), Config.placeholderFavorite.limit(), FavoritePlaceholderType.LARGE);
     }
 
-    public ZUserQuest(UUID uniqueId, List<ActiveQuest> activeQuests, List<CompletedQuest> completedQuests, int favoriteAmount) {
+    public ZUserQuest(UUID uniqueId, List<ActiveQuest> activeQuests, List<CompletedQuest> completedQuests, int favoriteLimit, FavoritePlaceholderType favoritePlaceholderType) {
         this.uniqueId = uniqueId;
         this.activeQuests = activeQuests;
         this.completedQuests = completedQuests;
-        this.favoriteAmount = favoriteAmount;
+        this.favoriteLimit = favoriteLimit;
+        this.favoritePlaceholderType = favoritePlaceholderType;
     }
 
     @Override
@@ -156,12 +159,22 @@ public class ZUserQuest implements UserQuest {
     }
 
     @Override
-    public int getFavoriteAmount() {
-        return this.favoriteAmount;
+    public int getFavoriteLimit() {
+        return this.favoriteLimit;
     }
 
     @Override
-    public void setFavoriteAmount(int favoriteAmount) {
-        this.favoriteAmount = favoriteAmount;
+    public void setFavoriteLimit(int favoriteLimit) {
+        this.favoriteLimit = favoriteLimit;
+    }
+
+    @Override
+    public FavoritePlaceholderType getFavoritePlaceholderType() {
+        return favoritePlaceholderType;
+    }
+
+    @Override
+    public void setFavoritePlaceholderType(FavoritePlaceholderType favoritePlaceholderType) {
+        this.favoritePlaceholderType = favoritePlaceholderType;
     }
 }

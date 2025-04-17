@@ -11,11 +11,12 @@ import fr.maxlego08.quests.api.storage.StorageType;
 import fr.maxlego08.quests.api.storage.Tables;
 import fr.maxlego08.quests.api.storage.dto.ActiveQuestDTO;
 import fr.maxlego08.quests.api.storage.dto.CompletedQuestDTO;
-import fr.maxlego08.quests.api.storage.dto.PlayerFavoriteAmountDTO;
+import fr.maxlego08.quests.api.storage.dto.PlayerFavoriteConfigurationDTO;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.storage.migrations.ActiveQuestsCreateMigration;
 import fr.maxlego08.quests.storage.migrations.CompletedQuestsCreateMigration;
-import fr.maxlego08.quests.storage.migrations.PlayerFavoriteAmountMigration;
+import fr.maxlego08.quests.storage.migrations.PlayerFavoriteConfigurationMigration;
 import fr.maxlego08.quests.zcore.utils.GlobalDatabaseConfiguration;
 import fr.maxlego08.sarah.DatabaseConfiguration;
 import fr.maxlego08.sarah.DatabaseConnection;
@@ -89,7 +90,7 @@ public class ZStorageManager implements StorageManager {
 
         MigrationManager.registerMigration(new ActiveQuestsCreateMigration());
         MigrationManager.registerMigration(new CompletedQuestsCreateMigration());
-        MigrationManager.registerMigration(new PlayerFavoriteAmountMigration());
+        MigrationManager.registerMigration(new PlayerFavoriteConfigurationMigration());
 
         MigrationManager.execute(connection, JULogger.from(this.plugin.getLogger()));
     }
@@ -120,7 +121,7 @@ public class ZStorageManager implements StorageManager {
         return table -> {
             table.uuid("unique_id", activeQuest.getUniqueId()).primary();
             table.string("name", activeQuest.getQuest().getName()).primary();
-            table.bigInt("amount", activeQuest.getAmount());
+            table.bigInt("limit", activeQuest.getAmount());
             table.bool("is_favorite", activeQuest.isFavorite());
         };
     }
@@ -167,10 +168,11 @@ public class ZStorageManager implements StorageManager {
     }
 
     @Override
-    public void upsertPlayerFavoriteQuestAmount(UUID uniqueId, int amount) {
-        executor.execute(() -> this.requestHelper.upsert("%prefix%" + Tables.PLAYER_FAVORITE_AMOUNT, table -> {
+    public void upsertPlayerFavoriteQuestConfiguration(UUID uniqueId, int limit, FavoritePlaceholderType favoritePlaceholderType) {
+        executor.execute(() -> this.requestHelper.upsert("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, table -> {
             table.uuid("unique_id", uniqueId).primary();
-            table.bigInt("amount", amount);
+            table.bigInt("limit", limit);
+            table.string("placeholder_type", favoritePlaceholderType.name());
         }));
     }
 
@@ -200,10 +202,10 @@ public class ZStorageManager implements StorageManager {
 
             List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(uuid, quest, dto.created_at(), dto.amount(), dto.is_favorite())).orElse(null));
             List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at(), dto.started_at(), dto.is_favorite())).orElse(null));
-            int amount = requestHelper.select("%prefix%" + Tables.PLAYER_FAVORITE_AMOUNT, PlayerFavoriteAmountDTO.class, table -> table.where("unique_id", uuid)).stream().findFirst().map(PlayerFavoriteAmountDTO::amount).orElse(Config.placeholderFavorite.limit());
+            var playerFavoriteAmountDTO = requestHelper.select("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, PlayerFavoriteConfigurationDTO.class, table -> table.where("unique_id", uuid)).stream().findFirst().orElse(new PlayerFavoriteConfigurationDTO(uuid, Config.placeholderFavorite.limit(), FavoritePlaceholderType.LARGE));
 
             // activeQuests.removeIf(ActiveQuest::isComplete);
-            consumer.accept(new ZUserQuest(uuid, activeQuests, completedQuests, amount));
+            consumer.accept(new ZUserQuest(uuid, activeQuests, completedQuests, playerFavoriteAmountDTO.limit(), playerFavoriteAmountDTO.placeholder_type()));
         });
     }
 

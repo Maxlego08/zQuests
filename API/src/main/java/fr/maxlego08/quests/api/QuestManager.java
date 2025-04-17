@@ -2,6 +2,7 @@ package fr.maxlego08.quests.api;
 
 import fr.maxlego08.quests.api.event.QuestEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import fr.maxlego08.quests.api.utils.InventoryContent;
 import fr.maxlego08.quests.api.utils.QuestHistory;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
@@ -73,7 +74,7 @@ public interface QuestManager {
      *
      * @param uuid   the unique identifier of the user
      * @param type   the type of quest
-     * @param amount the amount to increment
+     * @param amount the limit to increment
      * @param object additional data for the quest action
      * @return the active quests that were updated
      */
@@ -84,7 +85,7 @@ public interface QuestManager {
      *
      * @param uuid     the unique identifier of the user
      * @param type     the type of quest
-     * @param amount   the amount to increment
+     * @param amount   the limit to increment
      * @param object   additional data for the quest action
      * @param consumer a consumer that will be called with the
      *                 updated active quest, if the quest is complete
@@ -100,7 +101,7 @@ public interface QuestManager {
      *
      * @param uuid   the unique identifier of the user
      * @param type   the type of quest
-     * @param amount the amount to increment
+     * @param amount the limit to increment
      * @param object additional data for the quest action
      * @return the active quests that were updated
      */
@@ -127,7 +128,7 @@ public interface QuestManager {
      *
      * @param uuid     the unique identifier of the user
      * @param type     the type of quest
-     * @param amount   the amount to increment
+     * @param amount   the limit to increment
      * @param object   additional data for the quest action
      * @param consumer a consumer that will be called with the
      *                 updated active quest, if the quest is complete
@@ -230,7 +231,7 @@ public interface QuestManager {
      * @param sender    the command sender
      * @param player    the player to set the progress for
      * @param questName the name of the quest to set the progress for
-     * @param amount    the amount to set the progress to
+     * @param amount    the limit to set the progress to
      */
     void setQuestProgress(CommandSender sender, Player player, String questName, int amount);
 
@@ -240,7 +241,7 @@ public interface QuestManager {
      * @param sender    the command sender
      * @param player    the player to add progress to
      * @param questName the name of the quest to add progress to
-     * @param amount    the amount to add to the progress
+     * @param amount    the limit to add to the progress
      */
     void addQuestProgress(CommandSender sender, Player player, String questName, int amount);
 
@@ -383,8 +384,17 @@ public interface QuestManager {
      * Sets the number of quests that the given offline player can bookmark.
      *
      * @param sender        the command sender
-     * @param offlinePlayer the offline player to set the favorite amount for
+     * @param offlinePlayer the offline player to set the favorite limit for
      * @param amount        the number of quests that the player can bookmark
      */
-    void setFavoriteAmount(CommandSender sender, OfflinePlayer offlinePlayer, int amount);
+    void setFavoriteLimit(CommandSender sender, OfflinePlayer offlinePlayer, int amount);
+
+    /**
+     * Sets the favorite placeholder type for the given offline player.
+     *
+     * @param sender             the command sender
+     * @param offlinePlayer      the offline player to set the favorite placeholder type for
+     * @param favoritePlaceholderType the favorite placeholder type to set
+     */
+    void setFavoriteType(CommandSender sender, OfflinePlayer offlinePlayer, FavoritePlaceholderType favoritePlaceholderType);
 }

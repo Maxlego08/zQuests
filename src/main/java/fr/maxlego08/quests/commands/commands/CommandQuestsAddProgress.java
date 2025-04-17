@@ -29,7 +29,7 @@ public class CommandQuestsAddProgress extends VCommand {
             var userQuest = plugin.getQuestManager().getUserQuest(player.getUniqueId());
             return userQuest.getActiveQuests().stream().map(activeQuest -> activeQuest.getQuest().getName()).toList();
         });
-        this.addRequireArg("amount", (a, b) -> Arrays.asList("0", "10", "20", "30", "40", "50", "60", "70", "80", "90"));
+        this.addRequireArg("limit", (a, b) -> Arrays.asList("0", "10", "20", "30", "40", "50", "60", "70", "80", "90"));
     }
 
     @Override

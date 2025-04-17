@@ -23,23 +23,23 @@ public interface ActiveQuest {
     Quest getQuest();
 
     /**
-     * Gets the current progress amount of the quest.
+     * Gets the current progress limit of the quest.
      *
-     * @return the progress amount
+     * @return the progress limit
      */
     long getAmount();
 
     /**
-     * Adds to the current progress amount of the quest.
+     * Adds to the current progress limit of the quest.
      *
-     * @param amount the amount to add
+     * @param amount the limit to add
      */
     void addAmount(long amount);
 
     /**
-     * Sets the current progress amount of the quest.
+     * Sets the current progress limit of the quest.
      *
-     * @param amount the amount to set
+     * @param amount the limit to set
      */
     void setAmount(long amount);
 
@@ -67,18 +67,18 @@ public interface ActiveQuest {
     boolean owningBy(UUID uniqueId);
 
     /**
-     * Increments the current progress amount of the quest.
+     * Increments the current progress limit of the quest.
      *
-     * @param amount the amount to increment
+     * @param amount the limit to increment
      * @return true if the quest became complete as a result of the increment, false otherwise
      */
     boolean increment(long amount);
 
     /**
-     * This method sets the progress amount directly, instead of incrementing it.
+     * This method sets the progress limit directly, instead of incrementing it.
      * For example, for verifying a player's job level.
      *
-     * @param amount the amount to set for the progress
+     * @param amount the limit to set for the progress
      * @return true if the quest became complete as a result of setting the progress, false otherwise
      */
     boolean incrementStatic(long amount);

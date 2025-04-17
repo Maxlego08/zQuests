@@ -16,13 +16,15 @@ import fr.maxlego08.quests.api.event.QuestEvent;
 import fr.maxlego08.quests.api.event.events.QuestCompleteEvent;
 import fr.maxlego08.quests.api.event.events.QuestDeleteAllEvent;
 import fr.maxlego08.quests.api.event.events.QuestDeleteEvent;
-import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeAmountEvent;
 import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeEvent;
+import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeLimitEvent;
+import fr.maxlego08.quests.api.event.events.QuestFavoriteChangePlaceholderTypeEvent;
 import fr.maxlego08.quests.api.event.events.QuestPostProgressEvent;
 import fr.maxlego08.quests.api.event.events.QuestProgressEvent;
 import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.event.events.QuestUserLoadEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import fr.maxlego08.quests.api.utils.InventoryContent;
 import fr.maxlego08.quests.api.utils.QuestHistory;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
@@ -886,17 +888,32 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public void setFavoriteAmount(CommandSender sender, OfflinePlayer offlinePlayer, int amount) {
+    public void setFavoriteLimit(CommandSender sender, OfflinePlayer offlinePlayer, int amount) {
 
         var userQuest = this.usersQuests.get(offlinePlayer.getUniqueId());
 
-        var event = new QuestFavoriteChangeAmountEvent(userQuest, amount);
+        var event = new QuestFavoriteChangeLimitEvent(userQuest, amount);
         if (callQuestEvent(offlinePlayer.getUniqueId(), event)) return;
 
-        userQuest.setFavoriteAmount(event.getNewAmount());
+        userQuest.setFavoriteLimit(event.getNewLimit());
 
-        this.plugin.getStorageManager().upsertPlayerFavoriteQuestAmount(offlinePlayer.getUniqueId(), event.getNewAmount());
-        message(sender, Message.QUEST_SET_FAVORITE_AMOUNT_SUCCESS, "%player%", offlinePlayer.getName(), "%amount%", event.getNewAmount());
+        this.plugin.getStorageManager().upsertPlayerFavoriteQuestConfiguration(offlinePlayer.getUniqueId(), event.getNewLimit(), userQuest.getFavoritePlaceholderType());
+        message(sender, Message.QUEST_SET_FAVORITE_LIMIT_SUCCESS, "%player%", offlinePlayer.getName(), "%limit%", event.getNewLimit());
+    }
+
+    @Override
+    public void setFavoriteType(CommandSender sender, OfflinePlayer offlinePlayer, FavoritePlaceholderType favoritePlaceholderType) {
+
+        var userQuest = this.usersQuests.get(offlinePlayer.getUniqueId());
+
+        var event = new QuestFavoriteChangePlaceholderTypeEvent(userQuest, favoritePlaceholderType);
+        if (callQuestEvent(offlinePlayer.getUniqueId(), event)) return;
+
+        userQuest.setFavoritePlaceholderType(event.getNewFavoritePlaceholderType());
+
+        this.plugin.getStorageManager().upsertPlayerFavoriteQuestConfiguration(offlinePlayer.getUniqueId(), userQuest.getFavoriteLimit(), event.getNewFavoritePlaceholderType());
+        message(sender, Message.QUEST_SET_FAVORITE_TYPE_SUCCESS, "%player%", offlinePlayer.getName(), "%type%", name(event.getNewFavoritePlaceholderType().name()));
+
     }
 
     private void showQuests(CommandSender sender, OfflinePlayer offlinePlayer, UserQuest userQuest) {
@@ -910,7 +927,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
             var placeholders = QuestPlaceholderUtil.createPlaceholder(plugin, null, activeQuest.getQuest());
             placeholders.register("started-at", format.format(activeQuest.getCreatedAt()));
-            placeholders.register("amount", format(activeQuest.getAmount()));
+            placeholders.register("limit", format(activeQuest.getAmount()));
             placeholders.register("is-favorite", activeQuest.isFavorite() ? "<green>true" : "<red>false");
 
             return placeholders.parse(Message.SHOW_ELEMENT.msg());

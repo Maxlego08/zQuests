@@ -47,7 +47,8 @@ public enum Message {
     DESCRIPTION_RESTART("Restart a quest for a player"),
     DESCRIPTION_SET_PROGRESS("Set the progress of a quest for a player"),
     DESCRIPTION_SET_FAVORITE("Set a quest as favorite for a player"),
-    DESCRIPTION_SET_FAVORITE_AMOUNT("Set the quest favorite amount for a player"),
+    DESCRIPTION_SET_FAVORITE_LIMIT("Set the quest favorite limit for a player"),
+    DESCRIPTION_SET_FAVORITE_TYPE("Set the quest favorite type placeholder for a player"),
     DESCRIPTION_ADD_PROGRESS("Add a number to the progress of a quest for a player"),
     DESCRIPTION_PROGRESS_INVENTORY("Progress inventory content quests for a player"),
     DESCRIPTION_REFRESH_HOLOGRAM("Update player holograms"),
@@ -66,22 +67,23 @@ public enum Message {
     QUEST_DELETE_ALL_SUCCESS("&aAll the quests have just been deleted&a."),
     QUEST_SET_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just set the progress of the quest &f%name% &ato &f%progress%&a."),
     QUEST_ADD_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just added &f%progress% &ato the progress of the quest &f%name%&a."),
-    QUEST_SET_FAVORITE_AMOUNT_SUCCESS("&aThe player &f%player% &ahas just set the favorite amount of the quests &ato &f%amount%&a."),
+    QUEST_SET_FAVORITE_LIMIT_SUCCESS("&aThe player &f%player% &ahas just set the favorite limit of the quests &ato &f%limit%&a."),
+    QUEST_SET_FAVORITE_TYPE_SUCCESS("&aThe player &f%player% &ahas just set the favorite placeholder type &ato &f%type%&a."),
     INVENTORY_NOT_FOUND("&cUnable to find the inventory &f%inventory%&c."),
 
-    PROGRESS_INVENTORY_INFO("&aThe player &f%player% &ahas finished &f%amount% &aquests in the inventory&a."),
+    PROGRESS_INVENTORY_INFO("&aThe player &f%player% &ahas finished &f%limit% &aquests in the inventory&a."),
     QUEST_CANT_CHANGE_FAVORITE("&cYou can not change the favorite of the quest &f%name%&c."),
     QUEST_SET_FAVORITE_SUCCESS("&aYou have just set the favorite of the quest &f%name%&a for the player &f%player%&a."),
     QUEST_RESTART_SUCCESS("&aThe player &f%player% &ahas just restarted the quest &f%name%&a."),
     HOLOGRAM_REFRESH("&aYou have just refreshed the &f%player%&a's hologram&a."),
 
-    INVENTORY_CONTENT("#edacfcx%amount% #ff94d7<lang:%material-key%>"),
+    INVENTORY_CONTENT("#edacfcx%limit% #ff94d7<lang:%material-key%>"),
     INVENTORY_AND(" #77ff77and "),
     INVENTORY_REMOVE("#77ff77you just gave %items%#77ff77."),
 
     SHOW_LOAD_USER("&7Load &f%player% &7quests..."),
     SHOW_HEADER("&f%player% #edacfc%active-quests% &7ongoing and #edacfc%completed-quests% &7completed quests"),
-    SHOW_ELEMENT("<hover:show_text:\"%quest-description%<newline><white>%quest-display-name%<newline><newline><white>Start at %started-at%<newline><yellow>%amount%<gray>/<gold>%quest-objective%<newline><white>Favorite: %is-favorite%\">%quest-name%</hover>"),
+    SHOW_ELEMENT("<hover:show_text:\"%quest-description%<newline><white>%quest-display-name%<newline><newline><white>Start at %started-at%<newline><yellow>%limit%<gray>/<gold>%quest-objective%<newline><white>Favorite: %is-favorite%\">%quest-name%</hover>"),
     SHOW_INFOS(MessageType.WITHOUT_PREFIX, "%quests%"),
 
     CRAFT_OFFHAND("&cYou cannot use your secondary hand to craft items.");

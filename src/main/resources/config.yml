@@ -173,7 +173,12 @@ events:
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
     update-hologram: false # Determines if the hologram should be updated when this event occurs
 
-  - event: QuestFavoriteChangeAmountEvent # Triggered when a user changes the amount for the favorite placeholder
+  - event: QuestFavoriteChangeLimitEvent # Triggered when a user changes the limit for the favorite placeholder
+    enabled: false # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+
+  - event: QuestFavoriteChangePlaceholderTypeEvent # Triggered when a user changes the placeholder type for the favorite placeholder
     enabled: false # Indicates if the event is active
     update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
     update-hologram: false # Determines if the hologram should be updated when this event occurs

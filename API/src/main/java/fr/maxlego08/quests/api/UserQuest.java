@@ -1,6 +1,7 @@
 package fr.maxlego08.quests.api;
 
 import fr.maxlego08.quests.api.hologram.QuestHologram;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 
 import java.util.List;
 import java.util.Optional;
@@ -148,7 +149,11 @@ public interface UserQuest {
 
     boolean isFavorite(String questId);
 
-    int getFavoriteAmount();
+    int getFavoriteLimit();
 
-    void setFavoriteAmount(int amount);
+    void setFavoriteLimit(int limit);
+
+    FavoritePlaceholderType getFavoritePlaceholderType();
+
+    void setFavoritePlaceholderType(FavoritePlaceholderType favoritePlaceholderType);
 }

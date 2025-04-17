@@ -3,6 +3,7 @@ package fr.maxlego08.quests.api.storage;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.UserQuest;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -86,5 +87,12 @@ public interface StorageManager {
      */
     void delete(UUID uniqueId, CompletedQuest completedQuest);
 
-    void upsertPlayerFavoriteQuestAmount(UUID uniqueId, int amount);
+    /**
+     * Upsert the player's favorite quest configuration in the storage.
+     *
+     * @param uniqueId                the unique identifier of the user
+     * @param limit                   the maximum number of favorite quests a player can have
+     * @param favoritePlaceholderType the type of placeholder to use for favorite quests
+     */
+    void upsertPlayerFavoriteQuestConfiguration(UUID uniqueId, int limit, FavoritePlaceholderType favoritePlaceholderType);
 }

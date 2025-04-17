@@ -41,9 +41,9 @@ public interface Quest {
     Material getThumbnail();
 
     /**
-     * Gets the goal amount for the quest.
+     * Gets the goal limit for the quest.
      *
-     * @return the goal amount of the quest
+     * @return the goal limit of the quest
      */
     long getGoal();
 

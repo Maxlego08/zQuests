@@ -320,7 +320,7 @@ public class ItemBuilder extends ZUtils implements Cloneable {
 	}
 
 	/**
-	 * @return the amount
+	 * @return the limit
 	 */
 	public int getAmount() {
 		return amount;

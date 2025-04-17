@@ -4,18 +4,18 @@ import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.menu.button.ZButton;
 import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.QuestsPlugin;
-import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeAmountEvent;
+import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeLimitEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class SetFavoriteAmountButton extends ZButton {
+public class SetFavoriteLimitButton extends ZButton {
 
     private final QuestsPlugin plugin;
-    private final int amount;
+    private final int limit;
 
-    public SetFavoriteAmountButton(QuestsPlugin plugin, int amount) {
+    public SetFavoriteLimitButton(QuestsPlugin plugin, int limit) {
         this.plugin = plugin;
-        this.amount = amount;
+        this.limit = limit;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class SetFavoriteAmountButton extends ZButton {
 
     @Override
     public boolean checkPermission(Player player, InventoryDefault inventory, Placeholders placeholders) {
-        return super.checkPermission(player, inventory, placeholders) && (this.plugin.getQuestManager().getUserQuest(player.getUniqueId()).getFavoriteAmount() == this.amount);
+        return super.checkPermission(player, inventory, placeholders) && (this.plugin.getQuestManager().getUserQuest(player.getUniqueId()).getFavoriteLimit() == this.limit);
     }
 
     @Override
@@ -34,11 +34,11 @@ public class SetFavoriteAmountButton extends ZButton {
         var manager = this.plugin.getQuestManager();
         var userQuest = manager.getUserQuest(player.getUniqueId());
 
-        QuestFavoriteChangeAmountEvent amountEvent = new QuestFavoriteChangeAmountEvent(userQuest, this.amount);
+        QuestFavoriteChangeLimitEvent amountEvent = new QuestFavoriteChangeLimitEvent(userQuest, this.limit);
         if (manager.callQuestEvent(player.getUniqueId(), amountEvent)) return;
 
-        userQuest.setFavoriteAmount(amountEvent.getNewAmount());
-        this.plugin.getStorageManager().upsertPlayerFavoriteQuestAmount(player.getUniqueId(), amountEvent.getNewAmount());
+        userQuest.setFavoriteLimit(amountEvent.getNewLimit());
+        this.plugin.getStorageManager().upsertPlayerFavoriteQuestConfiguration(player.getUniqueId(), amountEvent.getNewLimit(), userQuest.getFavoritePlaceholderType());
         this.plugin.getInventoryManager().updateInventory(player);
     }
 }

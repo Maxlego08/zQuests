@@ -107,7 +107,7 @@ public class InventoryContentAction extends ZUtils implements QuestAction {
             if (removed >= amountToRemove) break;
         }
 
-        String items = map.entrySet().stream().map(entry -> getMessage(Message.INVENTORY_CONTENT, "%amount%", entry.getValue(), "%material-key%", entry.getKey().translationKey(), "%material%", name(entry.getKey()))).collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+        String items = map.entrySet().stream().map(entry -> getMessage(Message.INVENTORY_CONTENT, "%limit%", entry.getValue(), "%material-key%", entry.getKey().translationKey(), "%material%", name(entry.getKey()))).collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < list.size(); i++) {
                 sb.append(list.get(i));
