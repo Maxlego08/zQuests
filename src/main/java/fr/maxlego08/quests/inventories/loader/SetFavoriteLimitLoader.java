@@ -8,11 +8,11 @@ import fr.maxlego08.quests.inventories.buttons.SetFavoriteLimitButton;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-public class SetFavoriteAmountLoader implements ButtonLoader {
+public class SetFavoriteLimitLoader implements ButtonLoader {
 
     private final QuestsPlugin plugin;
 
-    public SetFavoriteAmountLoader(QuestsPlugin plugin) {
+    public SetFavoriteLimitLoader(QuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -33,7 +33,7 @@ public class SetFavoriteAmountLoader implements ButtonLoader {
 
     @Override
     public Button load(YamlConfiguration configuration, String path, DefaultButtonValue defaultButtonValue) {
-        int amount = configuration.getInt(path + "limit", 1);
+        int amount = Integer.parseInt(configuration.getString(path + "limit", "1"));
         return new SetFavoriteLimitButton(this.plugin, amount);
     }
 }

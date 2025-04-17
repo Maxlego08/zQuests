@@ -25,7 +25,7 @@ public class SetFavoriteLimitButton extends ZButton {
 
     @Override
     public boolean checkPermission(Player player, InventoryDefault inventory, Placeholders placeholders) {
-        return super.checkPermission(player, inventory, placeholders) && (this.plugin.getQuestManager().getUserQuest(player.getUniqueId()).getFavoriteLimit() == this.limit);
+        return super.checkPermission(player, inventory, placeholders) && (this.plugin.getQuestManager().getUserQuest(player.getUniqueId()).getFavoriteLimit() != this.limit);
     }
 
     @Override

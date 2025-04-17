@@ -32,7 +32,8 @@ import fr.maxlego08.quests.inventories.loader.ChangeQuestGroupLoader;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.QuestFavoriteLoader;
 import fr.maxlego08.quests.inventories.loader.QuestHistoryLoader;
-import fr.maxlego08.quests.inventories.loader.SetFavoriteAmountLoader;
+import fr.maxlego08.quests.inventories.loader.SetFavoriteLimitLoader;
+import fr.maxlego08.quests.inventories.loader.SetFavoriteTypeLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
 import fr.maxlego08.quests.messages.Message;
 import fr.maxlego08.quests.save.Config;
@@ -85,7 +86,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         buttonManager.register(new QuestHistoryLoader(this.plugin));
         buttonManager.register(new ChangeQuestGroupLoader(this.plugin));
         buttonManager.register(new QuestFavoriteLoader(this.plugin));
-        buttonManager.register(new SetFavoriteAmountLoader(this.plugin));
+        buttonManager.register(new SetFavoriteLimitLoader(this.plugin));
+        buttonManager.register(new SetFavoriteTypeLoader(this.plugin));
     }
 
     @Override
