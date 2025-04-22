@@ -46,6 +46,7 @@ public enum QuestType {
     ENTITY_DAMAGE,
     EXPERIENCE_GAIN,
     HATCHING,
+    ITEM_CONSUME,
     ITEM_BREAK,
     ITEM_MENDING,
     RESURRECT,
@@ -65,7 +66,7 @@ public enum QuestType {
         return switch (this) {
             case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, PURCHASE, ITEM_BREAK, ITEM_MENDING,
                  SMITHING -> new MaterialAction(this, (Material) target);
-            case CRAFT -> new ItemStackAction(this, (ItemStack) target);
+            case CRAFT, ITEM_CONSUME -> new ItemStackAction(this, (ItemStack) target);
             case ENTITY_KILL, TAME, SHEAR -> new EntityAction(this, (EntityType) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
             case BREW -> new BrewAction(this, (BrewEvent) target);

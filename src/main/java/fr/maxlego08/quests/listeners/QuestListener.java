@@ -43,6 +43,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -483,5 +484,13 @@ public class QuestListener extends ZUtils implements Listener {
         if (isNPC(player)) return;
 
         this.manager.handleQuests(player.getUniqueId(), QuestType.INVENTORY_OPEN, 1, event.getInventory());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onConsume(PlayerItemConsumeEvent event) {
+        var player = event.getPlayer();
+        if (isNPC(player)) return;
+
+        this.manager.handleQuests(player.getUniqueId(), QuestType.ITEM_CONSUME, 1, event.getItem());
     }
 }

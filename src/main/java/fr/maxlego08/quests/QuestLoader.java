@@ -15,7 +15,7 @@ import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import fr.maxlego08.quests.loader.BrewQuestLoader;
 import fr.maxlego08.quests.loader.CommandQuestLoader;
-import fr.maxlego08.quests.loader.CraftQuestLoader;
+import fr.maxlego08.quests.loader.ItemStackQuestLoader;
 import fr.maxlego08.quests.loader.CuboidQuestLoader;
 import fr.maxlego08.quests.loader.CustomQuestLoader;
 import fr.maxlego08.quests.loader.EnchantQuestLoader;
@@ -44,7 +44,7 @@ public class QuestLoader extends ZUtils {
         this.loaders.add(new CuboidQuestLoader(plugin));
         this.loaders.add(new CommandQuestLoader(plugin));
         this.loaders.add(new CustomQuestLoader(plugin));
-        this.loaders.add(new CraftQuestLoader(plugin));
+        this.loaders.add(new ItemStackQuestLoader(plugin));
         this.loaders.add(new EnchantQuestLoader(plugin));
         this.loaders.add(new EntityQuestLoader(plugin));
         this.loaders.add(new InventoryContentQuestLoader(plugin));
