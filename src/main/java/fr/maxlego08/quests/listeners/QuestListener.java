@@ -17,6 +17,7 @@ import org.bukkit.block.Container;
 import org.bukkit.block.Crafter;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.type.SeaPickle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -113,7 +114,12 @@ public class QuestListener extends ZUtils implements Listener {
             this.plugin.debug("Break Block: tracked: " + this.plugin.getBlockHook().isTracked(block));
             if (this.plugin.getBlockHook().isTracked(block)) return;
 
-            this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_BREAK, 1, event.getBlock().getType());
+            int amount = 1;
+            if (block.getBlockData() instanceof SeaPickle seaPickle) {
+                amount = seaPickle.getPickles();
+            }
+
+            this.manager.handleQuests(player.getUniqueId(), QuestType.BLOCK_BREAK, amount, event.getBlock().getType());
 
         } else if (block.getBlockData() instanceof Ageable ageable) {
 
