@@ -29,6 +29,7 @@ public class Config {
     public static boolean disableOffhandCraft = true;
     public static String questFavoriteIcon = "V";
     public static String questNotFavoriteIcon = "X";
+    public static int lookAtDistance = 5;
 
     /**
      * static Singleton instance.
@@ -72,6 +73,7 @@ public class Config {
 
         questFavoriteIcon = configuration.getString("quest-favorite-icon", "V");
         questNotFavoriteIcon = configuration.getString("quest-not-favorite-icon", "X");
+        lookAtDistance = configuration.getInt("look-at-distance", 5);
 
         this.loadEventConfiguration(configuration);
     }

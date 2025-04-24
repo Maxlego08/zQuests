@@ -75,6 +75,8 @@ public class QuestListener extends ZUtils implements Listener {
     private final QuestManager manager;
     private final NamespacedKey playerKey;
 
+    // Ajouter un systeme pour ne pas ecouter les events qui ne sont pas utiliser
+
     public QuestListener(QuestsPlugin plugin, QuestManager manager) {
         this.plugin = plugin;
         this.manager = manager;
@@ -473,7 +475,7 @@ public class QuestListener extends ZUtils implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onCommand(PlayerMoveEvent event) {
+    public void onWalk(PlayerMoveEvent event) {
 
         if (!event.hasExplicitlyChangedBlock()) return;
 
@@ -481,6 +483,22 @@ public class QuestListener extends ZUtils implements Listener {
         if (isNPC(player)) return;
 
         this.manager.handleQuests(player.getUniqueId(), QuestType.CUBOID, 1, event.getTo());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onVision(PlayerMoveEvent event) {
+
+        if (!event.hasChangedOrientation()) return;
+
+        var player = event.getPlayer();
+        if (isNPC(player)) return;
+
+        var result = player.rayTraceBlocks(Config.lookAtDistance);
+        if (result != null && result.getHitBlock() != null) {
+            var block = result.getHitBlock();
+            plugin.debug(player.getName() + " look at " + block.getType() + ", " + block.getWorld() + " - " + block.getX() + ", " + block.getY() + ", " + block.getZ());
+            this.manager.handleQuests(player.getUniqueId(), QuestType.LOOK_AT, 1, block.getLocation());
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
