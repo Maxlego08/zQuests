@@ -493,11 +493,22 @@ public class QuestListener extends ZUtils implements Listener {
         var player = event.getPlayer();
         if (isNPC(player)) return;
 
-        var result = player.rayTraceBlocks(Config.lookAtDistance);
-        if (result != null && result.getHitBlock() != null) {
-            var block = result.getHitBlock();
-            plugin.debug(player.getName() + " look at " + block.getType() + ", " + block.getWorld() + " - " + block.getX() + ", " + block.getY() + ", " + block.getZ());
-            this.manager.handleQuests(player.getUniqueId(), QuestType.LOOK_AT, 1, block.getLocation());
+        if (Config.lookAtDistanceBlock >= 1) {
+            var result = player.rayTraceBlocks(Config.lookAtDistanceBlock);
+            if (result != null && result.getHitBlock() != null) {
+                var block = result.getHitBlock();
+                plugin.debug(player.getName() + " look at block " + block.getType() + ", " + block.getWorld() + " - " + block.getX() + ", " + block.getY() + ", " + block.getZ());
+                this.manager.handleQuests(player.getUniqueId(), QuestType.LOOK_AT_BLOCK, 1, block.getLocation());
+            }
+        }
+
+        if (Config.lookAtDistanceEntity >= 1) {
+            var result = player.rayTraceEntities(Config.lookAtDistanceEntity);
+            if (result != null && result.getHitEntity() != null) {
+                var hitEntity = result.getHitEntity();
+                plugin.debug(player.getName() + " look at entity " + hitEntity.getType() + ", " + hitEntity.getWorld() + " - " + hitEntity.getX() + ", " + hitEntity.getY() + ", " + hitEntity.getZ());
+                this.manager.handleQuests(player.getUniqueId(), QuestType.LOOK_AT_ENTITY, 1, hitEntity.getLocation());
+            }
         }
     }
 

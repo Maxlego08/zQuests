@@ -38,6 +38,6 @@ public class CuboidQuestLoader extends ZUtils implements QuestActionLoader {
 
     @Override
     public List<QuestType> getSupportedTypes() {
-        return List.of(QuestType.CUBOID, QuestType.LOOK_AT);
+        return List.of(QuestType.CUBOID, QuestType.LOOK_AT_BLOCK, QuestType.LOOK_AT_ENTITY);
     }
 }

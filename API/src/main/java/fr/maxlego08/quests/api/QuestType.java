@@ -60,7 +60,8 @@ public enum QuestType {
     INVENTORY_OPEN,
     INVENTORY_CONTENT,
     SHEAR,
-    LOOK_AT,
+    LOOK_AT_BLOCK,
+    LOOK_AT_ENTITY,
     ;
 
     public ActionInfo<?> toAction(Object target) {
@@ -79,7 +80,7 @@ public enum QuestType {
             case JOB_LEVEL, JOB_PRESTIGE -> new JobAction(this, (String) target);
             case ISLAND -> new IslandAction(target);
             case COMMAND -> new CommandAction((String) target);
-            case CUBOID, LOOK_AT -> new LocationAction(this, (Location) target);
+            case CUBOID, LOOK_AT_BLOCK, LOOK_AT_ENTITY -> new LocationAction(this, (Location) target);
             case CUSTOM -> new CustomAction((String) target);
             case INVENTORY_OPEN -> new InventoryOpenAction((String) target);
             case INVENTORY_CONTENT -> new InventoryContentAction((InventoryContent) target);

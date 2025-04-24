@@ -242,5 +242,8 @@ anti-block-place-abuse: 60000
 quest-favorite-icon: "V"
 quest-not-favorite-icon: "X"
 
-# Distance use for rayTraceBlocks method, this allows to check or the player look for LOOK_AT quest
-look-at-distance: 5
+# Distance use for rayTraceBlocks method, this allows to check or the player look for LOOK_AT_BLOCK quest
+look-at-distance-block: 8
+
+# Distance use for rayTraceBlocks method, this allows to check or the player look for LOOK_AT_ENTITY quest
+look-at-distance-entity: 8
