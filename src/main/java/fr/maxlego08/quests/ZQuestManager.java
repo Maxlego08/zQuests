@@ -564,12 +564,19 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         Quest quest = optional.get();
         UserQuest userQuest = getUserQuest(player.getUniqueId());
-        if (userQuest.canStartQuest(quest)) {
-            this.addQuestToPlayer(player.getUniqueId(), quest, true);
-            message(sender, Message.QUEST_START_SUCCESS, "%name%", questName, "%player%", player.getName());
-        } else {
-            message(sender, Message.QUEST_START_ERROR, "%name%", questName, "%player%", player.getName());
+
+        if (userQuest.isQuestActive(quest)) {
+            message(sender, Message.QUEST_START_ERROR_ACTIVE, "%name%", questName, "%player%", player.getName());
+            return;
         }
+
+        if (userQuest.isQuestCompleted(quest)) {
+            message(sender, Message.QUEST_START_ERROR_COMPLETED, "%name%", questName, "%player%", player.getName());
+            return;
+        }
+
+        this.addQuestToPlayer(player.getUniqueId(), quest, true);
+        message(sender, Message.QUEST_START_SUCCESS, "%name%", questName, "%player%", player.getName());
     }
 
     @Override

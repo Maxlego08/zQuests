@@ -57,7 +57,8 @@ public enum Message {
 
     GROUP_NOT_FOUND("&cUnable to find the group &f%name%&c."),
     QUEST_NOT_FOUND("&cUnable to find the quest &f%name%&c."),
-    QUEST_START_ERROR("&cThe quest &f%name% &cis already completed or active for the player &f%player%&c."),
+    QUEST_START_ERROR_ACTIVE("&cThe quest &f%name% &cis already active for the player &f%player%&c."),
+    QUEST_START_ERROR_COMPLETED("&cThe quest &f%name% &cis already completed for the player &f%player%&c."),
     QUEST_START_SUCCESS("&aYou have just activated the quest &f%name%&a for the player &f%player%&a."),
     QUEST_START_GROUP("&aYou have just activated the quest group &f%name%&a for the player &f%player%&a."),
 
