@@ -33,12 +33,15 @@ public class StartQuestAction extends Action {
                 UserQuest userQuest = manager.getUserQuest(player.getUniqueId());
                 if (userQuest.canStartQuest(quest)) {
                     quests.add(quest);
+                } else {
+                    this.plugin.debug("Impossible to start the quest " + questName + " for " + player.getName());
                 }
+            } else {
+                this.plugin.getLogger().severe("Impossible to find quests : " + questName + " for " + player.getName());
             }
         }
-        if (quests.isEmpty()) {
-            plugin.getLogger().severe("Impossible to find quests : " + this.quests + " for " + player.getName());
-        } else {
+
+        if (!quests.isEmpty()) {
             manager.startQuests(player.getUniqueId(), quests);
         }
     }
