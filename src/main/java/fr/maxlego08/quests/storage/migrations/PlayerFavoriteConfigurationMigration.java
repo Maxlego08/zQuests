@@ -9,7 +9,7 @@ public class PlayerFavoriteConfigurationMigration extends Migration {
     public void up() {
         this.create("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, table -> {
             table.uuid("unique_id").primary();
-            table.integer("limit");
+            table.integer("amount");
             table.string("placeholder_type", 255);
             table.timestamps();
         });

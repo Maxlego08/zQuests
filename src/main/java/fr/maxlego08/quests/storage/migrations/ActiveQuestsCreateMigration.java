@@ -10,7 +10,7 @@ public class ActiveQuestsCreateMigration extends Migration {
         this.create("%prefix%" + Tables.ACTIVE_QUESTS, table -> {
             table.uuid("unique_id").primary();
             table.string("name", 255).primary();
-            table.bigInt("limit");
+            table.bigInt("amount");
             table.bool("is_favorite").defaultValue(false);
             table.timestamps();
         });

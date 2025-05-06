@@ -26,6 +26,7 @@ import fr.maxlego08.quests.placeholder.LocalPlaceholder;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.storage.ZStorageManager;
 import fr.maxlego08.quests.zcore.ZPlugin;
+import fr.maxlego08.quests.zcore.utils.plugins.Metrics;
 import fr.maxlego08.quests.zcore.utils.plugins.Plugins;
 
 /**
@@ -108,6 +109,8 @@ public class QuestsPlugin extends ZPlugin {
 
         this.questManager.loadPatterns();
         this.questManager.loadInventories();
+
+        new Metrics(this, 25647);
 
         this.postEnable();
     }
