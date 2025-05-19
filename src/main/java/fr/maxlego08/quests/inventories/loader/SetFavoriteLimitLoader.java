@@ -8,27 +8,13 @@ import fr.maxlego08.quests.inventories.buttons.SetFavoriteLimitButton;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-public class SetFavoriteLimitLoader implements ButtonLoader {
+public class SetFavoriteLimitLoader extends ButtonLoader {
 
     private final QuestsPlugin plugin;
 
     public SetFavoriteLimitLoader(QuestsPlugin plugin) {
+        super(plugin, "ZQUESTS_SET_FAVORITE_LIMIT");
         this.plugin = plugin;
-    }
-
-    @Override
-    public Class<? extends Button> getButton() {
-        return SetFavoriteLimitButton.class;
-    }
-
-    @Override
-    public String getName() {
-        return "ZQUESTS_SET_FAVORITE_LIMIT";
-    }
-
-    @Override
-    public Plugin getPlugin() {
-        return this.plugin;
     }
 
     @Override

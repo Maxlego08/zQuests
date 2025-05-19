@@ -1,41 +1,23 @@
 package fr.maxlego08.quests.inventories.loader;
 
-import fr.maxlego08.menu.MenuItemStack;
+import fr.maxlego08.menu.api.MenuItemStack;
 import fr.maxlego08.menu.api.button.Button;
 import fr.maxlego08.menu.api.button.DefaultButtonValue;
 import fr.maxlego08.menu.api.loader.ButtonLoader;
-import fr.maxlego08.menu.exceptions.InventoryException;
-import fr.maxlego08.menu.loader.MenuItemStackLoader;
-import fr.maxlego08.menu.zcore.utils.loader.Loader;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.inventories.buttons.QuestHistoryButton;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.List;
 
-public class QuestHistoryLoader implements ButtonLoader {
+public class QuestHistoryLoader extends ButtonLoader {
 
     private final QuestsPlugin plugin;
 
     public QuestHistoryLoader(QuestsPlugin plugin) {
+        super(plugin, "ZQUESTS_HISTORY");
         this.plugin = plugin;
-    }
-
-    @Override
-    public Class<? extends Button> getButton() {
-        return QuestHistoryButton.class;
-    }
-
-    @Override
-    public String getName() {
-        return "ZQUESTS_HISTORY";
-    }
-
-    @Override
-    public Plugin getPlugin() {
-        return this.plugin;
     }
 
     @Override
@@ -65,12 +47,6 @@ public class QuestHistoryLoader implements ButtonLoader {
     }
 
     private MenuItemStack load(YamlConfiguration configuration, String path, File file) {
-        try {
-            Loader<MenuItemStack> loader = new MenuItemStackLoader(this.plugin.getInventoryManager());
-            return loader.load(configuration, path, file);
-        } catch (InventoryException exception) {
-            exception.printStackTrace();
-        }
-        return null;
+        return this.plugin.getInventoryManager().loadItemStack(configuration, path, file);
     }
 }

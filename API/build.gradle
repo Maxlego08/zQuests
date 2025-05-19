@@ -4,6 +4,10 @@ plugins {
 
 group 'API'
 
+dependencies {
+    compileOnly(files("../libs/zMenu-API-1.1.0.0.jar"))
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {

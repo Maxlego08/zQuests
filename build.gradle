@@ -55,7 +55,6 @@ allprojects {
     dependencies {
         compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
         compileOnly 'me.clip:placeholderapi:2.11.6'
-        compileOnly 'com.github.Maxlego08:zMenu-API:c11869b6ef'
         compileOnly 'dev.krakenied:blocktracker:1.0.6'
         compileOnly 'com.bgsoftware:WildStackerAPI:2024.3'
         compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:2024.4'
@@ -67,8 +66,9 @@ allprojects {
         compileOnly files('libs/zJobs-1.0.0.jar')
         compileOnly files('libs/zshop-3.1.7.jar')
         compileOnly files('libs/zEssentials-1.0.2.2.jar')
+        compileOnly files('libs/zMenu-API-1.1.0.0.jar')
 
-        implementation 'com.github.Maxlego08:Sarah:1.15'
+        implementation 'com.github.Maxlego08:Sarah:1.17'
     }
 
 }

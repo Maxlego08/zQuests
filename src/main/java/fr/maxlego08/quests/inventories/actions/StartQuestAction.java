@@ -1,9 +1,9 @@
 package fr.maxlego08.quests.inventories.actions;
 
 import fr.maxlego08.menu.api.button.Button;
+import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.Placeholders;
-import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.UserQuest;
@@ -23,7 +23,7 @@ public class StartQuestAction extends Action {
     }
 
     @Override
-    protected void execute(Player player, Button button, InventoryDefault inventoryDefault, Placeholders placeholders) {
+    protected void execute(Player player, Button button, InventoryEngine inventoryDefault, Placeholders placeholders) {
         var manager = this.plugin.getQuestManager();
         List<Quest> quests = new ArrayList<>();
         for (String questName : this.quests) {

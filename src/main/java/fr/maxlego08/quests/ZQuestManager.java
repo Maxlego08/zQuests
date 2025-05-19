@@ -1,10 +1,10 @@
 package fr.maxlego08.quests;
 
+import fr.maxlego08.menu.api.exceptions.InventoryException;
+import fr.maxlego08.menu.api.loader.NoneLoader;
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
-import fr.maxlego08.menu.button.loader.NoneLoader;
-import fr.maxlego08.menu.exceptions.InventoryException;
 import fr.maxlego08.quests.actions.InventoryContentAction;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
