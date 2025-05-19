@@ -64,7 +64,7 @@ allprojects {
         implementation "com.github.technicallycoded:FoliaLib:main-SNAPSHOT"
 
         compileOnly files('libs/zJobs-1.0.0.jar')
-        compileOnly files('libs/zshop-3.1.7.jar')
+        compileOnly files('libs/zshop-3.2.0.jar')
         compileOnly files('libs/zEssentials-1.0.2.2.jar')
         compileOnly files('libs/zMenu-API-1.1.0.0.jar')
 
