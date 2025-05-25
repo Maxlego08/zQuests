@@ -43,7 +43,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
 
-      - name: Find zMenu JAR
+      - name: Find zQuests JAR
         id: find_jar
         run: |
           echo "Finding zQuests JAR..."

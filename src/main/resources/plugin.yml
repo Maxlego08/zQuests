@@ -1,4 +1,4 @@
-name: '${name}'
+name: 'zQuests'
 version: '${version}'
 main: fr.maxlego08.quests.QuestsPlugin
 description: Default plugin description
