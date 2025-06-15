@@ -16,7 +16,7 @@ allprojects {
     apply(plugin = "java-library")
     apply(plugin = "com.gradleup.shadow")
 
-    group = "fr.maxlego08.menu"
+    group = "fr.maxlego08.quests"
     version = rootProject.version
 
     repositories {
