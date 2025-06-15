@@ -31,6 +31,11 @@ allprojects {
         maven(url = "https://repo.bg-software.com/repository/api/")
     }
 
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+
     tasks.compileJava {
         options.encoding = "UTF-8"
     }
