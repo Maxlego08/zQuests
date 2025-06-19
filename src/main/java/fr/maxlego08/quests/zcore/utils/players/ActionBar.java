@@ -40,6 +40,11 @@ public class ActionBar {
         }
     }
 
+    /**
+     * Send an action bar to a player.
+     * @param player The player.
+     * @param message The message.
+     */
     public static void sendActionBar(Player player, String message) {
 
         if (!player.isOnline()) {

@@ -1,8 +1,8 @@
 package fr.maxlego08.quests.inventories.buttons;
 
+import fr.maxlego08.menu.api.button.Button;
+import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.utils.Placeholders;
-import fr.maxlego08.menu.button.ZButton;
-import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeLimitEvent;
 import fr.maxlego08.quests.save.Config;
@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.Plugin;
 
-public class AddFavoriteLimitButton extends ZButton {
+import java.awt.*;
+
+public class AddFavoriteLimitButton extends Button {
 
     private final QuestsPlugin plugin;
 
@@ -24,7 +26,7 @@ public class AddFavoriteLimitButton extends ZButton {
     }
 
     @Override
-    public boolean checkPermission(Player player, InventoryDefault inventory, Placeholders placeholders) {
+    public boolean checkPermission(Player player, InventoryEngine inventory, Placeholders placeholders) {
 
         var userQuest = this.plugin.getQuestManager().getUserQuest(player.getUniqueId());
         var placeholderFavorite = Config.placeholderFavorites.get(userQuest.getFavoritePlaceholderType());
@@ -33,7 +35,7 @@ public class AddFavoriteLimitButton extends ZButton {
     }
 
     @Override
-    public void onClick(Player player, InventoryClickEvent event, InventoryDefault inventory, int slot, Placeholders placeholders) {
+    public void onClick(Player player, InventoryClickEvent event, InventoryEngine inventory, int slot, Placeholders placeholders) {
         super.onClick(player, event, inventory, slot, placeholders);
         var manager = this.plugin.getQuestManager();
         var userQuest = manager.getUserQuest(player.getUniqueId());

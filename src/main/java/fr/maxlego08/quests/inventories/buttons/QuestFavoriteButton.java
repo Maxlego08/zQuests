@@ -1,8 +1,8 @@
 package fr.maxlego08.quests.inventories.buttons;
 
+import fr.maxlego08.menu.api.button.Button;
+import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.utils.Placeholders;
-import fr.maxlego08.menu.button.ZButton;
-import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeEvent;
@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class QuestFavoriteButton extends ZButton {
+public class QuestFavoriteButton extends Button {
 
     private final QuestsPlugin plugin;
     private final List<String> questNames;
@@ -40,7 +40,7 @@ public class QuestFavoriteButton extends ZButton {
     }
 
     @Override
-    public void onClick(Player player, InventoryClickEvent event, InventoryDefault inventory, int slot, Placeholders placeholders) {
+    public void onClick(Player player, InventoryClickEvent event, InventoryEngine inventory, int slot, Placeholders placeholders) {
         super.onClick(player, event, inventory, slot, placeholders);
 
         List<ActiveQuest> relevantQuests = getRelevantActiveQuests(player);

@@ -6,31 +6,16 @@ import fr.maxlego08.menu.api.loader.ButtonLoader;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.inventories.buttons.QuestFavoriteButton;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-public class QuestFavoriteLoader implements ButtonLoader {
+public class QuestFavoriteLoader extends ButtonLoader {
 
     private final QuestsPlugin plugin;
 
     public QuestFavoriteLoader(QuestsPlugin plugin) {
+        super(plugin, "ZQUESTS_FAVORITE_TOGGLE");
         this.plugin = plugin;
-    }
-
-    @Override
-    public Class<? extends Button> getButton() {
-        return QuestFavoriteButton.class;
-    }
-
-    @Override
-    public String getName() {
-        return "ZQUESTS_FAVORITE_TOGGLE";
-    }
-
-    @Override
-    public Plugin getPlugin() {
-        return this.plugin;
     }
 
     @Override

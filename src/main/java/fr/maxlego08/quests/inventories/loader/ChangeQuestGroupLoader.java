@@ -6,31 +6,16 @@ import fr.maxlego08.menu.api.loader.ButtonLoader;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.inventories.buttons.ChangeQuestGroupButton;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-public class ChangeQuestGroupLoader implements ButtonLoader {
+public class ChangeQuestGroupLoader extends ButtonLoader {
 
     private final QuestsPlugin plugin;
 
     public ChangeQuestGroupLoader(QuestsPlugin plugin) {
+        super(plugin, "ZQUESTS_CHANGE_QUEST_GROUP");
         this.plugin = plugin;
-    }
-
-    @Override
-    public Class<? extends Button> getButton() {
-        return ChangeQuestGroupButton.class;
-    }
-
-    @Override
-    public String getName() {
-        return "ZQUESTS_CHANGE_QUEST_GROUP";
-    }
-
-    @Override
-    public Plugin getPlugin() {
-        return this.plugin;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package fr.maxlego08.quests.inventories.buttons;
 
+import fr.maxlego08.menu.api.button.Button;
+import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.utils.Placeholders;
-import fr.maxlego08.menu.button.ZButton;
-import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
@@ -12,7 +12,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
 
-public class QuestCompleteButton extends ZButton {
+public class QuestCompleteButton extends Button {
 
     private final QuestsPlugin plugin;
     private final List<Quest> quests;
@@ -28,7 +28,7 @@ public class QuestCompleteButton extends ZButton {
     }
 
     @Override
-    public boolean checkPermission(Player player, InventoryDefault inventory, Placeholders placeholders) {
+    public boolean checkPermission(Player player, InventoryEngine inventory, Placeholders placeholders) {
 
         QuestManager questManager = this.plugin.getQuestManager();
         UserQuest userQuest = questManager.getUserQuest(player.getUniqueId());
@@ -39,7 +39,7 @@ public class QuestCompleteButton extends ZButton {
     }
 
     @Override
-    public void onClick(Player player, InventoryClickEvent event, InventoryDefault inventory, int slot, Placeholders placeholders) {
+    public void onClick(Player player, InventoryClickEvent event, InventoryEngine inventory, int slot, Placeholders placeholders) {
 
         if (!checkPermission(player, inventory, placeholders)) {
             return;

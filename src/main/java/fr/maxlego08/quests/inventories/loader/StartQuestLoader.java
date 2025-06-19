@@ -9,17 +9,13 @@ import fr.maxlego08.quests.inventories.actions.StartQuestAction;
 import java.io.File;
 import java.util.List;
 
-public class StartQuestLoader implements ActionLoader {
+public class StartQuestLoader extends ActionLoader {
 
     private final QuestsPlugin plugin;
 
     public StartQuestLoader(QuestsPlugin plugin) {
+        super("start_quest", "start quest", "start quests", "start_quests");
         this.plugin = plugin;
-    }
-
-    @Override
-    public String getKey() {
-        return "start_quest,start quest,start quests,start_quests";
     }
 
     @Override

@@ -1,10 +1,9 @@
 package fr.maxlego08.quests.inventories.buttons;
 
-import fr.maxlego08.menu.MenuItemStack;
+import fr.maxlego08.menu.api.MenuItemStack;
 import fr.maxlego08.menu.api.button.PaginateButton;
+import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.utils.Placeholders;
-import fr.maxlego08.menu.button.ZButton;
-import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
@@ -16,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class QuestHistoryButton extends ZButton implements PaginateButton {
+public class QuestHistoryButton extends PaginateButton {
 
     private final QuestsPlugin plugin;
     private final List<Integer> offsetSlots;
@@ -51,7 +50,7 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
     }
 
     @Override
-    public void onRender(Player player, InventoryDefault inventory) {
+    public void onRender(Player player, InventoryEngine inventory) {
 
         var quests = this.manager.getDisplayQuests(player);
 
@@ -83,7 +82,7 @@ public class QuestHistoryButton extends ZButton implements PaginateButton {
         });
     }
 
-    private void displayFav(Player player, QuestHistory questHistory, InventoryDefault inventory, int slot, Placeholders placeholders) {
+    private void displayFav(Player player, QuestHistory questHistory, InventoryEngine inventory, int slot, Placeholders placeholders) {
 
         var quest = questHistory.getQuest();
         var menuItemStack = questHistory.isActive() ? questHistory.activeQuest().isFavorite() ? this.favConfiguration.enable : this.favConfiguration.disable : this.favConfiguration.completed;

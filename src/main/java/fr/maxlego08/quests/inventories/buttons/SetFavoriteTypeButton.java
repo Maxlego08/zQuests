@@ -1,15 +1,15 @@
 package fr.maxlego08.quests.inventories.buttons;
 
+import fr.maxlego08.menu.api.button.Button;
+import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.utils.Placeholders;
-import fr.maxlego08.menu.button.ZButton;
-import fr.maxlego08.menu.inventory.inventories.InventoryDefault;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.event.events.QuestFavoriteChangePlaceholderTypeEvent;
 import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class SetFavoriteTypeButton extends ZButton {
+public class SetFavoriteTypeButton extends Button {
 
     private final QuestsPlugin plugin;
     private final FavoritePlaceholderType favoritePlaceholderType;
@@ -25,12 +25,12 @@ public class SetFavoriteTypeButton extends ZButton {
     }
 
     @Override
-    public boolean checkPermission(Player player, InventoryDefault inventory, Placeholders placeholders) {
+    public boolean checkPermission(Player player, InventoryEngine inventory, Placeholders placeholders) {
         return super.checkPermission(player, inventory, placeholders) && (this.plugin.getQuestManager().getUserQuest(player.getUniqueId()).getFavoritePlaceholderType() != this.favoritePlaceholderType);
     }
 
     @Override
-    public void onClick(Player player, InventoryClickEvent event, InventoryDefault inventory, int slot, Placeholders placeholders) {
+    public void onClick(Player player, InventoryClickEvent event, InventoryEngine inventory, int slot, Placeholders placeholders) {
         super.onClick(player, event, inventory, slot, placeholders);
         var manager = this.plugin.getQuestManager();
         var userQuest = manager.getUserQuest(player.getUniqueId());
