@@ -30,7 +30,7 @@ public class EnchantQuestLoader implements QuestActionLoader {
         String materialName = accessor.getString("material", null);
 
         Material material = materialName == null ? null : Material.valueOf(materialName.toUpperCase());
-        Enchantment enchantment = enchantmentName == null ? null : enchantments.getEnchantments(enchantmentName).map(MenuEnchantment::getEnchantment).orElse(null);
+        Enchantment enchantment = enchantmentName == null ? null : enchantments.getEnchantments(enchantmentName).map(MenuEnchantment::enchantment).orElse(null);
         int minimumLevel = accessor.getInt("minimum-level", 0);
         int minimumCost = accessor.getInt("minimum-cost", 0);
 
