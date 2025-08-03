@@ -6,14 +6,15 @@ import java.util.List;
 
 @FunctionalInterface
 public interface CollectionBiConsumer {
-	
-	/**
-	 * Accept consumer
-	 * 
-	 * @param sender
-	 * @param args
-	 * @return list of string
-	 */
-	List<String> accept(CommandSender sender, String[] args);
-	
+
+    /**
+     * Accepts a {@link CommandSender} and an array of {@link String}s,
+     * and returns a list of strings.
+     *
+     * @param sender the sender of the command.
+     * @param args   the arguments of the command.
+     * @return a list of strings.
+     */
+    List<String> accept(CommandSender sender, String[] args);
+
 }

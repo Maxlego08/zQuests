@@ -8,7 +8,7 @@ import fr.maxlego08.quests.zcore.utils.commands.CommandType;
 import org.bukkit.entity.Player;
 
 public class CommandQuestsCompleteAll extends VCommand {
-
+    
     public CommandQuestsCompleteAll(QuestsPlugin plugin) {
         super(plugin);
         this.setPermission(Permission.ZQUESTS_COMPLETE_ALL);

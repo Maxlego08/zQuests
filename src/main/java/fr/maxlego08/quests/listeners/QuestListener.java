@@ -87,12 +87,12 @@ public class QuestListener extends ZUtils implements Listener {
         return player != null && player.hasMetadata("NPC");
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
         this.manager.handleJoin(event.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onQuit(PlayerQuitEvent event) {
         this.manager.handleQuit(event.getPlayer().getUniqueId());
     }

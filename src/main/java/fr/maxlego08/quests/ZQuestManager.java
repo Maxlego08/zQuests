@@ -749,6 +749,15 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         return customRewards;
     }
 
+    /**
+     * Handle custom rewards for the given {@link UserQuest} and {@link ActiveQuest}.
+     * This method will execute the custom rewards actions for the given active quest.
+     * The custom rewards will be executed only if the player has completed all the quests
+     * required by the custom reward.
+     *
+     * @param userQuest the user quest
+     * @param activeQuest the active quest
+     */
     private void handleCustomReward(UserQuest userQuest, ActiveQuest activeQuest) {
 
         Player player = Bukkit.getPlayer(activeQuest.getUniqueId());
@@ -932,6 +941,13 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     }
 
+    /**
+     * Displays the active and completed quests of a specific offline player.
+     *
+     * @param sender        the command sender requesting the quest information
+     * @param offlinePlayer the offline player whose quests are being displayed
+     * @param userQuest     the user's quest data containing active and completed quests
+     */
     private void showQuests(CommandSender sender, OfflinePlayer offlinePlayer, UserQuest userQuest) {
 
         var activeQuests = userQuest.getActiveQuests();
@@ -952,6 +968,14 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         message(sender, Message.SHOW_INFOS, "%quests%", quests);
     }
 
+    /**
+     * Returns true if the quest belongs to the given group name, false otherwise.
+     * If the group name is null, the method will return true.
+     *
+     * @param quest         the quest to be checked
+     * @param currentGroupName the name of the group to be checked
+     * @return true if the quest belongs to the given group name, false otherwise
+     */
     private boolean isQuestGroup(Quest quest, String currentGroupName) {
         var groups = getGroups(quest);
         return currentGroupName == null || groups.stream().anyMatch(e -> e.getName().equalsIgnoreCase(currentGroupName));

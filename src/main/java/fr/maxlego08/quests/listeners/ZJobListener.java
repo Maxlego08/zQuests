@@ -11,6 +11,8 @@ import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.ArrayList;
+
 public class ZJobListener implements Listener {
 
     private final JobManager jobManager;
@@ -42,7 +44,7 @@ public class ZJobListener implements Listener {
         var optional = jobManager.getPlayerJobs(event.getPlayerUUID());
         if (optional.isPresent()) {
             var playerJobs = optional.get();
-            for (PlayerJob playerJob : playerJobs.getJobs()) {
+            for (PlayerJob playerJob : new ArrayList<>(playerJobs.getJobs())) {
 
                 var optionalJob = jobManager.getJob(playerJob.getJobId());
                 if (optionalJob.isPresent() && activeQuest.isQuestAction(optionalJob.get())) {
@@ -64,5 +66,4 @@ public class ZJobListener implements Listener {
             }
         }
     }
-
 }
