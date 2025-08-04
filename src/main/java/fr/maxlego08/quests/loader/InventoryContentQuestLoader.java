@@ -27,6 +27,12 @@ public class InventoryContentQuestLoader implements QuestActionLoader {
         String citizenName = accessor.contains("citizen-name") ? accessor.getString("citizen-name") : null;
         Material material = accessor.contains("material") ? Material.valueOf(accessor.getString("material").toUpperCase()) : null;
         Tag<Material> materialTag = accessor.contains("tag") ? TagRegistry.getTag(accessor.getString("tag").toUpperCase()) : null;
+
+        if (material == null && materialTag == null) {
+            this.plugin.getLogger().severe("Impossible to find the material or tag for " + questType + " in file " + file.getAbsolutePath());
+            return null;
+        }
+
         int customModelId = accessor.getInt("custom-model-id", 0);
 
         return new InventoryContentAction(citizenName, material, materialTag, customModelId);
