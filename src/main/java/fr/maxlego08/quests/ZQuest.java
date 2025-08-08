@@ -1,6 +1,7 @@
 package fr.maxlego08.quests;
 
 import fr.maxlego08.menu.api.requirement.Action;
+import fr.maxlego08.menu.api.requirement.Permissible;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.Quest;
@@ -26,6 +27,7 @@ public class ZQuest implements Quest {
     private final long goal;
     private final boolean autoAccept;
     private final List<Action> rewards;
+    private final List<Permissible> permissibleRewards;
     private final List<Action> startActions;
     private final List<QuestAction> actions;
     private final boolean useGlobalRewards;
@@ -36,7 +38,7 @@ public class ZQuest implements Quest {
     private final boolean isHidden;
     private final List<HologramConfiguration> hologramConfigurations;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Permissible> permissibleRewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -47,6 +49,7 @@ public class ZQuest implements Quest {
         this.goal = goal;
         this.autoAccept = autoAccept;
         this.rewards = rewards;
+        this.permissibleRewards = permissibleRewards;
         this.startActions = startActions;
         this.actions = actions;
         this.useGlobalRewards = useGlobalRewards;
@@ -77,7 +80,18 @@ public class ZQuest implements Quest {
             return;
         }
 
-        this.rewards.forEach(reward -> reward.preExecute(player, null, this.plugin.getInventoryManager().getFakeInventory(), new Placeholders()));
+        var placeholders = new Placeholders();
+        placeholders.register("name", this.displayName);
+        placeholders.register("description", this.description);
+        placeholders.register("goal", String.valueOf(this.goal));
+
+        var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
+        this.rewards.forEach(reward -> reward.preExecute(player, null, fakeInventory, placeholders));
+        
+        for (Permissible permissible : this.permissibleRewards) {
+            var actions = permissible.hasPermission(player, null, fakeInventory, placeholders) ? permissible.getSuccessActions() : permissible.getDenyActions();
+            actions.forEach(action -> action.preExecute(player, null, fakeInventory, placeholders));
+        }
     }
 
     @Override
@@ -113,6 +127,11 @@ public class ZQuest implements Quest {
     @Override
     public List<Action> getRewards() {
         return rewards;
+    }
+
+    @Override
+    public List<Permissible> getPermissibleRewards() {
+        return this.permissibleRewards;
     }
 
     @Override

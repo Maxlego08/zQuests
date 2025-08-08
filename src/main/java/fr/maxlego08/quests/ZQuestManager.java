@@ -3,6 +3,7 @@ package fr.maxlego08.quests;
 import fr.maxlego08.menu.api.exceptions.InventoryException;
 import fr.maxlego08.menu.api.loader.NoneLoader;
 import fr.maxlego08.menu.api.requirement.Action;
+import fr.maxlego08.menu.api.requirement.Permissible;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.actions.InventoryContentAction;
@@ -76,7 +77,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     private final Map<String, QuestsGroup> groups = new HashMap<>();
     private int globalGroupCustomModelId;
     private String globalGroupDisplayName;
+
     private List<Action> globalRewards = new ArrayList<>();
+    private List<Permissible> globalPermissibles = new ArrayList<>();
 
     public ZQuestManager(QuestsPlugin plugin) {
         this.plugin = plugin;
@@ -258,7 +261,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     private void loadGlobalRewards() {
         FileConfiguration configuration = this.plugin.getConfig();
-        this.globalRewards = this.plugin.getButtonManager().loadActions((List<Map<String, Object>>) configuration.getList("global-rewards"), "global-rewards", new File(plugin.getDataFolder(), "config.yml"));
+        var manager = this.plugin.getButtonManager();
+        var file = new File(this.plugin.getDataFolder(), "config.yml");
+
+        this.globalRewards = manager.loadActions((List<Map<String, Object>>) configuration.getList("global-rewards"), "global-rewards", file);
+        this.globalPermissibles = manager.loadPermissible((List<Map<String, Object>>) configuration.getList("global-permissibles"), "global-permissibles", file);
     }
 
     private void loadCustomRewards(FileConfiguration configuration, File file) {
@@ -755,7 +762,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
      * The custom rewards will be executed only if the player has completed all the quests
      * required by the custom reward.
      *
-     * @param userQuest the user quest
+     * @param userQuest   the user quest
      * @param activeQuest the active quest
      */
     private void handleCustomReward(UserQuest userQuest, ActiveQuest activeQuest) {
@@ -777,6 +784,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         if (quest.useGlobalRewards()) {
             for (Action action : this.globalRewards) {
                 action.preExecute(player, null, fakeInventory, placeholders);
+            }
+
+            for (Permissible permissible : this.globalPermissibles) {
+                var actions = permissible.hasPermission(player, null, fakeInventory, placeholders) ? permissible.getSuccessActions() : permissible.getDenyActions();
+                actions.forEach(action -> action.preExecute(player, null, fakeInventory, placeholders));
             }
         }
 
@@ -972,7 +984,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
      * Returns true if the quest belongs to the given group name, false otherwise.
      * If the group name is null, the method will return true.
      *
-     * @param quest         the quest to be checked
+     * @param quest            the quest to be checked
      * @param currentGroupName the name of the group to be checked
      * @return true if the quest belongs to the given group name, false otherwise
      */

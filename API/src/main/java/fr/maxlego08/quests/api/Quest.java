@@ -1,6 +1,7 @@
 package fr.maxlego08.quests.api;
 
 import fr.maxlego08.menu.api.requirement.Action;
+import fr.maxlego08.menu.api.requirement.Permissible;
 import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import org.bukkit.Material;
 
@@ -68,6 +69,15 @@ public interface Quest {
      * @return the list of rewards
      */
     List<Action> getRewards();
+
+    /**
+     * Gets the list of permissible rewards associated with the quest.
+     * These are rewards that requires certain permissions to be granted
+     * to the player.
+     *
+     * @return the list of permissible rewards
+     */
+    List<Permissible> getPermissibleRewards();
 
     /**
      * Gets the list of start actions associated with the quest.

@@ -1,6 +1,7 @@
 package fr.maxlego08.quests;
 
 import fr.maxlego08.menu.api.requirement.Action;
+import fr.maxlego08.menu.api.requirement.Permissible;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.actions.EntityDamageAction;
 import fr.maxlego08.quests.actions.ExperienceGainAction;
@@ -15,13 +16,13 @@ import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import fr.maxlego08.quests.loader.BrewQuestLoader;
 import fr.maxlego08.quests.loader.CommandQuestLoader;
-import fr.maxlego08.quests.loader.ItemStackQuestLoader;
 import fr.maxlego08.quests.loader.CuboidQuestLoader;
 import fr.maxlego08.quests.loader.CustomQuestLoader;
 import fr.maxlego08.quests.loader.EnchantQuestLoader;
 import fr.maxlego08.quests.loader.EntityQuestLoader;
 import fr.maxlego08.quests.loader.InventoryContentQuestLoader;
 import fr.maxlego08.quests.loader.InventoryOpenQuestLoader;
+import fr.maxlego08.quests.loader.ItemStackQuestLoader;
 import fr.maxlego08.quests.loader.JobQuestLoader;
 import fr.maxlego08.quests.loader.MaterialQuestLoader;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
@@ -75,11 +76,16 @@ public class QuestLoader extends ZUtils {
 
             int customModelId = accessor.getInt("custom-model-id", accessor.getInt("custom-model-data", getDefaultCustomModelId(name)));
 
+            var buttonManager = this.plugin.getButtonManager();
+
             List<Map<String, Object>> rewardsMap = accessor.contains("rewards") ? (List<Map<String, Object>>) accessor.getList("rewards") : new ArrayList<>();
-            List<Action> rewards = this.plugin.getButtonManager().loadActions(rewardsMap, "rewards", file);
+            List<Action> rewards = buttonManager.loadActions(rewardsMap, "rewards", file);
 
             List<Map<String, Object>> startActionsMap = accessor.contains("start-actions") ? (List<Map<String, Object>>) accessor.getList("start-actions") : new ArrayList<>();
-            List<Action> startActions = this.plugin.getButtonManager().loadActions(startActionsMap, "start-actions", file);
+            List<Action> startActions = buttonManager.loadActions(startActionsMap, "start-actions", file);
+
+            List<Map<String, Object>> permissibleRewardsMap = accessor.contains("permissible-rewards") ? (List<Map<String, Object>>) accessor.getList("permissible-rewards") : new ArrayList<>();
+            List<Permissible> permissibleRewards = buttonManager.loadPermissible(permissibleRewardsMap, "permissible-rewards", file);
 
             List<QuestAction> questActions = new ArrayList<>();
             if (accessor.contains("actions")) {
@@ -117,7 +123,7 @@ public class QuestLoader extends ZUtils {
                 hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);
             }
 
-            return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, thumbnail, goal, autoAccept, rewards, startActions, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden, hologramConfiguration);
+            return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, thumbnail, goal, autoAccept, rewards, permissibleRewards, startActions, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden, hologramConfiguration);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;
