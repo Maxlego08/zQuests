@@ -23,7 +23,7 @@ public record HologramConfiguration(Location location, List<String> texts, Displ
 
         var text = getTexts(accessor);
         var billboard = Display.Billboard.valueOf(accessor.getString("billboard", Display.Billboard.CENTER.name()).toUpperCase());
-        var scale = new Vector3f(accessor.getFloat("scale-x", 1), accessor.getFloat("scale-y", 1), accessor.getFloat("scale-z", 1));
+        var scale = configureScale(accessor);
         var translation = new Vector3f(accessor.getFloat("translation-x", 0), accessor.getFloat("translation-y", 0), accessor.getFloat("translation-z", 0));
         var brightness = new Display.Brightness(accessor.getInt("brightness-block", 15), accessor.getInt("brightness-sky", 15));
         var shadowRadius = accessor.getFloat("shadow-radius", 0);
@@ -54,6 +54,29 @@ public record HologramConfiguration(Location location, List<String> texts, Displ
         } else if (accessor.contains("location")) {
             return List.of(stringToLocation(accessor.getString("location")));
         } else return new ArrayList<>();
+    }
+
+    private static Vector3f configureScale(TypedMapAccessor accessor) {
+
+        if (accessor.contains("scale")) {
+            String scaleStr = accessor.getString("scale", null);
+            if (scaleStr != null) {
+                String[] values = scaleStr.replace(" ", "").split(",");
+                try {
+                    if (values.length == 3) {
+                        return new Vector3f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2]));
+                    }
+                    float value = Float.parseFloat(values[0]);
+                    return new Vector3f(value, value, value);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+
+            float value = accessor.getFloat("scale", 1);
+            return new Vector3f(value, value, value);
+        }
+
+        return new Vector3f(accessor.getFloat("scale-x", 1), accessor.getFloat("scale-y", 1), accessor.getFloat("scale-z", 1));
     }
 
     private static Location stringToLocation(String location) {
