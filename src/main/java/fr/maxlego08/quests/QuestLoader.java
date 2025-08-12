@@ -119,8 +119,21 @@ public class QuestLoader extends ZUtils {
 
             List<HologramConfiguration> hologramConfiguration = new ArrayList<>();
             if (accessor.contains("hologram")) {
-                var hologramAccessor = new TypedMapAccessor((Map<String, Object>) accessor.getObject("hologram"));
-                hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);
+
+                var hologramObject = accessor.getObject("hologram");
+                if (hologramObject instanceof String string) {
+                    var optionalHologramConfiguration = this.plugin.getHologramManager().getConfiguration(string);
+                    if (optionalHologramConfiguration.isPresent()) {
+                        hologramConfiguration = optionalHologramConfiguration.get();
+                    } else {
+                        this.plugin.getLogger().severe("Invalid hologram configuration for quest " + name + " in file " + file.getAbsolutePath() + ", global hologram not found");
+                    }
+                } else if (hologramObject instanceof Map<?, ?> map) {
+                    var hologramAccessor = new TypedMapAccessor((Map<String, Object>) map);
+                    hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);
+                } else {
+                    this.plugin.getLogger().severe("Invalid hologram configuration for quest " + name + " in file " + file.getAbsolutePath());
+                }
             }
 
             return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, thumbnail, goal, autoAccept, rewards, permissibleRewards, startActions, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden, hologramConfiguration);

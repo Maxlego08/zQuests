@@ -58,8 +58,8 @@ allprojects {
 
         compileOnly(files("libs/zJobs-1.0.0.jar"))
         compileOnly(files("libs/zshop-3.2.0.jar"))
-        compileOnly(files("libs/zEssentials-1.0.2.2.jar"))
-        compileOnly("fr.maxlego08.menu:zmenu-api:ce19423")
+        compileOnly(files("libs/zEssentials-1.0.2.6.jar"))
+        compileOnly("fr.maxlego08.menu:zmenu-api:1.1.0.2")
 
         implementation("com.tcoded:FoliaLib:0.5.1")
         implementation("fr.maxlego08.sarah:sarah:1.18")

@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.hologram;
 
+import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.Quest;
@@ -11,18 +12,27 @@ import fr.maxlego08.quests.api.event.events.QuestDeleteEvent;
 import fr.maxlego08.quests.api.event.events.QuestPostProgressEvent;
 import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.event.events.QuestUserLoadEvent;
+import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import fr.maxlego08.quests.api.hologram.HologramManager;
+import fr.maxlego08.quests.save.Config;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 public class ZHologramManager implements HologramManager {
 
     private final QuestsPlugin plugin;
+    private final Map<String, List<HologramConfiguration>> holograms = new HashMap<>();
 
     public ZHologramManager(QuestsPlugin plugin) {
         this.plugin = plugin;
@@ -55,6 +65,34 @@ public class ZHologramManager implements HologramManager {
         for (ActiveQuest activeQuest : userQuests.getActiveQuests()) {
             this.createHolograms(player, activeQuest.getQuest());
         }
+    }
+
+    @Override
+    public void loadGlobalConfiguration() {
+        File file = new File(this.plugin.getDataFolder(), "holograms.yml");
+        if (!file.exists()) {
+            this.plugin.saveResource("holograms.yml", false);
+        }
+
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        var holograms = configuration.getMapList("holograms");
+
+        holograms.forEach(map -> {
+            var hologramAccessor = new TypedMapAccessor((Map<String, Object>) map);
+            var hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);
+            String name = hologramAccessor.getString("name");
+
+            this.holograms.put(name, hologramConfiguration);
+            
+            if (Config.enableDebug) {
+                this.plugin.getLogger().info("Loaded global hologram " + name);
+            }
+        });
+    }
+
+    @Override
+    public Optional<List<HologramConfiguration>> getConfiguration(String name) {
+        return Optional.ofNullable(this.holograms.get(name));
     }
 
     private void onQuestLoad(UserQuest userQuest) {

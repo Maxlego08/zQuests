@@ -1,0 +1,8 @@
+# Vous permet d'avoir une configuration globale pour plusieurs quêtes
+holograms:
+  - name: EXAMPLE_1
+    location: "world,320.8,10,-9.5"
+    text: "%img_pnj_talk%"
+    scale: 2
+    billboard: VERTICAL
+    see-through: true

@@ -155,6 +155,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             this.plugin.saveResource("quests/example_craft.yml", false);
         }
 
+        // Load holograms
+        this.plugin.getHologramManager().loadGlobalConfiguration();
+
         // Load groups before quests
         this.loadGroups();
 
