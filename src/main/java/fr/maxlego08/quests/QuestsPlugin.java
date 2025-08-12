@@ -95,7 +95,7 @@ public class QuestsPlugin extends ZPlugin {
 
         if (isEnable(Plugins.ZSHOP)) {
             getLogger().info("Using zShop");
-            this.addListener(new ZShopListener(this.questManager));
+            this.addListener(new ZShopListener(this, this.questManager));
         }
 
         if (isEnable(Plugins.SUPERIORSKYBLOCK2)) {

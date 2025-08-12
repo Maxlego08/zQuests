@@ -1,11 +1,12 @@
 package fr.maxlego08.quests.listeners;
 
+import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.QuestType;
-import fr.maxlego08.zshop.api.event.ShopAction;
-import fr.maxlego08.zshop.api.event.events.ZShopBuyEvent;
-import fr.maxlego08.zshop.api.event.events.ZShopSellAllEvent;
-import fr.maxlego08.zshop.api.event.events.ZShopSellEvent;
+import fr.maxlego08.shop.api.event.ShopAction;
+import fr.maxlego08.shop.api.event.events.ZShopBuyEvent;
+import fr.maxlego08.shop.api.event.events.ZShopSellAllEvent;
+import fr.maxlego08.shop.api.event.events.ZShopSellEvent;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,9 +17,11 @@ import java.util.Map;
 
 public class ZShopListener implements Listener {
 
+    private final QuestsPlugin plugin;
     private final QuestManager manager;
 
-    public ZShopListener(QuestManager manager) {
+    public ZShopListener(QuestsPlugin plugin, QuestManager manager) {
+        this.plugin = plugin;
         this.manager = manager;
     }
 
@@ -26,14 +29,18 @@ public class ZShopListener implements Listener {
     public void onSell(ZShopBuyEvent event) {
         var player = event.getPlayer();
         var itemType = event.getItemButton().getItemStack().build(player).getType();
-        this.manager.handleQuests(player.getUniqueId(), QuestType.PURCHASE, event.getAmount(), itemType);
+        var r = this.manager.handleQuests(player.getUniqueId(), QuestType.PURCHASE, event.getAmount(), itemType);
+
+        this.plugin.debug("zShop purchase " + itemType + " -> " + player.getName() + " -> " + r);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSell(ZShopSellEvent event) {
         var player = event.getPlayer();
         var itemType = event.getItemButton().getItemStack().build(player).getType();
-        this.manager.handleQuests(player.getUniqueId(), QuestType.SELL, event.getAmount(), itemType);
+        var r = this.manager.handleQuests(player.getUniqueId(), QuestType.SELL, event.getAmount(), itemType);
+
+        this.plugin.debug("zShop sell " + itemType + " -> " + player.getName() + " -> " + r);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -45,6 +52,8 @@ public class ZShopListener implements Listener {
             map.put(itemStack.getType(), map.getOrDefault(itemStack.getType(), 0) + itemStack.getAmount());
         }
         map.forEach((itemType, amount) -> this.manager.handleQuests(player.getUniqueId(), QuestType.SELL, amount, itemType));
+
+        this.plugin.debug("zShop sell all -> " + player.getName());
     }
 
 }
