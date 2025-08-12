@@ -979,7 +979,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
             var placeholders = QuestPlaceholderUtil.createPlaceholder(plugin, null, activeQuest.getQuest());
             placeholders.register("started-at", format.format(activeQuest.getCreatedAt()));
-            placeholders.register("limit", format(activeQuest.getAmount()));
+            placeholders.register("amount", format(activeQuest.getAmount()));
             placeholders.register("is-favorite", activeQuest.isFavorite() ? "<green>true" : "<red>false");
 
             return placeholders.parse(Message.SHOW_ELEMENT.msg());
