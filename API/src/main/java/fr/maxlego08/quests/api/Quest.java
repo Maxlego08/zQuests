@@ -3,6 +3,8 @@ package fr.maxlego08.quests.api;
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.requirement.Permissible;
 import fr.maxlego08.quests.api.hologram.HologramConfiguration;
+import fr.maxlego08.quests.api.waypoint.QuestWayPoint;
+import fr.maxlego08.quests.api.waypoint.WayPointConfiguration;
 import org.bukkit.Material;
 
 import java.util.List;
@@ -166,5 +168,19 @@ public interface Quest {
     boolean hasHologram();
 
     String getHologramName(UUID uuid);
+
+    /**
+     * Checks if the quest has a way point associated with it.
+     *
+     * @return true if the quest has a way point, false otherwise
+     */
+    boolean hasWayPoint();
+
+    /**
+     * Retrieves the configuration for the way point associated with the quest.
+     *
+     * @return the way point configuration
+     */
+    WayPointConfiguration getWayPointConfiguration();
 
 }

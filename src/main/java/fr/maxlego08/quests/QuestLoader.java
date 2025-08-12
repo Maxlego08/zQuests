@@ -14,6 +14,7 @@ import fr.maxlego08.quests.api.QuestActionLoader;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.api.hologram.HologramConfiguration;
+import fr.maxlego08.quests.api.waypoint.WayPointConfiguration;
 import fr.maxlego08.quests.loader.BrewQuestLoader;
 import fr.maxlego08.quests.loader.CommandQuestLoader;
 import fr.maxlego08.quests.loader.CuboidQuestLoader;
@@ -25,9 +26,11 @@ import fr.maxlego08.quests.loader.InventoryOpenQuestLoader;
 import fr.maxlego08.quests.loader.ItemStackQuestLoader;
 import fr.maxlego08.quests.loader.JobQuestLoader;
 import fr.maxlego08.quests.loader.MaterialQuestLoader;
+import fr.maxlego08.quests.zcore.utils.Colors;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Material;
 
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,14 +132,25 @@ public class QuestLoader extends ZUtils {
                         this.plugin.getLogger().severe("Invalid hologram configuration for quest " + name + " in file " + file.getAbsolutePath() + ", global hologram not found");
                     }
                 } else if (hologramObject instanceof Map<?, ?> map) {
-                    var hologramAccessor = new TypedMapAccessor((Map<String, Object>) map);
-                    hologramConfiguration = HologramConfiguration.fromConfiguration(hologramAccessor);
+                    hologramConfiguration = HologramConfiguration.fromConfiguration(new TypedMapAccessor((Map<String, Object>) map));
                 } else {
                     this.plugin.getLogger().severe("Invalid hologram configuration for quest " + name + " in file " + file.getAbsolutePath());
                 }
             }
 
-            return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, thumbnail, goal, autoAccept, rewards, permissibleRewards, startActions, questActions, useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, isHidden, hologramConfiguration);
+            WayPointConfiguration waypointConfiguration = null;
+            if (accessor.contains("waypoint")) {
+                var waypointAccessor = new TypedMapAccessor((Map<String, Object>) accessor.getObject("waypoint"));
+                var location = changeStringLocationToLocation(waypointAccessor.getString("location"));
+                String texture = waypointAccessor.contains("texture") ? waypointAccessor.getString("texture") : null;
+                Color color = Colors.parseColor(waypointAccessor.getString("color", "white"));
+                waypointConfiguration = new WayPointConfiguration(location, texture, color);
+            }
+
+            return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, //
+                    thumbnail, goal, autoAccept, rewards, permissibleRewards, startActions, questActions, //
+                    useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, //
+                    isHidden, hologramConfiguration, waypointConfiguration);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;

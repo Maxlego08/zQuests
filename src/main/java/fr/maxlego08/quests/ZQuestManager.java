@@ -865,6 +865,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                     if (configuration.updateHologram()) {
                         this.plugin.getHologramManager().onQuestEvent(event);
                     }
+
+                    if (configuration.updateWayPoint()) {
+                        this.plugin.getWayPointManager().onQuestEvent(event);
+                    }
                 }, Config.eventTicks);
             }
         }

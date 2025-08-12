@@ -8,6 +8,7 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.hologram.HologramConfiguration;
+import fr.maxlego08.quests.api.waypoint.WayPointConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -37,8 +38,9 @@ public class ZQuest implements Quest {
     private final boolean isUnique;
     private final boolean isHidden;
     private final List<HologramConfiguration> hologramConfigurations;
+    private final WayPointConfiguration wayPointConfiguration;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Permissible> permissibleRewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Permissible> permissibleRewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration, WayPointConfiguration wayPointConfiguration) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -59,6 +61,7 @@ public class ZQuest implements Quest {
         this.isUnique = isUnique;
         this.isHidden = isHidden;
         this.hologramConfigurations = hologramConfiguration;
+        this.wayPointConfiguration = wayPointConfiguration;
     }
 
     @Override
@@ -87,7 +90,7 @@ public class ZQuest implements Quest {
 
         var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
         this.rewards.forEach(reward -> reward.preExecute(player, null, fakeInventory, placeholders));
-        
+
         for (Permissible permissible : this.permissibleRewards) {
             var actions = permissible.hasPermission(player, null, fakeInventory, placeholders) ? permissible.getSuccessActions() : permissible.getDenyActions();
             actions.forEach(action -> action.preExecute(player, null, fakeInventory, placeholders));
@@ -187,5 +190,15 @@ public class ZQuest implements Quest {
     @Override
     public String getHologramName(UUID uuid) {
         return String.format("zquests-%s-%s", this.name, uuid);
+    }
+
+    @Override
+    public boolean hasWayPoint() {
+        return this.wayPointConfiguration != null;
+    }
+
+    @Override
+    public WayPointConfiguration getWayPointConfiguration() {
+        return this.wayPointConfiguration;
     }
 }

@@ -117,10 +117,11 @@ public class Config {
             boolean enabled = accessor.getBoolean("enabled", true);
             boolean updateScoreboard = accessor.getBoolean("update-scoreboard", false);
             boolean updateHologram = accessor.getBoolean("update-hologram", false);
+            boolean updateWayPoint = accessor.getBoolean("update-waypoint", false);
 
             try {
                 Class<?> classz = Class.forName(String.format("fr.maxlego08.quests.api.event.events.%s", className));
-                eventConfigurations.put(classz, new EventConfiguration(className, enabled, updateScoreboard, updateHologram));
+                eventConfigurations.put(classz, new EventConfiguration(className, enabled, updateScoreboard, updateHologram, updateWayPoint));
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

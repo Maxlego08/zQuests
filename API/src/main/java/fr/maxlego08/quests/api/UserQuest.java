@@ -2,6 +2,7 @@ package fr.maxlego08.quests.api;
 
 import fr.maxlego08.quests.api.hologram.QuestHologram;
 import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
+import fr.maxlego08.quests.api.waypoint.QuestWayPoint;
 
 import java.util.List;
 import java.util.Optional;
@@ -133,27 +134,98 @@ public interface UserQuest {
      */
     void setCurrentGroup(String group);
 
+    /**
+     * Returns whether the user is currently in an extended state.
+     * This extended state is used to display quest group on inventories.
+     *
+     * @return whether the user is in an extended state
+     */
     boolean isExtend();
 
+    /**
+     * Sets the user's extended state.
+     *
+     * @param extend true to enable the extended state, false to disable it
+     */
     void setExtend(boolean extend);
 
+    /**
+     * Retrieves a list of all quest holograms associated with the user.
+     *
+     * @return a list of quest holograms
+     */
     List<QuestHologram> getHolograms();
 
+    /**
+     * Adds a quest hologram to the user's list of holograms.
+     *
+     * @param questHologram The quest hologram to be added.
+     */
     void addHologram(QuestHologram questHologram);
 
+    /**
+     * Removes a quest hologram from the user's list of holograms.
+     *
+     * @param questHologram The quest hologram to be removed.
+     */
     void removeHologram(QuestHologram questHologram);
 
+    /**
+     * Retrieves the unique identifier associated with the user.
+     *
+     * @return the UUID of the user
+     */
     UUID getUniqueId();
 
+    /**
+     * Retrieves the hologram associated with the specified quest.
+     *
+     * @param quest The quest whose hologram is to be retrieved.
+     * @return An Optional containing the quest hologram if present, otherwise an empty Optional.
+     */
     Optional<QuestHologram> getHologram(Quest quest);
 
+    /**
+     * Checks if the user has marked a quest as favorite.
+     *
+     * @param questId the id of the quest to check
+     * @return true if the user has marked the quest as favorite, false otherwise
+     */
     boolean isFavorite(String questId);
 
+    /**
+     * Retrieves the maximum number of favorite quests that the user can have.
+     *
+     * @return the maximum number of favorite quests
+     */
     int getFavoriteLimit();
 
+    /**
+     * Sets the maximum number of favorite quests that the user can have.
+     *
+     * @param limit the new maximum number of favorite quests
+     */
     void setFavoriteLimit(int limit);
 
+    /**
+     * Retrieves the current favorite placeholder type for the user.
+     *
+     * @return the favorite placeholder type
+     */
     FavoritePlaceholderType getFavoritePlaceholderType();
 
+    /**
+     * Sets the favorite placeholder type for the user.
+     *
+     * @param favoritePlaceholderType the new favorite placeholder type
+     */
     void setFavoritePlaceholderType(FavoritePlaceholderType favoritePlaceholderType);
+
+    List<QuestWayPoint> getQuestWayPoints();
+
+    void addWayPoint(QuestWayPoint questWayPoint);
+
+    void removeWayPoint(QuestWayPoint questWayPoint);
+
+    Optional<QuestWayPoint> getWayPoint(Quest quest);
 }

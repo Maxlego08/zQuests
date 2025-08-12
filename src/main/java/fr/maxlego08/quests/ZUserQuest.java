@@ -6,6 +6,7 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.UserQuest;
 import fr.maxlego08.quests.api.hologram.QuestHologram;
 import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
+import fr.maxlego08.quests.api.waypoint.QuestWayPoint;
 import fr.maxlego08.quests.save.Config;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class ZUserQuest implements UserQuest {
     private final List<ActiveQuest> activeQuests;
     private final List<CompletedQuest> completedQuests;
     private final List<QuestHologram> questHolograms = new ArrayList<>();
+    private final List<QuestWayPoint> questWayPoints = new ArrayList<>();
     private String currentGroup;
     private boolean isExtend;
     private int favoriteLimit;
@@ -176,5 +178,25 @@ public class ZUserQuest implements UserQuest {
     @Override
     public void setFavoritePlaceholderType(FavoritePlaceholderType favoritePlaceholderType) {
         this.favoritePlaceholderType = favoritePlaceholderType;
+    }
+
+    @Override
+    public List<QuestWayPoint> getQuestWayPoints() {
+        return this.questWayPoints;
+    }
+
+    @Override
+    public void addWayPoint(QuestWayPoint questWayPoint) {
+this.questWayPoints.add(questWayPoint);
+    }
+
+    @Override
+    public void removeWayPoint(QuestWayPoint questWayPoint) {
+this.questWayPoints.remove(questWayPoint);
+    }
+
+    @Override
+    public Optional<QuestWayPoint> getWayPoint(Quest quest) {
+        return this.questWayPoints.stream().filter(questHologram -> questHologram.match(quest)).findFirst();
     }
 }

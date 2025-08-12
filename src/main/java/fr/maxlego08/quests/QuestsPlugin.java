@@ -10,6 +10,7 @@ import fr.maxlego08.quests.api.hooks.BlockHook;
 import fr.maxlego08.quests.api.hooks.ScoreboardHook;
 import fr.maxlego08.quests.api.hooks.StackerHook;
 import fr.maxlego08.quests.api.storage.StorageManager;
+import fr.maxlego08.quests.api.waypoint.WayPointManager;
 import fr.maxlego08.quests.commands.commands.CommandQuests;
 import fr.maxlego08.quests.hologram.ZHologramManager;
 import fr.maxlego08.quests.hooks.blocks.BlockTrackerHook;
@@ -25,6 +26,7 @@ import fr.maxlego08.quests.listeners.ZShopListener;
 import fr.maxlego08.quests.placeholder.LocalPlaceholder;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.storage.ZStorageManager;
+import fr.maxlego08.quests.waypoint.ZWayPointManager;
 import fr.maxlego08.quests.zcore.ZPlugin;
 import fr.maxlego08.quests.zcore.utils.plugins.Metrics;
 import fr.maxlego08.quests.zcore.utils.plugins.Plugins;
@@ -40,6 +42,7 @@ public class QuestsPlugin extends ZPlugin {
     private final StorageManager storageManager = new ZStorageManager(this);
     private final QuestManager questManager = new ZQuestManager(this);
     private final HologramManager hologramManager = new ZHologramManager(this);
+    private final WayPointManager wayPointManager = new ZWayPointManager(this);
     private ScoreboardHook scoreboardHook = new EmptyScoreboardHook();
     private BlockHook blockHook = new EmptyBlockHook();
     private StackerHook stackerHook = new EmptyStackerHook();
@@ -73,6 +76,7 @@ public class QuestsPlugin extends ZPlugin {
 
         this.addListener(new QuestListener(this, this.questManager));
         this.addListener(this.hologramManager);
+        this.addListener(this.wayPointManager);
 
         if (isEnable(Plugins.BLOCKTRACKER)) {
             getLogger().info("Using BlockTracker");
@@ -179,5 +183,9 @@ public class QuestsPlugin extends ZPlugin {
 
     public HologramManager getHologramManager() {
         return hologramManager;
+    }
+
+    public WayPointManager getWayPointManager() {
+        return wayPointManager;
     }
 }

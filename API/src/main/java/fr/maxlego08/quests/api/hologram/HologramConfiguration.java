@@ -18,7 +18,7 @@ public record HologramConfiguration(Location location, List<String> texts, Displ
                                     Vector3f translation, Display.Brightness brightness, float shadowRadius,
                                     float shadowStrength, int visibilityDistance, TextColor background,
                                     TextDisplay.TextAlignment textAlignment, boolean textShadow, boolean seeThrough) {
-
+    
     public static List<HologramConfiguration> fromConfiguration(TypedMapAccessor accessor) {
 
         var text = getTexts(accessor);
