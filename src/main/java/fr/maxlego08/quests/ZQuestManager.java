@@ -157,6 +157,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         // Load holograms
         this.plugin.getHologramManager().loadGlobalConfiguration();
+        this.plugin.getWayPointManager().loadGlobalConfiguration();
 
         // Load groups before quests
         this.loadGroups();
