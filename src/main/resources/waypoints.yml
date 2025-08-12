@@ -1,0 +1,5 @@
+waypoints:
+  - name: EXAMPLE_1
+    location: "world,320.8,10,-9.5"
+    texture: example
+    color: red

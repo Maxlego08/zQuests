@@ -74,6 +74,8 @@ public class ZHologramManager implements HologramManager {
             this.plugin.saveResource("holograms.yml", false);
         }
 
+        this.holograms.clear();
+
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         var holograms = configuration.getMapList("holograms");
 
@@ -83,7 +85,7 @@ public class ZHologramManager implements HologramManager {
             String name = hologramAccessor.getString("name");
 
             this.holograms.put(name, hologramConfiguration);
-            
+
             if (Config.enableDebug) {
                 this.plugin.getLogger().info("Loaded global hologram " + name);
             }

@@ -1,5 +1,6 @@
 package fr.maxlego08.quests.waypoint;
 
+import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.Quest;
@@ -10,15 +11,26 @@ import fr.maxlego08.quests.api.event.events.QuestDeleteAllEvent;
 import fr.maxlego08.quests.api.event.events.QuestDeleteEvent;
 import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.event.events.QuestUserLoadEvent;
+import fr.maxlego08.quests.api.waypoint.WayPointConfiguration;
 import fr.maxlego08.quests.api.waypoint.WayPointManager;
+import fr.maxlego08.quests.zcore.utils.Colors;
+import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
-public class ZWayPointManager implements WayPointManager {
+public class ZWayPointManager extends ZUtils implements WayPointManager {
 
     private final QuestsPlugin plugin;
+    private final Map<String, WayPointConfiguration> wayPoints = new HashMap<>();
 
     public ZWayPointManager(QuestsPlugin plugin) {
         this.plugin = plugin;
@@ -37,6 +49,36 @@ public class ZWayPointManager implements WayPointManager {
         } else if (event instanceof QuestDeleteAllEvent questDeleteAllEvent) {
             this.onQuestDeleteAll(questDeleteAllEvent.getUserQuest());
         }
+    }
+
+    @Override
+    public void loadGlobalConfiguration() {
+
+        File file = new File(this.plugin.getDataFolder(), "waypoints.yml");
+        if (!file.exists()) {
+            this.plugin.saveResource("waypoints.yml", false);
+        }
+
+        this.wayPoints.clear();
+
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        configuration.getMapList("waypoints").forEach(map -> {
+
+            var accessor = new TypedMapAccessor((Map<String, Object>) map);
+
+            var location = changeStringLocationToLocation(accessor.getString("location"));
+            String texture = accessor.contains("texture") ? accessor.getString("texture") : null;
+            Color color = Colors.parseColor(accessor.getString("color", "white"));
+            var name = accessor.getString("name");
+            var waypointConfiguration = new WayPointConfiguration(location, texture, color);
+
+            this.wayPoints.put(name, waypointConfiguration);
+        });
+    }
+
+    @Override
+    public Optional<WayPointConfiguration> getConfiguration(String name) {
+        return Optional.ofNullable(this.wayPoints.get(name));
     }
 
     private void onQuestDeleteAll(UserQuest userQuest) {

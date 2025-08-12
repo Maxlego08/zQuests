@@ -140,11 +140,25 @@ public class QuestLoader extends ZUtils {
 
             WayPointConfiguration waypointConfiguration = null;
             if (accessor.contains("waypoint")) {
-                var waypointAccessor = new TypedMapAccessor((Map<String, Object>) accessor.getObject("waypoint"));
-                var location = changeStringLocationToLocation(waypointAccessor.getString("location"));
-                String texture = waypointAccessor.contains("texture") ? waypointAccessor.getString("texture") : null;
-                Color color = Colors.parseColor(waypointAccessor.getString("color", "white"));
-                waypointConfiguration = new WayPointConfiguration(location, texture, color);
+
+                var object = accessor.getObject("waypoint");
+                if (object instanceof String string) {
+                    var optionalWaypointConfiguration = this.plugin.getWayPointManager().getConfiguration(string);
+                    if (optionalWaypointConfiguration.isPresent()) {
+                        waypointConfiguration = optionalWaypointConfiguration.get();
+                    } else {
+                        this.plugin.getLogger().severe("Invalid waypoint configuration for quest " + name + " in file " + file.getAbsolutePath() + ", global waypoint not found");
+                    }
+                } else if (object instanceof Map<?, ?> map) {
+                    var waypointAccessor = new TypedMapAccessor((Map<String, Object>) map);
+                    var location = changeStringLocationToLocation(waypointAccessor.getString("location"));
+                    String texture = waypointAccessor.contains("texture") ? waypointAccessor.getString("texture") : null;
+                    Color color = Colors.parseColor(waypointAccessor.getString("color", "white"));
+                    waypointConfiguration = new WayPointConfiguration(location, texture, color);
+                } else {
+                    this.plugin.getLogger().severe("Invalid waypoint configuration for quest " + name + " in file " + file.getAbsolutePath());
+                }
+
             }
 
             return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, //
