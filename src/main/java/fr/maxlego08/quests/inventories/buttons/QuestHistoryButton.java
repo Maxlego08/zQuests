@@ -23,17 +23,19 @@ public class QuestHistoryButton extends PaginateButton {
     private final int offsetCustomModelId;
     private final FavConfiguration favConfiguration;
     private final MenuItemStack additionalInformationItem;
+    private final MenuItemStack additionalInformationCompletedItem;
     private final int additionalInformationOffset;
     private final boolean enableAdditionalInformation;
     private final QuestManager manager;
 
-    public QuestHistoryButton(QuestsPlugin plugin, List<Integer> offsetSlots, MenuItemStack completedItem, int offsetCustomModelId, FavConfiguration favConfiguration, MenuItemStack additionalInformation, int additionalInformationOffset, boolean enableAdditionalInformation) {
+    public QuestHistoryButton(QuestsPlugin plugin, List<Integer> offsetSlots, MenuItemStack completedItem, int offsetCustomModelId, FavConfiguration favConfiguration, MenuItemStack additionalInformation, MenuItemStack additionalInformationCompletedItem, int additionalInformationOffset, boolean enableAdditionalInformation) {
         this.plugin = plugin;
         this.offsetSlots = offsetSlots;
         this.completedItem = completedItem;
         this.offsetCustomModelId = offsetCustomModelId;
         this.favConfiguration = favConfiguration;
         this.additionalInformationItem = additionalInformation;
+        this.additionalInformationCompletedItem = additionalInformationCompletedItem;
         this.additionalInformationOffset = additionalInformationOffset;
         this.enableAdditionalInformation = enableAdditionalInformation;
         this.manager = this.plugin.getQuestManager();
@@ -77,7 +79,8 @@ public class QuestHistoryButton extends PaginateButton {
             this.displayFav(player, questHistory, inventory, slot, placeholders);
             
             if (this.enableAdditionalInformation) {
-                inventory.addItem(slot + this.additionalInformationOffset, this.additionalInformationItem.build(player, false, placeholders));
+                var menuItemStackAdditionalInfo = questHistory.isActive() ? this.additionalInformationItem : this.additionalInformationCompletedItem;
+                inventory.addItem(slot + this.additionalInformationOffset, menuItemStackAdditionalInfo.build(player, false, placeholders));
             }
         });
     }

@@ -30,6 +30,7 @@ public class QuestHistoryLoader extends ButtonLoader {
         MenuItemStack completedQuest = load(configuration, path + "completed-item.", file);
 
         MenuItemStack additionalInformationItem = load(configuration, path + "additional-information.item.", file);
+        MenuItemStack additionalInformationCompletedItem = load(configuration, path + "additional-information.completed-item.", file);
         int additionalInformationOffset = configuration.getInt(path + "additional-information.offset", -1);
         boolean enableAdditionalInformation = configuration.getBoolean(path + "additional-information.enable", false);
 
@@ -43,7 +44,7 @@ public class QuestHistoryLoader extends ButtonLoader {
                 configuration.getString(path + "favorite.lore-cancel", "&cYou cant change the favorite status")
         );
 
-        return new QuestHistoryButton(this.plugin, offsetSlots, completedQuest, offsetCustomModelId, favConfiguration, additionalInformationItem, additionalInformationOffset, enableAdditionalInformation);
+        return new QuestHistoryButton(this.plugin, offsetSlots, completedQuest, offsetCustomModelId, favConfiguration, additionalInformationItem, additionalInformationCompletedItem, additionalInformationOffset, enableAdditionalInformation);
     }
 
     private MenuItemStack load(YamlConfiguration configuration, String path, File file) {
