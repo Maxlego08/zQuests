@@ -74,15 +74,14 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     private final List<Quest> quests = new ArrayList<>();
     private final Map<UUID, UserQuest> usersQuests = new HashMap<>();
     private final List<CustomReward> customRewards = new ArrayList<>();
-    private final Map<String, QuestsGroup> groups = new HashMap<>();
-    private int globalGroupCustomModelId;
-    private String globalGroupDisplayName;
+    private final QuestGroupManager groupManager;
 
     private List<Action> globalRewards = new ArrayList<>();
     private List<Permissible> globalPermissibles = new ArrayList<>();
 
     public ZQuestManager(QuestsPlugin plugin) {
         this.plugin = plugin;
+        this.groupManager = new QuestGroupManager(plugin);
     }
 
     @Override
@@ -160,7 +159,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.plugin.getWayPointManager().loadGlobalConfiguration();
 
         // Load groups before quests
-        this.loadGroups();
+        this.groupManager.loadGroups();
 
         this.quests.clear();
         this.customRewards.clear();
@@ -185,55 +184,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.loadCustomRewards(this.plugin.getConfig(), new File(this.plugin.getDataFolder(), "config.yml"));
         this.plugin.getLogger().info(this.customRewards.size() + " custom rewards loaded");
 
-        for (QuestsGroup value : this.groups.values()) {
-            value.setQuests(value.getQuestNames().stream().map(this::getQuest).filter(Optional::isPresent).map(Optional::get).toList());
-
-            if (Config.enableDebug) {
-                this.plugin.getLogger().info("Group " + value.getName() + " has " + value.getQuests().size() + " quests and " + value.getQuestNames().size() + " names");
-            }
-
-            if (value.getQuests().size() != value.getQuestNames().size()) {
-                this.plugin.getLogger().severe("A group with the name " + value.getName() + " has a quest that doesn't exist. Quests expected: " + value.getQuestNames().size() + ", quests loaded: " + value.getQuests().size());
-                for (String questName : value.getQuestNames()) {
-                    if (getQuest(questName).isEmpty()) {
-                        this.plugin.getLogger().severe("The quest " + questName + " was not found !");
-                    }
-                }
-            }
-        }
-    }
-
-    private void loadGroups() {
-
-        this.groups.clear();
-
-        var config = this.plugin.getInventoryManager().loadYamlConfiguration(new File(this.plugin.getDataFolder(), "config.yml"));
-
-        this.globalGroupCustomModelId = config.getInt("global-group.custom-model-id", 0);
-        this.globalGroupDisplayName = config.getString("global-group.display-name", "Global");
-
-        var section = config.getConfigurationSection("quests-groups");
-        if (section == null) return;
-
-
-        for (String key : section.getKeys(false)) {
-
-            var currentSection = section.getConfigurationSection(key);
-
-            if (currentSection == null) continue;
-
-            String displayName = currentSection.getString("display-name", key);
-            int customModelId = currentSection.getInt("custom-model-id", 0);
-            var isProgression = currentSection.getBoolean("progression", false);
-            List<String> quests = currentSection.getStringList("quests");
-
-            List<QuestsGroup> subGroups = new ArrayList<>();
-            for (String subGroupName : currentSection.getStringList("sub-groups")) {
-                getGroup(subGroupName).ifPresentOrElse(subGroups::add, () -> this.plugin.getLogger().severe("The group " + subGroupName + " doesn't exist !"));
-            }
-
-            this.groups.put(key, new ZQuestsGroup(key, displayName, quests, subGroups, customModelId, isProgression));
-        }
+        this.groupManager.updateGroups(this::getQuest);
     }
 
     private void updateOnlyPlayers() {
@@ -546,7 +497,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public List<QuestsGroup> getGroups(Quest quest) {
-        return this.groups.values().stream().filter(e -> e.getQuests().contains(quest)).toList();
+        return this.groupManager.getGroups(quest);
     }
 
     @Override
@@ -822,12 +773,12 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public Map<String, QuestsGroup> getGroup() {
-        return this.groups;
+        return this.groupManager.getGroups();
     }
 
     @Override
     public Optional<QuestsGroup> getGroup(String key) {
-        return Optional.ofNullable(this.groups.get(key));
+        return this.groupManager.getGroup(key);
     }
 
     @Override
@@ -926,12 +877,12 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public int getGlobalGroupCustomModelId() {
-        return this.globalGroupCustomModelId;
+        return this.groupManager.getGlobalGroupCustomModelId();
     }
 
     @Override
     public String getGlobalGroupDisplayName() {
-        return this.globalGroupDisplayName;
+        return this.groupManager.getGlobalGroupDisplayName();
     }
 
     @Override
@@ -1016,11 +967,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public Optional<QuestsGroup> getGroup(Quest quest) {
-        return this.groups.values().stream().filter(e -> e.getQuests().contains(quest) && e.isProgression()).findFirst();
+        return this.groupManager.getGroup(quest);
     }
 
     @Override
     public Optional<QuestsGroup> getGlobalGroup(Quest quest) {
-        return this.groups.values().stream().filter(e -> e.getQuests().contains(quest) && !e.isProgression()).findFirst();
+        return this.groupManager.getGlobalGroup(quest);
     }
 }
