@@ -39,8 +39,9 @@ public class ZQuest implements Quest {
     private final boolean isHidden;
     private final List<HologramConfiguration> hologramConfigurations;
     private final WayPointConfiguration wayPointConfiguration;
+    private final List<Permissible> permissibles;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Permissible> permissibleRewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration, WayPointConfiguration wayPointConfiguration) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Permissible> permissibleRewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration, WayPointConfiguration wayPointConfiguration, List<Permissible> permissibles) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -62,6 +63,7 @@ public class ZQuest implements Quest {
         this.isHidden = isHidden;
         this.hologramConfigurations = hologramConfiguration;
         this.wayPointConfiguration = wayPointConfiguration;
+        this.permissibles = permissibles;
     }
 
     @Override
@@ -200,5 +202,10 @@ public class ZQuest implements Quest {
     @Override
     public WayPointConfiguration getWayPointConfiguration() {
         return this.wayPointConfiguration;
+    }
+
+    @Override
+    public List<Permissible> getActionPermissibles() {
+        return this.permissibles;
     }
 }

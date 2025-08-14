@@ -1,10 +1,12 @@
 package fr.maxlego08.quests;
 
+import fr.maxlego08.menu.api.engine.InventoryEngine;
+import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestType;
-import fr.maxlego08.quests.zcore.utils.QuestPlaceholderUtil;
+import org.bukkit.Bukkit;
 
 import java.util.Date;
 import java.util.UUID;
@@ -113,5 +115,19 @@ public class ZActiveQuest implements ActiveQuest {
     @Override
     public Date getCreatedAt() {
         return this.createdAt;
+    }
+
+    @Override
+    public boolean canComplete(UUID uuid, InventoryEngine inventoryEngine) {
+
+        var permissibles = this.quest.getActionPermissibles();
+        if (permissibles.isEmpty()) return true;
+
+        var player = Bukkit.getPlayer(uuid);
+        if (player == null) return false;
+
+        var placeholders = new Placeholders();
+        placeholders.register("player", player.getName());
+        return permissibles.stream().allMatch(permissible -> permissible.isValid() && permissible.hasPermission(player, null, inventoryEngine, placeholders));
     }
 }

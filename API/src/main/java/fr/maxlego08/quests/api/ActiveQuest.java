@@ -1,5 +1,7 @@
 package fr.maxlego08.quests.api;
 
+import fr.maxlego08.menu.api.engine.InventoryEngine;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -30,18 +32,18 @@ public interface ActiveQuest {
     long getAmount();
 
     /**
-     * Adds to the current progress limit of the quest.
-     *
-     * @param amount the limit to add
-     */
-    void addAmount(long amount);
-
-    /**
      * Sets the current progress limit of the quest.
      *
      * @param amount the limit to set
      */
     void setAmount(long amount);
+
+    /**
+     * Adds to the current progress limit of the quest.
+     *
+     * @param amount the limit to add
+     */
+    void addAmount(long amount);
 
     /**
      * Checks if the quest is complete.
@@ -118,4 +120,13 @@ public interface ActiveQuest {
      * @return the creation date
      */
     Date getCreatedAt();
+
+    /**
+     * Checks if the player can complete the quest.
+     *
+     * @param uuid            the player's unique identifier
+     * @param inventoryEngine the inventory engine used to check the player's inventory
+     * @return true if the player can complete the quest, false otherwise
+     */
+    boolean canComplete(UUID uuid, InventoryEngine inventoryEngine);
 }

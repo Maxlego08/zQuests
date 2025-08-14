@@ -108,6 +108,22 @@ public interface QuestManager {
     Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
 
 
+    /**
+     * Handle quests for a user.
+     *
+     * <p>This method processes the active quests of a user, updating the progress
+     * based on the given amount and quest type. If the quest is marked as static,
+     * it can be completed multiple times.</p>
+     *
+     * @param uuid     the unique identifier of the user
+     * @param type     the type of quest
+     * @param amount   the amount to increment the quest progress
+     * @param object   additional data required for the quest action
+     * @param consumer a consumer that is called with the updated active quest
+     *                 when a quest is completed
+     * @param isStatic whether the quest is static and can be completed multiple times
+     * @return the set of active quests that were updated
+     */
     Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer, boolean isStatic);
 
     /**
@@ -392,8 +408,8 @@ public interface QuestManager {
     /**
      * Sets the favorite placeholder type for the given offline player.
      *
-     * @param sender             the command sender
-     * @param offlinePlayer      the offline player to set the favorite placeholder type for
+     * @param sender                  the command sender
+     * @param offlinePlayer           the offline player to set the favorite placeholder type for
      * @param favoritePlaceholderType the favorite placeholder type to set
      */
     void setFavoriteType(CommandSender sender, OfflinePlayer offlinePlayer, FavoritePlaceholderType favoritePlaceholderType);

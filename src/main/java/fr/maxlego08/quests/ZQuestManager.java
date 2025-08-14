@@ -320,6 +320,14 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         });
     }
 
+    /**
+     * Handle default quests for a player.
+     *
+     * <p>This method finds all quests that are auto-accepted and that the player
+     * has not yet completed, and starts them for the player.</p>
+     *
+     * @param uuid the UUID of the player
+     */
     private void handleDefaultQuest(UUID uuid) {
 
         UserQuest userQuest = getUserQuest(uuid);
@@ -366,9 +374,14 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             }
         };
 
+        var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
+
         // Stream through the active quests of the user
         for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
             if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
+
+                // Check if player can complete the quest
+                if (!activeQuest.canComplete(uuid, fakeInventory)) continue;
 
                 QuestProgressEvent progressEvent = new QuestProgressEvent(uuid, activeQuest, amount);
                 if (callQuestEvent(uuid, progressEvent)) continue;
@@ -990,7 +1003,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     /**
      * Returns true if the quest belongs to the given group name, false otherwise.
-     * If the group name is null, the method will return true.
+     * If the group name is null, the method will return true.a
      *
      * @param quest            the quest to be checked
      * @param currentGroupName the name of the group to be checked

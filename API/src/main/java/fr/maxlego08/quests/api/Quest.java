@@ -3,7 +3,6 @@ package fr.maxlego08.quests.api;
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.requirement.Permissible;
 import fr.maxlego08.quests.api.hologram.HologramConfiguration;
-import fr.maxlego08.quests.api.waypoint.QuestWayPoint;
 import fr.maxlego08.quests.api.waypoint.WayPointConfiguration;
 import org.bukkit.Material;
 
@@ -182,5 +181,12 @@ public interface Quest {
      * @return the way point configuration
      */
     WayPointConfiguration getWayPointConfiguration();
+
+    /**
+     * Retrieves the permissibles associated with the quest's actions.
+     *
+     * @return the permissibles associated with the quest's actions
+     */
+    List<Permissible> getActionPermissibles();
 
 }
