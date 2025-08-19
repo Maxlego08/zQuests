@@ -221,11 +221,32 @@ public interface UserQuest {
      */
     void setFavoritePlaceholderType(FavoritePlaceholderType favoritePlaceholderType);
 
+    /**
+     * Retrieves a list of all quest waypoints associated with the user.
+     *
+     * @return a list of quest waypoints
+     */
     List<QuestWayPoint> getQuestWayPoints();
 
+    /**
+     * Adds a quest waypoint to the user's collection of waypoints.
+     *
+     * @param questWayPoint the quest waypoint to add
+     */
     void addWayPoint(QuestWayPoint questWayPoint);
 
+    /**
+     * Removes a quest waypoint from the user's collection of waypoints.
+     *
+     * @param questWayPoint the quest waypoint to remove
+     */
     void removeWayPoint(QuestWayPoint questWayPoint);
 
+    /**
+     * Retrieves the quest waypoint associated with the user and the specified quest.
+     *
+     * @param quest the quest whose waypoint is to be retrieved
+     * @return an Optional containing the quest waypoint if present, otherwise an empty Optional
+     */
     Optional<QuestWayPoint> getWayPoint(Quest quest);
 }

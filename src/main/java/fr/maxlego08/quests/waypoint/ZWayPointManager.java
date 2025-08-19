@@ -18,11 +18,12 @@ import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -141,9 +142,28 @@ public class ZWayPointManager extends ZUtils implements WayPointManager {
         var userQuest = this.plugin.getQuestManager().getUserQuest(player.getUniqueId());
         if (userQuest.getWayPoint(quest).isPresent()) return;
 
+        if (quest.getWayPointConfiguration().location().getWorld() != player.getWorld()) return;
+
         var questWayPoint = new EssentialsWayPoint(this.plugin, quest);
         questWayPoint.create(player);
 
         userQuest.addWayPoint(questWayPoint);
+    }
+
+    @EventHandler
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+        var player = event.getPlayer();
+        var userQuest = this.plugin.getQuestManager().getUserQuest(player.getUniqueId());
+
+        var fromWorld = event.getFrom();
+        var toWorld = event.getPlayer().getWorld();
+
+        userQuest.getQuestWayPoints().forEach(wayPoint -> {
+            if (wayPoint.getQuest().getWayPointConfiguration().location().getWorld().equals(fromWorld)) {
+                wayPoint.delete(player);
+            } else {
+                wayPoint.create(player);
+            }
+        });
     }
 }

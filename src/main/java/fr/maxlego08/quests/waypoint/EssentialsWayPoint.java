@@ -50,4 +50,9 @@ public class EssentialsWayPoint implements QuestWayPoint {
     private EssentialsPlugin getEssentialsPlugin() {
         return this.essentialsPlugin == null ? this.essentialsPlugin = this.plugin.getProvider(EssentialsPlugin.class) : this.essentialsPlugin;
     }
+
+    @Override
+    public Quest getQuest() {
+        return quest;
+    }
 }
