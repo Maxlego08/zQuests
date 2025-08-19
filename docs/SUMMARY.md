@@ -8,6 +8,7 @@
 * [📜 Commands and Permissions](configurations/commands-and-permissions.md)
 * [📰 PlaceHolders](configurations/placeholders.md)
 * [🐎 Quests](configurations/quests.md)
+* [📍 Waypoints & Holograms](configurations/waypoints-and-holograms.md)
 * [🎁 Rewards](configurations/rewards.md)
 * [📖 Inventories](configurations/inventories.md)
 

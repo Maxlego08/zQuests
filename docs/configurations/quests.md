@@ -347,7 +347,7 @@ action-requirements:
 
 ### `hologram`
 
-Displays one or more holograms when the quest is active. You can reference a global hologram defined in `holograms.yml` by name or specify the configuration inline.
+Displays one or more holograms when the quest is active. See [Waypoints & Holograms](waypoints-and-holograms.md) for complete configuration options. You can reference a global hologram defined in `holograms.yml` by name or specify the configuration inline.
 
 - **Default:** No hologram.
 - **Notes:** Requires a compatible hologram system such as zEssentials.
@@ -369,7 +369,7 @@ hologram:
 
 ### `waypoint`
 
-Creates a waypoint guiding the player to a location. Like holograms, this can reference a global configuration from `waypoints.yml` or define its own location and appearance.
+Creates a waypoint guiding the player to a location. See [Waypoints & Holograms](waypoints-and-holograms.md) for full configuration options. Like holograms, this can reference a global configuration from `waypoints.yml` or define its own location and appearance.
 
 - **Default:** No waypoint.
 - **Notes:** The `color` field accepts common color names or hex codes.
