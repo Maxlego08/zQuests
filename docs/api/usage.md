@@ -33,3 +33,24 @@ public class QuestListener implements Listener {
 ```
 
 Register your listener like any other Bukkit listener to start receiving callbacks.
+
+## Custom quest actions
+
+Trigger your own quest logic by sending custom actions through the API. This opens the door
+to crafting entirely new quest types inside your plugins.
+
+```java
+// questsPlugin is a reference to the zQuests plugin instance
+questsPlugin.getQuestManager().handleQuests(player.getUniqueId(), QuestType.CUSTOM, 1, "<your info>");
+```
+
+Configure the corresponding quest to expect your custom data:
+
+```yaml
+quests:
+  - type: CUSTOM
+    actions:
+      - data: '<your info>'
+```
+
+By interpreting the `data` field however you like, you can implement virtually any quest behaviour.
