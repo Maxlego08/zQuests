@@ -26,3 +26,9 @@
   * [fish](default-configuration/quests/fish.md)
   * [smelt](default-configuration/quests/smelt.md)
 * [Inventories](default-configuration/inventories.md)
+
+## 🧩 API
+
+* [📘 Overview](api/README.md)
+* [🔑 Setup](api/setup.md)
+* [🛠 Usage](api/usage.md)
