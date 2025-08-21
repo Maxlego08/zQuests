@@ -128,6 +128,11 @@ public class ZActiveQuest implements ActiveQuest {
 
         var placeholders = new Placeholders();
         placeholders.register("player", player.getName());
-        return permissibles.stream().allMatch(permissible -> permissible.isValid() && permissible.hasPermission(player, null, inventoryEngine, placeholders));
+        return permissibles.stream().allMatch(permissible -> {
+            var result = permissible.isValid() && permissible.hasPermission(player, null, inventoryEngine, placeholders);
+            var actions = result ? permissible.getSuccessActions() : permissible.getDenyActions();
+            actions.forEach(action -> action.preExecute(player, null, inventoryEngine, placeholders));
+            return result;
+        });
     }
 }

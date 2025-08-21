@@ -397,6 +397,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(player.getUniqueId());
+        var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
 
         for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
             if (activeQuest.getQuest().getType() == QuestType.INVENTORY_CONTENT && !activeQuest.isComplete() && activeQuest.isQuestAction(inventoryContent)) {
@@ -407,6 +408,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 var inventoryContentAction = optional.get();
                 int amount = inventoryContentAction.countItems(player);
                 if (amount == 0) continue;
+
+                // Check if player can complete the quest
+                if (!activeQuest.canComplete(player.getUniqueId(), fakeInventory)) continue;
 
                 QuestProgressEvent progressEvent = new QuestProgressEvent(player.getUniqueId(), activeQuest, amount);
                 if (callQuestEvent(player.getUniqueId(), progressEvent)) continue;
