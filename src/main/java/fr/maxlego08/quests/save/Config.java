@@ -5,9 +5,11 @@ import fr.maxlego08.quests.api.utils.EventConfiguration;
 import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import fr.maxlego08.quests.api.utils.PlaceholderFavorite;
 import fr.maxlego08.quests.api.utils.ProgressBarConfig;
+import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ public class Config {
     public static String questNotFavoriteIcon = "X";
     public static int lookAtDistanceBlock = 5;
     public static int lookAtDistanceEntity = 5;
+    public static List<QuestInventoryPage> questInventoryPages = new ArrayList<>();
 
     /**
      * static Singleton instance.
@@ -76,6 +79,11 @@ public class Config {
         questNotFavoriteIcon = configuration.getString("quest-not-favorite-icon", "X");
         lookAtDistanceBlock = configuration.getInt("look-at-distance-block", 8);
         lookAtDistanceEntity = configuration.getInt("look-at-distance-entity", 8);
+
+        configuration.getMapList("main-command-page").forEach(map -> {
+            TypedMapAccessor typedMapAccessor = new TypedMapAccessor((Map<String, Object>) map);
+            questInventoryPages.add(new QuestInventoryPage(typedMapAccessor.getString("permission"), typedMapAccessor.getString("inventory", "quests"), typedMapAccessor.getInt("page", 1), typedMapAccessor.getInt("priority", 0)));
+        });
 
         this.loadEventConfiguration(configuration);
     }

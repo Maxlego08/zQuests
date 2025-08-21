@@ -16,8 +16,6 @@ import java.util.Map;
 
 public class CommandQuests extends VCommand {
 
-    private final List<QuestInventoryPage> questInventoryPages = new ArrayList<>();
-
     public CommandQuests(QuestsPlugin plugin) {
         super(plugin);
         this.setPermission(Permission.ZQUESTS_USE);
@@ -39,21 +37,17 @@ public class CommandQuests extends VCommand {
         this.addSubCommand(new CommandQuestsShow(plugin));
         this.addSubCommand(new CommandQuestsSetFavoriteLimit(plugin));
         this.addSubCommand(new CommandQuestsSetFavoriteType(plugin));
-
-        plugin.getConfig().getMapList("main-command-page").forEach(map -> {
-            TypedMapAccessor typedMapAccessor = new TypedMapAccessor((Map<String, Object>) map);
-            this.questInventoryPages.add(new QuestInventoryPage(typedMapAccessor.getString("permission"), typedMapAccessor.getString("inventory", "quests"), typedMapAccessor.getInt("page", 1), typedMapAccessor.getInt("priority", 0)));
-        });
     }
 
     @Override
     protected CommandType perform(QuestsPlugin plugin) {
 
         if (sender instanceof Player player) {
-            var result = this.questInventoryPages.stream()
+            var result = Config.questInventoryPages.stream()
                     .filter(questInventoryPage -> player.hasPermission(questInventoryPage.permission()))
                     .max(Comparator.comparingInt(QuestInventoryPage::priority))
                     .orElse(new QuestInventoryPage("", Config.mainCommandInventoryName, 1, 0));
+
             plugin.getQuestManager().openQuestInventory(player, result);
         } else syntaxMessage();
 
