@@ -4,17 +4,20 @@ package fr.maxlego08.quests;
 import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.menu.api.pattern.PatternManager;
+import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
 import fr.maxlego08.quests.api.hologram.HologramManager;
 import fr.maxlego08.quests.api.hooks.BlockHook;
 import fr.maxlego08.quests.api.hooks.ScoreboardHook;
 import fr.maxlego08.quests.api.hooks.StackerHook;
 import fr.maxlego08.quests.api.storage.StorageManager;
+import fr.maxlego08.quests.api.utils.PlayTimeHelper;
 import fr.maxlego08.quests.api.waypoint.WayPointManager;
 import fr.maxlego08.quests.commands.commands.CommandQuests;
 import fr.maxlego08.quests.hologram.ZHologramManager;
 import fr.maxlego08.quests.hooks.blocks.BlockTrackerHook;
 import fr.maxlego08.quests.hooks.blocks.EmptyBlockHook;
+import fr.maxlego08.quests.hooks.playtime.ZEssentialsPlayTime;
 import fr.maxlego08.quests.hooks.scoreboard.EmptyScoreboardHook;
 import fr.maxlego08.quests.hooks.scoreboard.ZEssentialsScoreboardHook;
 import fr.maxlego08.quests.hooks.stacker.EmptyStackerHook;
@@ -28,8 +31,14 @@ import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.storage.ZStorageManager;
 import fr.maxlego08.quests.waypoint.ZWayPointManager;
 import fr.maxlego08.quests.zcore.ZPlugin;
+import fr.maxlego08.quests.zcore.utils.SpigotPlayTime;
 import fr.maxlego08.quests.zcore.utils.plugins.Metrics;
 import fr.maxlego08.quests.zcore.utils.plugins.Plugins;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.stream.Collectors;
 
 /**
  * System to create your plugins very simple Projet:
@@ -43,6 +52,7 @@ public class QuestsPlugin extends ZPlugin {
     private final QuestManager questManager = new ZQuestManager(this);
     private final HologramManager hologramManager = new ZHologramManager(this);
     private final WayPointManager wayPointManager = new ZWayPointManager(this);
+    private PlayTimeHelper playTimeHelper = new SpigotPlayTime();
     private ScoreboardHook scoreboardHook = new EmptyScoreboardHook();
     private BlockHook blockHook = new EmptyBlockHook();
     private StackerHook stackerHook = new EmptyStackerHook();
@@ -106,6 +116,7 @@ public class QuestsPlugin extends ZPlugin {
         if (isEnable(Plugins.ZESSENTIALS)) {
             getLogger().info("Using zEssentials");
             this.scoreboardHook = new ZEssentialsScoreboardHook();
+            this.playTimeHelper = new ZEssentialsPlayTime(this);
         }
 
         this.questPlaceholder = new QuestPlaceholder();
@@ -115,6 +126,19 @@ public class QuestsPlugin extends ZPlugin {
         this.questManager.loadInventories();
 
         new Metrics(this, 25647);
+
+        /*var map = this.questManager.getQuests().stream().collect(Collectors.toMap(Quest::getName, Quest::getDescription));
+        try (var writer = new BufferedWriter(new FileWriter("map.txt"))) {
+            map.forEach((key, value) -> {
+                try {
+                    writer.write(key + "=" + value + "\n");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
 
         this.postEnable();
     }
@@ -187,5 +211,9 @@ public class QuestsPlugin extends ZPlugin {
 
     public WayPointManager getWayPointManager() {
         return wayPointManager;
+    }
+
+    public PlayTimeHelper getPlayTimeHelper() {
+        return playTimeHelper;
     }
 }

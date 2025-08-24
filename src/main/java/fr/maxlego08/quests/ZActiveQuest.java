@@ -13,18 +13,22 @@ import java.util.UUID;
 
 public class ZActiveQuest implements ActiveQuest {
 
+    private final QuestsPlugin plugin;
     private final UUID uniqueId;
     private final Quest quest;
     private final Date createdAt;
+    private final long startPlayTime;
     private long amount;
     private boolean isFavorite;
 
-    public ZActiveQuest(UUID uniqueId, Quest quest, Date createdAt, long amount, boolean isFavorite) {
+    public ZActiveQuest(QuestsPlugin plugin, UUID uniqueId, Quest quest, Date createdAt, long amount, boolean isFavorite, long startPlayTime) {
+        this.plugin = plugin;
         this.uniqueId = uniqueId;
         this.quest = quest;
         this.createdAt = createdAt;
         this.amount = amount;
         this.isFavorite = isFavorite;
+        this.startPlayTime = startPlayTime;
     }
 
     @Override
@@ -94,7 +98,7 @@ public class ZActiveQuest implements ActiveQuest {
 
     @Override
     public CompletedQuest complete() {
-        return new CompletedQuest(this.quest, new Date(), this.createdAt, this.isFavorite);
+        return new CompletedQuest(this.quest, new Date(), this.createdAt, this.isFavorite, this.startPlayTime, this.plugin.getPlayTimeHelper().getPlayTime(this.uniqueId));
     }
 
     @Override
@@ -134,5 +138,10 @@ public class ZActiveQuest implements ActiveQuest {
             actions.forEach(action -> action.preExecute(player, null, inventoryEngine, placeholders));
             return result;
         });
+    }
+
+    @Override
+    public long getStartPlayTime() {
+        return this.startPlayTime;
     }
 }

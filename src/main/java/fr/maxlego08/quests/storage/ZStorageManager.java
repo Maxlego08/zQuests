@@ -22,7 +22,6 @@ import fr.maxlego08.sarah.DatabaseConfiguration;
 import fr.maxlego08.sarah.DatabaseConnection;
 import fr.maxlego08.sarah.HikariDatabaseConnection;
 import fr.maxlego08.sarah.MigrationManager;
-import fr.maxlego08.sarah.MySqlConnection;
 import fr.maxlego08.sarah.RequestHelper;
 import fr.maxlego08.sarah.SchemaBuilder;
 import fr.maxlego08.sarah.SqliteConnection;
@@ -122,6 +121,7 @@ public class ZStorageManager implements StorageManager {
             table.string("name", activeQuest.getQuest().getName()).primary();
             table.bigInt("amount", activeQuest.getAmount());
             table.bool("is_favorite", activeQuest.isFavorite());
+            table.bigInt("start_play_time", activeQuest.getStartPlayTime());
         };
     }
 
@@ -142,6 +142,8 @@ public class ZStorageManager implements StorageManager {
             table.object("completed_at", completedQuest.completedAt());
             table.object("started_at", completedQuest.startedAt());
             table.bool("is_favorite", completedQuest.isFavorite());
+            table.bigInt("start_play_time", completedQuest.startPlayTime());
+            table.bigInt("complet_play_time", completedQuest.completPlayTime());
         }));
     }
 
@@ -199,8 +201,8 @@ public class ZStorageManager implements StorageManager {
             List<ActiveQuestDTO> activeQuestDTOS = requestHelper.select("%prefix%" + Tables.ACTIVE_QUESTS, ActiveQuestDTO.class, table -> table.where("unique_id", uuid));
             List<CompletedQuestDTO> completedQuestDTOS = requestHelper.select("%prefix%" + Tables.COMPLETED_QUESTS, CompletedQuestDTO.class, table -> table.where("unique_id", uuid));
 
-            List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(uuid, quest, dto.created_at(), dto.amount(), dto.is_favorite())).orElse(null));
-            List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at(), dto.started_at(), dto.is_favorite())).orElse(null));
+            List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(this.plugin, uuid, quest, dto.created_at(), dto.amount(), dto.is_favorite(), dto.start_play_time())).orElse(null));
+            List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at(), dto.started_at(), dto.is_favorite(), dto.start_play_time(), dto.complet_play_time())).orElse(null));
             var playerFavoriteAmountDTO = requestHelper.select("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, PlayerFavoriteConfigurationDTO.class, table -> table.where("unique_id", uuid)).stream().findFirst().orElse(new PlayerFavoriteConfigurationDTO(uuid, Config.placeholderFavorites.get(FavoritePlaceholderType.LARGE).maxFavorite(), FavoritePlaceholderType.LARGE));
 
             // activeQuests.removeIf(ActiveQuest::isComplete);

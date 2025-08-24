@@ -189,6 +189,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     private void updateOnlyPlayers() {
 
+        var playTimeHelper = this.plugin.getPlayTimeHelper();
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             UserQuest userQuest = this.getUserQuest(player.getUniqueId());
             List<ActiveQuest> activeQuests = userQuest.getActiveQuests();
@@ -198,7 +200,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 Optional<Quest> optionalQuest = this.getQuest(activeQuest.getQuest().getName());
                 if (optionalQuest.isPresent()) {
                     Quest quest = optionalQuest.get();
-                    activeQuests.set(i, new ZActiveQuest(activeQuest.getUniqueId(), quest, activeQuest.getCreatedAt(), activeQuest.getAmount(), activeQuest.isFavorite()));
+                    activeQuests.set(i, new ZActiveQuest(this.plugin, activeQuest.getUniqueId(), quest, activeQuest.getCreatedAt(), activeQuest.getAmount(), activeQuest.isFavorite(), playTimeHelper.getPlayTime(player.getUniqueId())));
                 }
             }
 
@@ -208,7 +210,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 Optional<Quest> optionalQuest = this.getQuest(completedQuest.quest().getName());
                 if (optionalQuest.isPresent()) {
                     Quest quest = optionalQuest.get();
-                    completedQuests.set(i, new CompletedQuest(quest, completedQuest.completedAt(), completedQuest.startedAt(), completedQuest.isFavorite()));
+                    completedQuests.set(i, new CompletedQuest(quest, completedQuest.completedAt(), completedQuest.startedAt(), completedQuest.isFavorite(), completedQuest.startPlayTime(), completedQuest.completPlayTime()));
                 }
             }
         }
@@ -464,7 +466,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
 
         // Create a new active quest for the player
-        ActiveQuest activeQuest = new ZActiveQuest(uuid, quest, new Date(), 0, isFavorite);
+        ActiveQuest activeQuest = new ZActiveQuest(this.plugin, uuid, quest, new Date(), 0, isFavorite, this.plugin.getPlayTimeHelper().getPlayTime(uuid));
 
         // Check if the user already completes the quest
         if (userQuest.getCompletedQuests().stream().anyMatch(completedQuest -> completedQuest.quest().equals(quest))) {
@@ -476,7 +478,6 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         // Add the active quest to the user's active quests
         userQuest.getActiveQuests().add(event.getActiveQuest());
-
 
         var offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         if (offlinePlayer.isOnline()) {

@@ -129,4 +129,6 @@ public interface ActiveQuest {
      * @return true if the player can complete the quest, false otherwise
      */
     boolean canComplete(UUID uuid, InventoryEngine inventoryEngine);
+
+    long getStartPlayTime();
 }

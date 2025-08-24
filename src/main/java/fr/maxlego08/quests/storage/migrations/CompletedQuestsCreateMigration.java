@@ -13,6 +13,8 @@ public class CompletedQuestsCreateMigration extends Migration {
             table.timestamp("started_at").defaultValue("CURRENT_TIMESTAMP");
             table.timestamp("completed_at").defaultValue("CURRENT_TIMESTAMP");
             table.bool("is_favorite").defaultValue(false);
+            table.bigInt("start_play_time").defaultValue(0);
+            table.bigInt("complet_play_time").defaultValue(0);
         });
     }
 }
