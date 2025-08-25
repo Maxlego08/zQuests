@@ -22,6 +22,7 @@ import fr.maxlego08.quests.api.utils.InventoryContent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Egg;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -69,7 +70,7 @@ public enum QuestType {
             case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, PURCHASE, ITEM_BREAK, ITEM_MENDING,
                  SMITHING -> new MaterialAction(this, (Material) target);
             case CRAFT, ITEM_CONSUME -> new ItemStackAction(this, (ItemStack) target);
-            case ENTITY_KILL, TAME, SHEAR -> new EntityAction(this, (EntityType) target);
+            case ENTITY_KILL, TAME, SHEAR -> new EntityAction(this, (Entity) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
             case BREW -> new BrewAction(this, (BrewEvent) target);
             case VOTE -> new VoteAction(this);

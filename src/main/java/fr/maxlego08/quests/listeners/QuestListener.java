@@ -75,8 +75,6 @@ public class QuestListener extends ZUtils implements Listener {
     private final QuestManager manager;
     private final NamespacedKey playerKey;
 
-    // Ajouter un systeme pour ne pas ecouter les events qui ne sont pas utiliser
-
     public QuestListener(QuestsPlugin plugin, QuestManager manager) {
         this.plugin = plugin;
         this.manager = manager;
@@ -181,7 +179,7 @@ public class QuestListener extends ZUtils implements Listener {
 
             var amount = this.plugin.getStackerHook().getEntityCount(entity);
 
-            this.manager.handleQuests(player.getUniqueId(), QuestType.ENTITY_KILL, amount, entity.getType());
+            this.manager.handleQuests(player.getUniqueId(), QuestType.ENTITY_KILL, amount, entity);
         }
     }
 

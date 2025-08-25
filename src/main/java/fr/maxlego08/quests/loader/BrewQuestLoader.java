@@ -1,16 +1,12 @@
 package fr.maxlego08.quests.loader;
 
-import fr.maxlego08.menu.api.enchantment.Enchantments;
-import fr.maxlego08.menu.api.enchantment.MenuEnchantment;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.actions.BrewAction;
-import fr.maxlego08.quests.actions.EnchantmentAction;
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestActionLoader;
 import fr.maxlego08.quests.api.QuestType;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.potion.PotionType;
 
 import java.io.File;
