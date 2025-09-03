@@ -38,7 +38,8 @@ import fr.maxlego08.quests.zcore.utils.plugins.Plugins;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * System to create your plugins very simple Projet:
@@ -126,6 +127,23 @@ public class QuestsPlugin extends ZPlugin {
         this.questManager.loadInventories();
 
         new Metrics(this, 25647);
+
+        List<String> strings = new ArrayList<>();
+
+        this.questManager.getGroup().forEach((groupName, group) -> {
+            strings.add(groupName + "\n");
+            for (Quest quest : group.getQuests()) {
+                strings.add("* " + quest.getDescription().replaceAll("#[0-9a-fA-F]{6}", "") + "\n");
+            }
+        });
+
+        try (var writer = new BufferedWriter(new FileWriter(this.getDataFolder().getAbsoluteFile() + "/map.txt"))) {
+            for (String string : strings) {
+                writer.write(string);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         /*var map = this.questManager.getQuests().stream().collect(Collectors.toMap(Quest::getName, Quest::getDescription));
         try (var writer = new BufferedWriter(new FileWriter("map.txt"))) {

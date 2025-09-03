@@ -172,7 +172,7 @@ public class ZStorageManager implements StorageManager {
     public void upsertPlayerFavoriteQuestConfiguration(UUID uniqueId, int limit, FavoritePlaceholderType favoritePlaceholderType) {
         executor.execute(() -> this.requestHelper.upsert("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, table -> {
             table.uuid("unique_id", uniqueId).primary();
-            table.bigInt("limit", limit);
+            table.bigInt("amount", limit);
             table.string("placeholder_type", favoritePlaceholderType.name());
         }));
     }
