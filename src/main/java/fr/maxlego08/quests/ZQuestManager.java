@@ -221,8 +221,15 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         var manager = this.plugin.getButtonManager();
         var file = new File(this.plugin.getDataFolder(), "config.yml");
 
-        this.globalRewards = manager.loadActions((List<Map<String, Object>>) configuration.getList("global-rewards"), "global-rewards", file);
-        this.globalPermissibles = manager.loadPermissible((List<Map<String, Object>>) configuration.getList("global-permissibles"), "global-permissibles", file);
+        var globalRewardConfiguration = configuration.getList("global-rewards");
+        if (globalRewardConfiguration != null) {
+            this.globalRewards = manager.loadActions((List<Map<String, Object>>) globalRewardConfiguration, "global-rewards", file);
+        }
+
+        var globalPermissibleConfiguration = configuration.getList("global-permissibles");
+        if (globalPermissibleConfiguration != null) {
+            this.globalPermissibles = manager.loadPermissible((List<Map<String, Object>>) globalPermissibleConfiguration, "global-permissibles", file);
+        }
     }
 
     private void loadCustomRewards(FileConfiguration configuration, File file) {
