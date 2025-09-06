@@ -61,7 +61,7 @@ public class ZUserQuest implements UserQuest {
 
     @Override
     public boolean isQuestCompleted(Quest quest) {
-        return this.completedQuests.stream().anyMatch(completedQuest -> completedQuest.quest().equals(quest));
+        return isQuestCompleted(quest.getName());
     }
 
     @Override
