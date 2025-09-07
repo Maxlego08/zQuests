@@ -29,6 +29,6 @@ public class JobQuestLoader implements QuestActionLoader {
 
     @Override
     public List<QuestType> getSupportedTypes() {
-        return List.of(QuestType.JOB_LEVEL, QuestType.JOB_PRESTIGE);
+        return List.of(QuestType.JOB_LEVEL, QuestType.JOB_PRESTIGE, QuestType.JOB_PRESTIGE_AND_LEVEL);
     }
 }

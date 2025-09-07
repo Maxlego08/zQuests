@@ -44,7 +44,6 @@ public class QuestFavoriteButton extends Button {
         super.onClick(player, event, inventory, slot, placeholders);
 
         List<ActiveQuest> relevantQuests = getRelevantActiveQuests(player);
-        long favoriteCount = relevantQuests.stream().filter(ActiveQuest::isFavorite).count();
         boolean newFavoriteValue = !relevantQuests.stream().allMatch(ActiveQuest::isFavorite);
 
         for (ActiveQuest activeQuest : relevantQuests) {
@@ -52,13 +51,13 @@ public class QuestFavoriteButton extends Button {
             if (plugin.getQuestManager().callQuestEvent(player.getUniqueId(), changeEvent)) continue;
 
             activeQuest.setFavorite(changeEvent.isFavorite());
-            plugin.getStorageManager().upsert(activeQuest);
+            this.plugin.getStorageManager().upsert(activeQuest);
         }
 
-        plugin.getInventoryManager().updateInventory(player);
+        this.plugin.getInventoryManager().updateInventory(player);
     }
 
     private List<ActiveQuest> getRelevantActiveQuests(Player player) {
-        return plugin.getQuestManager().getUserQuest(player.getUniqueId()).getActiveQuests().stream().filter(aq -> questNames.contains(aq.getQuest().getName())).toList();
+        return this.plugin.getQuestManager().getUserQuest(player.getUniqueId()).getActiveQuests().stream().filter(aq -> this.questNames.contains(aq.getQuest().getName())).toList();
     }
 }
