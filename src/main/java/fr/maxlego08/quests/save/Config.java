@@ -1,6 +1,7 @@
 package fr.maxlego08.quests.save;
 
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
+import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.utils.EventConfiguration;
 import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import fr.maxlego08.quests.api.utils.PlaceholderFavorite;
@@ -17,6 +18,7 @@ import java.util.Map;
 public class Config {
 
     public static boolean enableDebug = true;
+    public static Map<QuestType, Boolean> questDebugs = new HashMap<>();
     public static boolean enableDebugTime = false;
     public static ProgressBarConfig progressBar;
     public static String loreLinePlaceholderActive;
@@ -85,6 +87,14 @@ public class Config {
             questInventoryPages.add(new QuestInventoryPage(typedMapAccessor.getString("permission"), typedMapAccessor.getString("inventory", "quests"), typedMapAccessor.getInt("page", 1), typedMapAccessor.getInt("priority", 0)));
         });
 
+        var section = configuration.getConfigurationSection("debug-quests");
+        if (section != null) {
+            for (String key : section.getKeys(false)) {
+                questDebugs.put(QuestType.valueOf(key), section.getBoolean(key, false));
+            }
+        }
+        System.out.println("R : " + questDebugs);
+
         this.loadEventConfiguration(configuration);
     }
 
@@ -134,6 +144,10 @@ public class Config {
                 exception.printStackTrace();
             }
         }
+    }
+
+    public static boolean isDebug(QuestType questType) {
+        return questDebugs.getOrDefault(questType, false);
     }
 
 }

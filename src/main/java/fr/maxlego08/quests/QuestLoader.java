@@ -271,6 +271,7 @@ public class QuestLoader extends ZUtils {
             if (optional.isPresent()) {
                 QuestAction result = optional.get().load(actionAccessor, questType, file);
                 if (result != null) results.add(result);
+                else logSevere("No loader found for " + questType + " in file " + file.getAbsolutePath());
             } else {
                 logSevere("No loader found for " + questType + " in file " + file.getAbsolutePath());
             }

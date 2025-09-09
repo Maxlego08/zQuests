@@ -4,8 +4,8 @@ package fr.maxlego08.quests;
 import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.menu.api.pattern.PatternManager;
-import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestManager;
+import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.hologram.HologramManager;
 import fr.maxlego08.quests.api.hooks.BlockHook;
 import fr.maxlego08.quests.api.hooks.ScoreboardHook;
@@ -34,12 +34,6 @@ import fr.maxlego08.quests.zcore.ZPlugin;
 import fr.maxlego08.quests.zcore.utils.SpigotPlayTime;
 import fr.maxlego08.quests.zcore.utils.plugins.Metrics;
 import fr.maxlego08.quests.zcore.utils.plugins.Plugins;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * System to create your plugins very simple Projet:
@@ -207,6 +201,12 @@ public class QuestsPlugin extends ZPlugin {
         this.questManager.loadQuests();
         this.questManager.loadPatterns();
         this.questManager.loadInventories();
+    }
+
+    public void debug(QuestType questType, String string) {
+        if (Config.isDebug(questType)) {
+            this.getLogger().info(string);
+        }
     }
 
     public void debug(String string) {

@@ -31,7 +31,7 @@ public class ZShopListener implements Listener {
         var itemType = event.getItemButton().getItemStack().build(player).getType();
         var r = this.manager.handleQuests(player.getUniqueId(), QuestType.PURCHASE, event.getAmount(), itemType);
 
-        this.plugin.debug("zShop purchase " + itemType + " -> " + player.getName() + " -> " + r);
+        this.plugin.debug(QuestType.PURCHASE, "zShop purchase " + itemType + " -> " + player.getName() + " -> " + r);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -40,7 +40,7 @@ public class ZShopListener implements Listener {
         var itemType = event.getItemButton().getItemStack().build(player).getType();
         var r = this.manager.handleQuests(player.getUniqueId(), QuestType.SELL, event.getAmount(), itemType);
 
-        this.plugin.debug("zShop sell " + itemType + " -> " + player.getName() + " -> " + r);
+        this.plugin.debug(QuestType.SELL, "zShop sell " + itemType + " -> " + player.getName() + " -> " + r);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -53,7 +53,7 @@ public class ZShopListener implements Listener {
         }
         map.forEach((itemType, amount) -> this.manager.handleQuests(player.getUniqueId(), QuestType.SELL, amount, itemType));
 
-        this.plugin.debug("zShop sell all -> " + player.getName());
+        this.plugin.debug(QuestType.SELL, "zShop sell all -> " + player.getName());
     }
 
 }

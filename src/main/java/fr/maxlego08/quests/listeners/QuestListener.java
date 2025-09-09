@@ -101,17 +101,17 @@ public class QuestListener extends ZUtils implements Listener {
         Block block = event.getBlock();
         Player player = event.getPlayer();
 
-        this.plugin.debug("Start Break Block " + player.getName() + " : " + block.getType() + " - world: " + block.getWorld().getName() + " x: " + block.getX() + " y: " + block.getY() + " z: " + block.getZ());
+        this.plugin.debug(QuestType.BLOCK_BREAK, "Start Break Block " + player.getName() + " : " + block.getType() + " - world: " + block.getWorld().getName() + " x: " + block.getX() + " y: " + block.getY() + " z: " + block.getZ());
 
         if (isNPC(player)) return;
 
         Material material = block.getType();
 
-        this.plugin.debug("Break Block: PLAYER IS NOT AN NPC " + block.getBlockData() + " -> " + (block.getBlockData() instanceof Ageable));
+        this.plugin.debug(QuestType.BLOCK_BREAK, "Break Block: PLAYER IS NOT AN NPC " + block.getBlockData() + " -> " + (block.getBlockData() instanceof Ageable));
 
         if (!(block.getBlockData() instanceof Ageable)) {
 
-            this.plugin.debug("Break Block: tracked: " + this.plugin.getBlockHook().isTracked(block));
+            this.plugin.debug(QuestType.BLOCK_BREAK, "Break Block: tracked: " + this.plugin.getBlockHook().isTracked(block));
             if (this.plugin.getBlockHook().isTracked(block)) return;
 
             int amount = 1;
@@ -123,7 +123,7 @@ public class QuestListener extends ZUtils implements Listener {
 
         } else if (block.getBlockData() instanceof Ageable ageable) {
 
-            this.plugin.debug("Break Block: Ageable: " + ageable.getAge() + " / " + ageable.getMaximumAge() + " - is special block: " + material + " = " + (material == Material.SUGAR_CANE || material == Material.KELP || material == Material.BAMBOO));
+            this.plugin.debug(QuestType.FARMING, "Break Block: Ageable: " + ageable.getAge() + " / " + ageable.getMaximumAge() + " - is special block: " + material + " = " + (material == Material.SUGAR_CANE || material == Material.KELP || material == Material.BAMBOO));
             if ((material == Material.SUGAR_CANE || material == Material.KELP || material == Material.BAMBOO) || ageable.getAge() == ageable.getMaximumAge()) {
                 this.manager.handleQuests(player.getUniqueId(), QuestType.FARMING, 1, event.getBlock().getType());
             }
@@ -188,7 +188,10 @@ public class QuestListener extends ZUtils implements Listener {
 
         var entity = event.getEntity();
         var player = event.getPlayer();
-        this.manager.handleQuests(player.getUniqueId(), QuestType.SHEAR, 1, entity.getType());
+        this.manager.handleQuests(player.getUniqueId(), QuestType.SHEAR, 1, entity);
+
+        var location = entity.getLocation();
+        this.plugin.debug(QuestType.SHEAR, player.getName() + " shear entity " + entity.getType() + " at " + location.getWorld().getName() + " x: " + location.getBlockX() + " y: " + location.getBlockY() + " z: " + location.getBlockZ());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -202,7 +205,7 @@ public class QuestListener extends ZUtils implements Listener {
 
             if (isNPC(player)) return;
 
-            this.manager.handleQuests(player.getUniqueId(), QuestType.TAME, 1, animal.getType());
+            this.manager.handleQuests(player.getUniqueId(), QuestType.TAME, 1, animal);
         }
     }
 
@@ -330,14 +333,14 @@ public class QuestListener extends ZUtils implements Listener {
     public void onCraft(CraftItemEvent event) {
 
         var isValid = isValidCraftEvent(event);
-        plugin.debug("Try craft " + event.getWhoClicked().getName() + ", isValid: " + isValid + ", result: " + event.getResult() + ", itemStack: " + event.getCurrentItem());
+        plugin.debug(QuestType.CRAFT, "Try craft " + event.getWhoClicked().getName() + ", isValid: " + isValid + ", result: " + event.getResult() + ", itemStack: " + event.getCurrentItem());
         if (!isValid) return;
 
         Player player = (Player) event.getWhoClicked();
         ItemStack result = event.getCurrentItem();
 
         int craftAmount = event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP ? calculateMaxCraftAmount(event) : event.getCursor().getType() != Material.AIR ? 0 : result.getAmount();
-        plugin.debug("Craft limit: " + craftAmount + ", isNPC: " + isNPC(player));
+        plugin.debug(QuestType.CRAFT, "Craft limit: " + craftAmount + ", isNPC: " + isNPC(player));
 
         if (craftAmount > 0 && !isNPC(player)) {
             this.manager.handleQuests(player.getUniqueId(), QuestType.CRAFT, craftAmount, result);
@@ -345,7 +348,7 @@ public class QuestListener extends ZUtils implements Listener {
     }
 
     private boolean isValidCraftEvent(CraftItemEvent event) {
-        plugin.debug("isValidCraftEvent = currentItem: " + event.getCurrentItem() + ", action: " + event.getAction() + ", cursor: " + event.getCursor() + ", item in offhand: " + (event.getWhoClicked() instanceof Player player && player.getInventory().getItemInOffHand().getAmount() == 0) + " (item in off hand must be true)");
+        plugin.debug(QuestType.CRAFT, "isValidCraftEvent = currentItem: " + event.getCurrentItem() + ", action: " + event.getAction() + ", cursor: " + event.getCursor() + ", item in offhand: " + (event.getWhoClicked() instanceof Player player && player.getInventory().getItemInOffHand().getAmount() == 0) + " (item in off hand must be true)");
         return event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR
                 && event.getAction() != InventoryAction.NOTHING
                 && !isInvalidDrop(event)
@@ -354,7 +357,7 @@ public class QuestListener extends ZUtils implements Listener {
     }
 
     private boolean isInvalidDrop(CraftItemEvent event) {
-        plugin.debug("isInvalidDrop = action: " + event.getAction() + ", click: " + event.getClick() + ", cursor: " + event.getCursor());
+        plugin.debug(QuestType.CRAFT, "isInvalidDrop = action: " + event.getAction() + ", click: " + event.getClick() + ", cursor: " + event.getCursor());
         return (event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getClick() == ClickType.DROP && event.getCursor().getType() != Material.AIR)
                 || (event.getAction() == InventoryAction.DROP_ALL_SLOT && event.getClick() == ClickType.CONTROL_DROP && event.getCursor().getType() != Material.AIR)
                 || (event.getAction() == InventoryAction.UNKNOWN && event.getClick() == ClickType.UNKNOWN);
@@ -495,7 +498,7 @@ public class QuestListener extends ZUtils implements Listener {
             var result = player.rayTraceBlocks(Config.lookAtDistanceBlock);
             if (result != null && result.getHitBlock() != null) {
                 var block = result.getHitBlock();
-                plugin.debug(player.getName() + " look at block " + block.getType() + ", " + block.getWorld() + " - " + block.getX() + ", " + block.getY() + ", " + block.getZ());
+                plugin.debug(QuestType.LOOK_AT_BLOCK, ": " + player.getName() + " look at block " + block.getType() + ", " + block.getWorld() + " - " + block.getX() + ", " + block.getY() + ", " + block.getZ());
                 this.manager.handleQuests(player.getUniqueId(), QuestType.LOOK_AT_BLOCK, 1, block.getLocation());
             }
         }
@@ -504,7 +507,7 @@ public class QuestListener extends ZUtils implements Listener {
             var result = player.rayTraceEntities(Config.lookAtDistanceEntity);
             if (result != null && result.getHitEntity() != null) {
                 var hitEntity = result.getHitEntity();
-                plugin.debug(player.getName() + " look at entity " + hitEntity.getType() + ", " + hitEntity.getWorld() + " - " + hitEntity.getX() + ", " + hitEntity.getY() + ", " + hitEntity.getZ());
+                plugin.debug(QuestType.LOOK_AT_ENTITY, player.getName() + " look at entity " + hitEntity.getType() + ", " + hitEntity.getWorld() + " - " + hitEntity.getX() + ", " + hitEntity.getY() + ", " + hitEntity.getZ());
                 this.manager.handleQuests(player.getUniqueId(), QuestType.LOOK_AT_ENTITY, 1, hitEntity.getLocation());
             }
         }

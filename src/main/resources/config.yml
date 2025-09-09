@@ -6,6 +6,42 @@ enable-debug: true
 # Useful for identifying bottlenecks and optimizing performance.
 enable-debug-time: true
 
+# Displays the logs in the console by quest type, this allows you to check that everything is working properly.
+debug-quests:
+  BLOCK_BREAK: false
+  BLOCK_PLACE: false
+  ENTITY_KILL: false
+  FARMING: false
+  FISHING: false
+  TAME: false
+  ENCHANT: false
+  BREW: false
+  SMELT: false
+  CRAFT: false
+  VOTE: false
+  SELL: false
+  PURCHASE: false
+  ENTITY_DAMAGE: false
+  EXPERIENCE_GAIN: false
+  HATCHING: false
+  ITEM_CONSUME: false
+  ITEM_BREAK: false
+  ITEM_MENDING: false
+  RESURRECT: false
+  JOB_LEVEL: false
+  JOB_PRESTIGE: false
+  JOB_PRESTIGE_AND_LEVEL: false
+  SMITHING: false
+  ISLAND: false
+  COMMAND: false
+  CUBOID: false
+  CUSTOM: false
+  INVENTORY_OPEN: false
+  INVENTORY_CONTENT: false
+  SHEAR: false
+  LOOK_AT_BLOCK: false
+  LOOK_AT_ENTITY: false
+
 # Allows disabling the action of crafting an item and obtaining it directly in the off-hand.
 # For a quest of type CRAFT, it is impossible to perform this action.
 # We advise you to keep this feature active to avoid any confusion for your players.
