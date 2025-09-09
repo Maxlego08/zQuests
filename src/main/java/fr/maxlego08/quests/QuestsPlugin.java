@@ -128,7 +128,7 @@ public class QuestsPlugin extends ZPlugin {
 
         new Metrics(this, 25647);
 
-        List<String> strings = new ArrayList<>();
+        /*List<String> strings = new ArrayList<>();
 
         this.questManager.getGroup().forEach((groupName, group) -> {
             strings.add(groupName + "\n");
@@ -143,7 +143,7 @@ public class QuestsPlugin extends ZPlugin {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         /*var map = this.questManager.getQuests().stream().collect(Collectors.toMap(Quest::getName, Quest::getDescription));
         try (var writer = new BufferedWriter(new FileWriter("map.txt"))) {
