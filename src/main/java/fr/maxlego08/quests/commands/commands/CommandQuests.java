@@ -37,6 +37,7 @@ public class CommandQuests extends VCommand {
         this.addSubCommand(new CommandQuestsShow(plugin));
         this.addSubCommand(new CommandQuestsSetFavoriteLimit(plugin));
         this.addSubCommand(new CommandQuestsSetFavoriteType(plugin));
+        this.addSubCommand(new CommandQuestsReward(plugin));
     }
 
     @Override

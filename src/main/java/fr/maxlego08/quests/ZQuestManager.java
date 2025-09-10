@@ -937,6 +937,22 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     }
 
+    @Override
+    public void giveQuestReward(CommandSender sender, Player player, String questName) {
+
+        var optional = getQuest(questName);
+        if (optional.isEmpty()){
+            message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
+            return;
+        }
+
+        var quest = optional.get();
+        var fakeActiveQuest = new ZActiveQuest(this.plugin, player.getUniqueId(), quest, new Date(), quest.getGoal(), false, 0);
+        quest.onComplete(fakeActiveQuest);
+
+        message(sender, Message.QUEST_REWARD, "%name%", quest.getName(), "%player%", player.getName());
+    }
+
     /**
      * Displays the active and completed quests of a specific offline player.
      *

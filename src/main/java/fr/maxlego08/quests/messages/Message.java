@@ -62,6 +62,8 @@ public enum Message {
     QUEST_START_SUCCESS("&aYou have just activated the quest &f%name%&a for the player &f%player%&a."),
     QUEST_START_GROUP("&aYou have just activated the quest group &f%name%&a for the player &f%player%&a."),
 
+    QUEST_REWARD("&aYou have just given the rewards of the quest &f%name% &ato the player&f %player%&a."),
+
     GROUP_COMPLETE_SUCCESS("&aThe player &f%player% &ahas just completed the quest group &f%name%&a!"),
     QUEST_COMPLETE_SUCCESS("&aThe player &f%player% &ahas just completed the quest &f%name%&a!"),
     QUEST_DELETE_SUCCESS("&aThe quest &f%name% &ahas just been deleted&a."),

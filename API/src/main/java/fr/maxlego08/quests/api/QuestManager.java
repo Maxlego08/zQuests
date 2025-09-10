@@ -413,4 +413,13 @@ public interface QuestManager {
      * @param favoritePlaceholderType the favorite placeholder type to set
      */
     void setFavoriteType(CommandSender sender, OfflinePlayer offlinePlayer, FavoritePlaceholderType favoritePlaceholderType);
+
+    /**
+     * Gives the reward of the given quest to the given player.
+     *
+     * @param sender    the command sender
+     * @param player    the player to give the reward to
+     * @param questName the name of the quest to give the reward of
+     */
+    void giveQuestReward(CommandSender sender, Player player, String questName);
 }
