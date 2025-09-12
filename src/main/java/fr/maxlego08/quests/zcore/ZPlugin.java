@@ -225,7 +225,7 @@ public abstract class ZPlugin extends JavaPlugin {
      */
     protected boolean isEnable(Plugins plugins) {
         Plugin plugin = getPlugin(plugins);
-        return plugin != null && plugin.isEnabled();
+        return plugin != null;
     }
 
     /**

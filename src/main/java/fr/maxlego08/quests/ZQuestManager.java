@@ -832,7 +832,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 isCancelled = !event.callEvent();
             }
 
-            if ((configuration.updateScoreboard() || configuration.updateHologram()) && playerUniqueId != null) {
+            if ((configuration.updateScoreboard() || configuration.updateHologram() || configuration.updateWayPoint()) && playerUniqueId != null) {
                 this.plugin.getScheduler().runLater(w -> {
 
                     if (configuration.updateScoreboard()) {
@@ -941,7 +941,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public void giveQuestReward(CommandSender sender, Player player, String questName) {
 
         var optional = getQuest(questName);
-        if (optional.isEmpty()){
+        if (optional.isEmpty()) {
             message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
             return;
         }

@@ -93,7 +93,6 @@ public class Config {
                 questDebugs.put(QuestType.valueOf(key), section.getBoolean(key, false));
             }
         }
-        System.out.println("R : " + questDebugs);
 
         this.loadEventConfiguration(configuration);
     }
