@@ -1,0 +1,62 @@
+name: "&8Options"
+size: 36
+items:
+
+  info-quest-placeholders:
+    type: ZQUESTS_CHANGE_FAVORITE_TYPE
+    slot: 13
+    item:
+      material: COMPASS
+      name: '#edacfcDisplay in the ScoreBoard'
+      amount: '%zquests_favorite_limit%'
+      lore:
+        - ''
+        - '#edacfcDisplay&8: #ff94d7%zquests_favorite_type_name%'
+        - '#edacfcQuêtes displayed&8: #ff94d7%zquests_favorite_limit%'
+        - ''
+        - "&7Change the display and the number"
+        - "&7of quests in the scoreboard."
+        - ""
+        - "#edacfcClick to #ff94d7change #edacfcthe display"
+
+  add:
+    type: ZQUESTS_ADD_FAVORITE_LIMIT
+    slot: 11
+    item:
+      material: GREEN_STAINED_GLASS_PANE
+      name: '#edacfcAdd quests'
+      lore:
+        - ''
+        - '#edacfcClick to #ff94d7display #edacfcanother quest'
+    else:
+      item:
+        material: BARRIER
+        name: '#edacfcAdd quests'
+        lore:
+          - '#ff3535You cannot display'
+          - '#ff3535more than &f%zquests_favorite_max% #ff3535quests #ff3535in the scoreboard'
+
+  remove:
+    type: ZQUESTS_REMOVE_FAVORITE_LIMIT
+    slot: 15
+    item:
+      material: RED_STAINED_GLASS_PANE
+      name: '#edacfcRemove quests'
+      lore:
+        - ''
+        - '#edacfcClick to #ff94d7display #edacfcone less queste'
+    else:
+      item:
+        material: BARRIER
+        name: '#edacfcRemove quests'
+        lore:
+          - '#ff3535You cannot display'
+          - '#ff3535less than &f%zquests_favorite_min% #ff3535quests #ff3535in the scoreboard'
+
+  back:
+    type: INVENTORY
+    inventory: quests
+    slot: 31
+    item:
+      material: ARROW
+      name: "&fGo back"

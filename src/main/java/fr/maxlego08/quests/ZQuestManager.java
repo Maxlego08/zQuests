@@ -127,6 +127,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             folder.mkdirs();
             this.plugin.saveResource("inventories/quests.yml", false);
             this.plugin.saveResource("inventories/quests-history.yml", false);
+            this.plugin.saveResource("inventories/quests-options.yml", false);
         }
 
         files(folder, file -> {

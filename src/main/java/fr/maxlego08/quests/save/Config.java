@@ -36,6 +36,7 @@ public class Config {
     public static int lookAtDistanceBlock = 5;
     public static int lookAtDistanceEntity = 5;
     public static List<QuestInventoryPage> questInventoryPages = new ArrayList<>();
+    public static boolean enableQuestInventoryPages = false;
 
     /**
      * static Singleton instance.
@@ -86,6 +87,8 @@ public class Config {
             TypedMapAccessor typedMapAccessor = new TypedMapAccessor((Map<String, Object>) map);
             questInventoryPages.add(new QuestInventoryPage(typedMapAccessor.getString("permission"), typedMapAccessor.getString("inventory", "quests"), typedMapAccessor.getInt("page", 1), typedMapAccessor.getInt("priority", 0)));
         });
+
+        enableQuestInventoryPages = configuration.getBoolean("enable-quest-inventory-pages", false);
 
         var section = configuration.getConfigurationSection("debug-quests");
         if (section != null) {

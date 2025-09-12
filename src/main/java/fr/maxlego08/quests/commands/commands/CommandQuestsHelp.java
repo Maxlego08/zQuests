@@ -21,7 +21,7 @@ public class CommandQuestsHelp extends VCommand {
     @Override
     protected CommandType perform(QuestsPlugin plugin) {
 
-        this.parent.syntaxMessage();
+        this.parent.syntaxMessage(this.sender);
 
         return CommandType.SUCCESS;
     }

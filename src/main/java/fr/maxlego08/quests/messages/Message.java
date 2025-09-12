@@ -13,8 +13,8 @@ public enum Message {
 
     PREFIX("&8(#3dffa1zQuests&8) "),
 
-    INVENTORY_CLONE_NULL("&cThe inventory clone is null!"),
-    INVENTORY_OPEN_ERROR("&cAn error occurred with the opening of the inventory &6%id%&c."),
+    INVENTORY_CLONE_NULL("#ff3535The inventory clone is null!"),
+    INVENTORY_OPEN_ERROR("#ff3535An error occurred with the opening of the inventory &6%id%#ff3535."),
     TIME_DAY("%02d %day% %02d %hour% %02d %minute% %02d %second%"),
     TIME_HOUR("%02d %hour% %02d minute(s) %02d %second%"),
     TIME_MINUTE("%02d %minute% %02d %second%"),
@@ -28,16 +28,18 @@ public enum Message {
 
     FORMAT_DAY("d"), FORMAT_DAYS("days"),
 
-    COMMAND_SYNTAX_ERROR("&cYou must execute the command like this&7: &a%syntax%"),
-    COMMAND_NO_PERMISSION("&cYou do not have permission to run this command."),
-    COMMAND_NO_CONSOLE("&cOnly one player can execute this command."),
-    COMMAND_NO_ARG("&cImpossible to find the command with its arguments."),
+    COMMAND_SYNTAX_ERROR("#ff3535You must execute the command like this&7: #77ff77%syntax%"),
+    COMMAND_NO_PERMISSION("#ff3535You do not have permission to run this command."),
+    COMMAND_NO_CONSOLE("#ff3535Only one player can execute this command."),
+    COMMAND_NO_ARG("#ff3535Impossible to find the command with its arguments."),
     COMMAND_SYNTAX_HELP("&f%syntax% &7» &7%description%"),
 
-    RELOAD("&aYou have just reloaded the configuration files."),
+    RELOAD("#77ff77You have just reloaded the configuration files."),
+    RELOAD_INVENTORIES("#77ff77You have just reloaded the inventories files."),
 
     DESCRIPTION_HELP("Send commands"),
     DESCRIPTION_RELOAD("Reload configuration files"),
+    DESCRIPTION_RELOAD_INVENTORIES("Reload inventories files"),
     DESCRIPTION_START("Activate a quest for a player"),
     DESCRIPTION_START_ALL("Activate a quest group for a player"),
     DESCRIPTION_COMPLETE("Complete a quest for a player"),
@@ -55,30 +57,30 @@ public enum Message {
     DESCRIPTION_ADD_FAVORITE("Allows a player to bookmark a quest, use this command in a message with a click."),
     DESCRIPTION_SHOW("Show player's quests"),
 
-    GROUP_NOT_FOUND("&cUnable to find the group &f%name%&c."),
-    QUEST_NOT_FOUND("&cUnable to find the quest &f%name%&c."),
-    QUEST_START_ERROR_ACTIVE("&cThe quest &f%name% &cis already active for the player &f%player%&c."),
-    QUEST_START_ERROR_COMPLETED("&cThe quest &f%name% &cis already completed for the player &f%player%&c."),
-    QUEST_START_SUCCESS("&aYou have just activated the quest &f%name%&a for the player &f%player%&a."),
-    QUEST_START_GROUP("&aYou have just activated the quest group &f%name%&a for the player &f%player%&a."),
+    GROUP_NOT_FOUND("#ff3535Unable to find the group &f%name%#ff3535."),
+    QUEST_NOT_FOUND("#ff3535Unable to find the quest &f%name%#ff3535."),
+    QUEST_START_ERROR_ACTIVE("#ff3535The quest &f%name% #ff3535is already active for the player &f%player%#ff3535."),
+    QUEST_START_ERROR_COMPLETED("#ff3535The quest &f%name% #ff3535is already completed for the player &f%player%#ff3535."),
+    QUEST_START_SUCCESS("#77ff77You have just activated the quest &f%name%#77ff77 for the player &f%player%#77ff77."),
+    QUEST_START_GROUP("#77ff77You have just activated the quest group &f%name%#77ff77 for the player &f%player%#77ff77."),
 
-    QUEST_REWARD("&aYou have just given the rewards of the quest &f%name% &ato the player&f %player%&a."),
+    QUEST_REWARD("#77ff77You have just given the rewards of the quest &f%name% #77ff77to the player&f %player%#77ff77."),
 
-    GROUP_COMPLETE_SUCCESS("&aThe player &f%player% &ahas just completed the quest group &f%name%&a!"),
-    QUEST_COMPLETE_SUCCESS("&aThe player &f%player% &ahas just completed the quest &f%name%&a!"),
-    QUEST_DELETE_SUCCESS("&aThe quest &f%name% &ahas just been deleted&a."),
-    QUEST_DELETE_ALL_SUCCESS("&aAll the quests have just been deleted&a."),
-    QUEST_SET_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just set the progress of the quest &f%name% &ato &f%progress%&a."),
-    QUEST_ADD_PROGRESS_SUCCESS("&aThe player &f%player% &ahas just added &f%progress% &ato the progress of the quest &f%name%&a."),
-    QUEST_SET_FAVORITE_LIMIT_SUCCESS("&aThe player &f%player% &ahas just set the favorite limit of the quests &ato &f%limit%&a."),
-    QUEST_SET_FAVORITE_TYPE_SUCCESS("&aThe player &f%player% &ahas just set the favorite placeholder type &ato &f%type%&a."),
-    INVENTORY_NOT_FOUND("&cUnable to find the inventory &f%inventory%&c."),
+    GROUP_COMPLETE_SUCCESS("#77ff77The player &f%player% #77ff77has just completed the quest group &f%name%#77ff77!"),
+    QUEST_COMPLETE_SUCCESS("#77ff77The player &f%player% #77ff77has just completed the quest &f%name%#77ff77!"),
+    QUEST_DELETE_SUCCESS("#77ff77The quest &f%name% #77ff77has just been deleted#77ff77."),
+    QUEST_DELETE_ALL_SUCCESS("#77ff77All the quests have just been deleted#77ff77."),
+    QUEST_SET_PROGRESS_SUCCESS("#77ff77The player &f%player% #77ff77has just set the progress of the quest &f%name% #77ff77to &f%progress%#77ff77."),
+    QUEST_ADD_PROGRESS_SUCCESS("#77ff77The player &f%player% #77ff77has just added &f%progress% #77ff77to the progress of the quest &f%name%#77ff77."),
+    QUEST_SET_FAVORITE_LIMIT_SUCCESS("#77ff77The player &f%player% #77ff77has just set the favorite limit of the quests #77ff77to &f%limit%#77ff77."),
+    QUEST_SET_FAVORITE_TYPE_SUCCESS("#77ff77The player &f%player% #77ff77has just set the favorite placeholder type #77ff77to &f%type%#77ff77."),
+    INVENTORY_NOT_FOUND("#ff3535Unable to find the inventory &f%inventory%#ff3535."),
 
-    PROGRESS_INVENTORY_INFO("&aThe player &f%player% &ahas finished &f%amount% &aquests in the inventory&a."),
-    QUEST_CANT_CHANGE_FAVORITE("&cYou can not change the favorite of the quest &f%name%&c."),
-    QUEST_SET_FAVORITE_SUCCESS("&aYou have just set the favorite of the quest &f%name%&a for the player &f%player%&a."),
-    QUEST_RESTART_SUCCESS("&aThe player &f%player% &ahas just restarted the quest &f%name%&a."),
-    HOLOGRAM_REFRESH("&aYou have just refreshed the &f%player%&a's hologram&a."),
+    PROGRESS_INVENTORY_INFO("#77ff77The player &f%player% #77ff77has finished &f%amount% #77ff77quests in the inventory#77ff77."),
+    QUEST_CANT_CHANGE_FAVORITE("#ff3535You can not change the favorite of the quest &f%name%#ff3535."),
+    QUEST_SET_FAVORITE_SUCCESS("#77ff77You have just set the favorite of the quest &f%name%#77ff77 for the player &f%player%#77ff77."),
+    QUEST_RESTART_SUCCESS("#77ff77The player &f%player% #77ff77has just restarted the quest &f%name%#77ff77."),
+    HOLOGRAM_REFRESH("#77ff77You have just refreshed the &f%player%#77ff77's hologram#77ff77."),
 
     INVENTORY_CONTENT("#edacfcx%amount% #ff94d7<lang:%material-key%>"),
     INVENTORY_AND(" #77ff77and "),
@@ -89,7 +91,7 @@ public enum Message {
     SHOW_ELEMENT("<hover:show_text:\"%quest-description%<newline><white>%quest-display-name%<newline><newline><white>Start at %started-at%<newline><yellow>%limit%<gray>/<gold>%quest-objective%<newline><white>Favorite: %is-favorite%\">%quest-name%</hover>"),
     SHOW_INFOS(MessageType.WITHOUT_PREFIX, "%quests%"),
 
-    CRAFT_OFFHAND("&cYou cannot use your secondary hand to craft items.");
+    CRAFT_OFFHAND("#ff3535You cannot use your secondary hand to craft items.");
 
     private ZPlugin plugin;
     private List<ZMessage> messages = new ArrayList<>();

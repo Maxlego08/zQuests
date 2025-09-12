@@ -1,6 +1,5 @@
 package fr.maxlego08.quests.commands.commands;
 
-import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.api.utils.QuestInventoryPage;
 import fr.maxlego08.quests.commands.VCommand;
@@ -9,10 +8,7 @@ import fr.maxlego08.quests.zcore.enums.Permission;
 import fr.maxlego08.quests.zcore.utils.commands.CommandType;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 
 public class CommandQuests extends VCommand {
 
@@ -43,14 +39,17 @@ public class CommandQuests extends VCommand {
     @Override
     protected CommandType perform(QuestsPlugin plugin) {
 
-        if (sender instanceof Player player) {
-            var result = Config.questInventoryPages.stream()
-                    .filter(questInventoryPage -> player.hasPermission(questInventoryPage.permission()))
-                    .max(Comparator.comparingInt(QuestInventoryPage::priority))
-                    .orElse(new QuestInventoryPage("", Config.mainCommandInventoryName, 1, 0));
+        if (sender instanceof Player currentPlayer) {
 
-            plugin.getQuestManager().openQuestInventory(player, result);
-        } else syntaxMessage();
+            var mainPage = new QuestInventoryPage("", Config.mainCommandInventoryName, 1, 0);
+
+            var result = Config.enableQuestInventoryPages ? Config.questInventoryPages.stream()
+                    .filter(questInventoryPage -> currentPlayer.hasPermission(questInventoryPage.permission()))
+                    .max(Comparator.comparingInt(QuestInventoryPage::priority))
+                    .orElse(mainPage) : mainPage;
+
+            plugin.getQuestManager().openQuestInventory(currentPlayer, result);
+        } else syntaxMessage(this.sender);
 
         return CommandType.SUCCESS;
     }
