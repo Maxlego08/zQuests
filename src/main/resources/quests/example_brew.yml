@@ -24,7 +24,7 @@ quests:
     placeholder-description: "#edacfcBrew #ff94d%quest-remaining% #edacfclong fire resistance splash potions" # The description of the quest
     thumbnail: POTION # The material to be displayed in-game
     goal: 3 # The goal to be achieved
-    auto-accept: false # If the quest should start automatically
+    auto-accept: true # If the quest should start automatically
     rewards: # The rewards
       - type: message # Sending a message
         messages:

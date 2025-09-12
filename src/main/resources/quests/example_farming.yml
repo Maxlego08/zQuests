@@ -26,7 +26,7 @@ quests:
     placeholder-description: '#edacfcBreak #ff94d7%quest-remaining% #edacfccarrot blocks'
     thumbnail: CARROT
     goal: 10
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
@@ -44,7 +44,7 @@ quests:
     placeholder-description: '#edacfcBreak #ff94d7%quest-remaining% #edacfcpotato blocks'
     thumbnail: POTATO
     goal: 10
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
@@ -62,7 +62,7 @@ quests:
     placeholder-description: '#edacfcBreak #ff94d7%quest-remaining% #edacfcmelon'
     thumbnail: MELON
     goal: 10
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
@@ -80,7 +80,7 @@ quests:
     placeholder-description: '#edacfcBreak #ff94d7%quest-remaining% #edacfcpumpkin'
     thumbnail: PUMPKIN
     goal: 10
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
@@ -98,7 +98,7 @@ quests:
     placeholder-description: '#edacfcBreak #ff94d7%quest-remaining% #edacfccactus'
     thumbnail: CACTUS
     goal: 10
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
@@ -116,7 +116,7 @@ quests:
     placeholder-description: '#edacfcBreak #ff94d7%quest-remaining% #edacfcsugar cane'
     thumbnail: SUGAR_CANE
     goal: 10
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:

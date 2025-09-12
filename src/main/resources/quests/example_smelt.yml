@@ -23,7 +23,7 @@ quests:
     placeholder-description: '#edacfcSmelt #ff94d7%quest-remaining% #edacfcstone'
     thumbnail: STONE
     goal: 16
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:

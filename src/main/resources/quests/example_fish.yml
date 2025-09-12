@@ -23,7 +23,7 @@ quests:
     placeholder-description: '#edacfcCatch #ff94d7%quest-remaining% #edacfcsalmon'
     thumbnail: SALMON
     goal: 10
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
@@ -38,7 +38,7 @@ quests:
     placeholder-description: '#edacfcCatch #ff94d7%quest-remaining% #edacfcpufferfish'
     thumbnail: PUFFERFISH
     goal: 5
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:

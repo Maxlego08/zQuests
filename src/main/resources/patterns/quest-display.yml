@@ -1,0 +1,59 @@
+name: "quest-display"
+type: BUTTON
+button:
+  slot: '%slot%'
+  type: ZQUESTS_COMPLETE
+  quests:
+    - "%quests%"
+  item:
+    material: PAPER
+    name: "#edacfcMission #ff94d7#%number%"
+    lore:
+      - ""
+      - "&7Status&8: #77ff77Completed"
+      - ""
+      - "&fObjectives&8:"
+      - "%objectives%"
+      - ""
+      - "&fRewards&8:"
+      - "%rewards%"
+      - ""
+  else:
+    slot: '%slot%'
+    type: ZQUESTS_NOT_ACTIVE
+    quests:
+      - "%quests%"
+    item:
+      material: PAPER
+      name: "#edacfcMission #ff94d7#%number%"
+      lore:
+        - ""
+        - "&7Status&8: #77ff77Completed"
+        - ""
+        - "&fObjectives&8:"
+        - "%objectives%"
+        - ""
+        - "&fRewards&8:"
+        - "%rewards%"
+        - ""
+        - "#ff3535You must complete the previous quests"
+    else:
+      type: ZQUESTS_FAVORITE_TOGGLE
+      quests:
+        - "%quests%"
+      enable: "#edacfcClick to #ff94d7add #edacfcmission to favorites"
+      disable: "#edacfcClick to #ff94d7remove #edacfcmission from favorites"
+      item:
+        material: PAPER
+        name: "#edacfcMission #ff94d7#%number%"
+        lore:
+          - ""
+          - "&7Status&8: #ff3535In progress"
+          - ""
+          - "&fObjectives&8:"
+          - "%objectives%"
+          - ""
+          - "&fRewards&8:"
+          - "%rewards%"
+          - ""
+          - "%action%"

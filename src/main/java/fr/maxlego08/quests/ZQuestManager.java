@@ -110,6 +110,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         File folder = new File(this.plugin.getDataFolder(), "patterns");
         if (!folder.exists()) {
             folder.mkdirs();
+            this.plugin.saveResource("patterns/quest-display.yml", false);
         }
 
         files(folder, file -> {
@@ -157,6 +158,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             this.plugin.saveResource("quests/example_enchant.yml", false);
             this.plugin.saveResource("quests/example_brew.yml", false);
             this.plugin.saveResource("quests/example_craft.yml", false);
+            this.plugin.saveResource("quests/example_complex.yml", false);
         }
 
         // Load holograms

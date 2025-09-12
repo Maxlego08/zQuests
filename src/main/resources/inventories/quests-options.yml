@@ -58,5 +58,5 @@ items:
     inventory: quests
     slot: 31
     item:
-      material: ARROW
+      material: BARRIER
       name: "&fGo back"

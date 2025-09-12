@@ -26,7 +26,7 @@ quests:
     placeholder-description: '#edacfcKill #ff94d7%quest-remaining% #edacfcZombies'
     thumbnail: ROTTEN_FLESH
     goal: 15
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
@@ -44,7 +44,7 @@ quests:
     placeholder-description: '#edacfcKill #ff94d7%quest-remaining% #edacfcCreepers'
     thumbnail: GUNPOWDER
     goal: 5
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
@@ -62,7 +62,7 @@ quests:
     placeholder-description: '#edacfcKill #ff94d7%quest-remaining% #edacfcEndermen'
     thumbnail: ENDER_PEARL
     goal: 3
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
@@ -80,7 +80,7 @@ quests:
     placeholder-description: '#edacfcKill #ff94d7%quest-remaining% #edacfcCows'
     thumbnail: BEEF
     goal: 20
-    auto-accept: false
+    auto-accept: true
     rewards:
       - type: message
         messages:
