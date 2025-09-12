@@ -5,7 +5,8 @@ quests:
       - material: COBBLESTONE
     name: "block-break-1" # The name must be unique and must never change
     display-name: "Stone Breaker" # The name of the quest to be displayed in-game
-    description: "Break 500 stone blocks" # The description of the quest
+    description: "#edacfcBreak #ff94d7500 #edacfcstone blocks" # The description of the quest
+    placeholder-description: "#edacfcBreak #ff94d7%quest-remaining% #edacfcstone blocks" # The description of the quest
     thumbnail: STONE # The material to be displayed in-game
     goal: 500 # The goal to be achieved
     auto-accept: true # If the quest should start automatically
@@ -24,7 +25,8 @@ quests:
       - material: DIORITE
     name: "block-break-2" # The name must be unique and must never change
     display-name: "Granite Breaker" # The name of the quest to be displayed in-game
-    description: "Break 300 granite blocks" # The description of the quest
+    description: "#edacfcBreak #ff94d7300 #edacfcgranite blocks" # The description of the quest
+    placeholder-description: "#edacfcBreak #ff94d7%quest-remaining% #edacfcgranite blocks" # The placeholder description of the quest
     thumbnail: GRANITE # The material to be displayed in-game
     goal: 300 # The goal to be achieved
     auto-accept: false # If the quest should start automatically
@@ -42,7 +44,8 @@ quests:
       - material: RED_SANDSTONE
     name: "block-break-3" # The name must be unique and must never change
     display-name: "Sandstone Breaker" # The name of the quest to be displayed in-game
-    description: "Break 200 sandstone blocks" # The description of the quest
+    description: "#edacfcBreak #ff94d7200 #edacfcsandstone blocks" # The description of the quest
+    placeholder-description: "#edacfcBreak #ff94d7%quest-remaining% #edacfcsandstone blocks" # The description of the quest
     thumbnail: SANDSTONE # The material to be displayed in-game
     goal: 200 # The goal to be achieved
     auto-accept: false # If the quest should start automatically
@@ -59,7 +62,8 @@ quests:
       - tag: LOGS
     name: "log-breaker" # The name must be unique and must never change
     display-name: "Log Breaker" # The name of the quest to be displayed in-game
-    description: "Cut 20 logs" # The description of the quest
+    description: "#edacfcCut #ff94d720 #edacfclogs" # The description of the quest
+    placeholder-description: "#edacfcCut #ff94d7%quest-remaining% #edacfclogs" # The description of the quest
     thumbnail: OAK_LOG # The material to be displayed in-game
     goal: 20 # The goal to be achieved
     auto-accept: false # If the quest should start automatically
@@ -76,7 +80,8 @@ quests:
       - tag: MINEABLE_PICKAXE
     name: "miner" # The name must be unique and must never change
     display-name: "Miner" # The name of the quest to be displayed in-game
-    description: "Mine 300 blocks" # The description of the quest
+    description: "#edacfcMine #ff94d7300 #edacfcblocks" # The description of the quest
+    placeholder-description: "#edacfcMine #ff94d7%quest-remaining% #edacfcblocks" # The description of the quest
     thumbnail: DIAMOND_PICKAXE # The material to be displayed in-game
     goal: 300 # The goal to be achieved
     auto-accept: false # If the quest should start automatically

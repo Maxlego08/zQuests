@@ -1,85 +1,90 @@
 quests:
-  - type: ENTITY_KILL # The type of the quest
-    actions: # List of entities to be considered
+  - type: ENTITY_KILL
+    actions:
       - entity: SKELETON
-    name: "entity-skeleton-1" # The name must be unique and must never change
-    display-name: "Skeleton Killer" # The name of the quest to be displayed in-game
-    description: "Kill 10 Skeleton" # The description of the quest
-    thumbnail: BONE # The material to be displayed in-game
-    goal: 10 # The goal to be achieved
-    auto-accept: true # If the quest should start automatically
-    rewards: # The rewards
-      - type: message # Sending a message
+    name: entity-skeleton-1
+    display-name: Skeleton Killer
+    description: '#edacfcKill #ff94d710 #edacfcSkeleton'
+    placeholder-description: '#edacfcKill #ff94d7%quest-remaining% #edacfcSkeleton'
+    thumbnail: BONE
+    goal: 10
+    auto-accept: true
+    rewards:
+      - type: message
         messages:
-          - "&fYou have killed &710 skeleton&f !"
-      - type: console_command # Executing a command
+          - '&fYou have killed &710 skeleton&f !'
+      - type: console_command
         commands:
-          - "give %player% diamond 5"
+          - give %player% diamond 5
 
-  - type: ENTITY_KILL # The type of the quest
-    actions: # List of entities to be considered
+  - type: ENTITY_KILL
+    actions:
       - entity: ZOMBIE
-    name: "entity-zombie-1" # The name must be unique and must never change
-    display-name: "Zombie Slayer" # The name of the quest to be displayed in-game
-    description: "Kill 15 Zombies" # The description of the quest
-    thumbnail: ROTTEN_FLESH # The material to be displayed in-game
-    goal: 15 # The goal to be achieved
-    auto-accept: false # If the quest should start automatically
-    rewards: # The rewards
-      - type: message # Sending a message
+    name: entity-zombie-1
+    display-name: Zombie Slayer
+    description: '#edacfcKill #ff94d715 #edacfcZombies'
+    placeholder-description: '#edacfcKill #ff94d7%quest-remaining% #edacfcZombies'
+    thumbnail: ROTTEN_FLESH
+    goal: 15
+    auto-accept: false
+    rewards:
+      - type: message
         messages:
-          - "&fYou have killed &715 zombies&f !"
-      - type: console_command # Executing a command
+          - '&fYou have killed &715 zombies&f !'
+      - type: console_command
         commands:
-          - "give %player% iron_ingot 3"
+          - give %player% iron_ingot 3
 
-  - type: ENTITY_KILL # The type of the quest
-    actions: # List of entities to be considered
+  - type: ENTITY_KILL
+    actions:
       - entity: CREEPER
-    name: "entity-creeper-1" # The name must be unique and must never change
-    display-name: "Creeper Crusher" # The name of the quest to be displayed in-game
-    description: "Kill 5 Creepers" # The description of the quest
-    thumbnail: GUNPOWDER # The material to be displayed in-game
-    goal: 5 # The goal to be achieved
-    auto-accept: false # If the quest should start automatically
-    rewards: # The rewards
-      - type: message # Sending a message
+    name: entity-creeper-1
+    display-name: Creeper Crusher
+    description: '#edacfcKill #ff94d75 #edacfcCreepers'
+    placeholder-description: '#edacfcKill #ff94d7%quest-remaining% #edacfcCreepers'
+    thumbnail: GUNPOWDER
+    goal: 5
+    auto-accept: false
+    rewards:
+      - type: message
         messages:
-          - "&fYou have killed &75 creepers&f !"
-      - type: console_command # Executing a command
+          - '&fYou have killed &75 creepers&f !'
+      - type: console_command
         commands:
-          - "give %player% tnt 2"
+          - give %player% tnt 2
 
-  - type: ENTITY_KILL # The type of the quest
-    actions: # List of entities to be considered
+  - type: ENTITY_KILL
+    actions:
       - entity: ENDERMAN
-    name: "entity-enderman-1" # The name must be unique and must never change
-    display-name: "Enderman Hunter" # The name of the quest to be displayed in-game
-    description: "Kill 3 Endermen" # The description of the quest
-    thumbnail: ENDER_PEARL # The material to be displayed in-game
-    goal: 3 # The goal to be achieved
-    auto-accept: false # If the quest should start automatically
-    rewards: # The rewards
-      - type: message # Sending a message
+    name: entity-enderman-1
+    display-name: Enderman Hunter
+    description: '#edacfcKill #ff94d73 #edacfcEndermen'
+    placeholder-description: '#edacfcKill #ff94d7%quest-remaining% #edacfcEndermen'
+    thumbnail: ENDER_PEARL
+    goal: 3
+    auto-accept: false
+    rewards:
+      - type: message
         messages:
-          - "&fYou have killed &73 endermen&f !"
-      - type: console_command # Executing a command
+          - '&fYou have killed &73 endermen&f !'
+      - type: console_command
         commands:
-          - "give %player% ender_pearl 3"
+          - give %player% ender_pearl 3
 
-  - type: ENTITY_KILL # The type of the quest
-    actions: # List of entities to be considered
+  - type: ENTITY_KILL
+    actions:
       - entity: COW
-    name: "entity-cow-1" # The name must be unique and must never change
-    display-name: "Cow Butcher" # The name of the quest to be displayed in-game
-    description: "Kill 20 Cows" # The description of the quest
-    thumbnail: BEEF # The material to be displayed in-game
-    goal: 20 # The goal to be achieved
-    auto-accept: false # If the quest should start automatically
-    rewards: # The rewards
-      - type: message # Sending a message
+    name: entity-cow-1
+    display-name: Cow Butcher
+    description: '#edacfcKill #ff94d720 #edacfcCows'
+    placeholder-description: '#edacfcKill #ff94d7%quest-remaining% #edacfcCows'
+    thumbnail: BEEF
+    goal: 20
+    auto-accept: false
+    rewards:
+      - type: message
         messages:
-          - "&fYou have killed &720 cows&f !"
-      - type: console_command # Executing a command
+          - '&fYou have killed &720 cows&f !'
+      - type: console_command
         commands:
-          - "give %player% leather 10"
+          - give %player% leather 10

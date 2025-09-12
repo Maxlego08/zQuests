@@ -3,8 +3,9 @@ quests:
     actions:
       - material: CHEST
     name: "craft-chest-1"
-    display-name: "Craft 8 Chests"
-    description: "Craft 8 chests"
+    display-name: "Craft"
+    description: "#edacfcCraft #ff94d78 #edacfcchests"
+    placeholder-description: "#edacfcCraft #ff94d7%quest-remaining% #edacfcchests"
     thumbnail: CHEST
     goal: 8
     auto-accept: true
