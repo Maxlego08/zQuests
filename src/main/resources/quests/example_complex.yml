@@ -37,7 +37,7 @@ quests:
           - "quests-options"
     name: "complex-2"
     display-name: "Complex"
-    description: "#edacfcOpen the #ff94d7quest owptions #edacfcinventory"
+    description: "#edacfcOpen the #ff94d7quest options #edacfcinventory"
     auto-accept: true
     goal: 1
 
