@@ -53,7 +53,6 @@ public enum QuestType {
     RESURRECT,
     JOB_LEVEL,
     JOB_PRESTIGE,
-    JOB_PRESTIGE_AND_LEVEL,
     SMITHING,
     ISLAND,
     COMMAND,
@@ -79,7 +78,7 @@ public enum QuestType {
             case ENTITY_DAMAGE -> new EntityDamageAction(this, (EntityDamageByEntityEvent) target);
             case EXPERIENCE_GAIN -> new ExperienceGainAction(this, (Integer) target);
             case RESURRECT -> new ResurrectAction(this);
-            case JOB_LEVEL, JOB_PRESTIGE, JOB_PRESTIGE_AND_LEVEL -> new JobAction(this, (String) target);
+            case JOB_LEVEL, JOB_PRESTIGE -> new JobAction(this, (String) target);
             case ISLAND -> new IslandAction(target);
             case COMMAND -> new CommandAction((String) target);
             case CUBOID, LOOK_AT_BLOCK, LOOK_AT_ENTITY -> new LocationAction(this, (Location) target);

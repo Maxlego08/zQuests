@@ -29,9 +29,6 @@ public class ZJobListener implements Listener {
     public void onJobLevel(JobLevelEvent event) {
         var player = event.getPlayer();
         this.manager.handleStaticQuests(player.getUniqueId(), QuestType.JOB_LEVEL, event.getLevel(), event.getJob());
-
-        var prestigeAndLevel = (event.getPlayerJob().getPrestige() * 100) + event.getLevel();
-        this.manager.handleStaticQuests(player.getUniqueId(), QuestType.JOB_PRESTIGE_AND_LEVEL, prestigeAndLevel, event.getJob());
     }
 
     @EventHandler
@@ -62,8 +59,6 @@ public class ZJobListener implements Listener {
                         amount = playerJob.getLevel();
                     } else if (quest.getType() == QuestType.JOB_PRESTIGE) {
                         amount = playerJob.getPrestige();
-                    } else if (quest.getType() == QuestType.JOB_PRESTIGE_AND_LEVEL) {
-                        amount = (playerJob.getPrestige() * 100) + playerJob.getLevel();
                     } else {
                         continue;
                     }
