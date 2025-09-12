@@ -8,6 +8,7 @@ import fr.maxlego08.quests.api.hologram.QuestHologram;
 import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import fr.maxlego08.quests.api.waypoint.QuestWayPoint;
 import fr.maxlego08.quests.save.Config;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -187,16 +188,35 @@ public class ZUserQuest implements UserQuest {
 
     @Override
     public void addWayPoint(QuestWayPoint questWayPoint) {
-this.questWayPoints.add(questWayPoint);
+        this.questWayPoints.add(questWayPoint);
     }
 
     @Override
     public void removeWayPoint(QuestWayPoint questWayPoint) {
-this.questWayPoints.remove(questWayPoint);
+        this.questWayPoints.remove(questWayPoint);
     }
 
     @Override
     public Optional<QuestWayPoint> getWayPoint(Quest quest) {
         return this.questWayPoints.stream().filter(questHologram -> questHologram.match(quest)).findFirst();
+    }
+
+    @Override
+    public void deleteHolograms() {
+
+        var player = Bukkit.getPlayer(this.uniqueId);
+        if (player == null) return;
+
+        this.questHolograms.forEach(questHologram -> questHologram.delete(player));
+        this.questHolograms.clear();
+    }
+
+    @Override
+    public void deleteWayPoints() {
+        var player = Bukkit.getPlayer(this.uniqueId);
+        if (player == null) return;
+
+        this.questWayPoints.forEach(questWayPoint -> questWayPoint.delete(player));
+        this.questWayPoints.clear();
     }
 }
