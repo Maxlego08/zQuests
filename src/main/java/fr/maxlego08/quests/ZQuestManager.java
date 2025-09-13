@@ -34,9 +34,11 @@ import fr.maxlego08.quests.inventories.buttons.AddFavoriteLimitButton;
 import fr.maxlego08.quests.inventories.buttons.ChangeFavoriteTypeButton;
 import fr.maxlego08.quests.inventories.buttons.RemoveFavoriteLimitButton;
 import fr.maxlego08.quests.inventories.loader.ChangeQuestGroupLoader;
+import fr.maxlego08.quests.inventories.loader.QuestActiveLoader;
 import fr.maxlego08.quests.inventories.loader.QuestCompleteLoader;
 import fr.maxlego08.quests.inventories.loader.QuestFavoriteLoader;
 import fr.maxlego08.quests.inventories.loader.QuestHistoryLoader;
+import fr.maxlego08.quests.inventories.loader.QuestNotActiveLoader;
 import fr.maxlego08.quests.inventories.loader.SetFavoriteLimitLoader;
 import fr.maxlego08.quests.inventories.loader.SetFavoriteTypeLoader;
 import fr.maxlego08.quests.inventories.loader.StartQuestLoader;
@@ -89,6 +91,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         var buttonManager = this.plugin.getButtonManager();
         buttonManager.registerAction(new StartQuestLoader(this.plugin));
         buttonManager.register(new QuestCompleteLoader(this.plugin));
+        buttonManager.register(new QuestActiveLoader(this.plugin));
+        buttonManager.register(new QuestNotActiveLoader(this.plugin));
         buttonManager.register(new QuestHistoryLoader(this.plugin));
         buttonManager.register(new ChangeQuestGroupLoader(this.plugin));
         buttonManager.register(new QuestFavoriteLoader(this.plugin));
@@ -106,6 +110,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         File folder = new File(this.plugin.getDataFolder(), "patterns");
         if (!folder.exists()) {
             folder.mkdirs();
+            this.plugin.saveResource("patterns/quest-display.yml", false);
         }
 
         files(folder, file -> {
@@ -127,6 +132,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             folder.mkdirs();
             this.plugin.saveResource("inventories/quests.yml", false);
             this.plugin.saveResource("inventories/quests-history.yml", false);
+            this.plugin.saveResource("inventories/quests-options.yml", false);
         }
 
         files(folder, file -> {
@@ -152,6 +158,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             this.plugin.saveResource("quests/example_enchant.yml", false);
             this.plugin.saveResource("quests/example_brew.yml", false);
             this.plugin.saveResource("quests/example_craft.yml", false);
+            this.plugin.saveResource("quests/example_complex.yml", false);
         }
 
         // Load holograms
@@ -832,7 +839,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 isCancelled = !event.callEvent();
             }
 
-            if ((configuration.updateScoreboard() || configuration.updateHologram()) && playerUniqueId != null) {
+            if ((configuration.updateScoreboard() || configuration.updateHologram() || configuration.updateWayPoint()) && playerUniqueId != null) {
                 this.plugin.getScheduler().runLater(w -> {
 
                     if (configuration.updateScoreboard()) {
@@ -941,7 +948,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public void giveQuestReward(CommandSender sender, Player player, String questName) {
 
         var optional = getQuest(questName);
-        if (optional.isEmpty()){
+        if (optional.isEmpty()) {
             message(sender, Message.QUEST_NOT_FOUND, "%name%", questName);
             return;
         }

@@ -249,4 +249,8 @@ public interface UserQuest {
      * @return an Optional containing the quest waypoint if present, otherwise an empty Optional
      */
     Optional<QuestWayPoint> getWayPoint(Quest quest);
+
+    void deleteHolograms();
+
+    void deleteWayPoints();
 }

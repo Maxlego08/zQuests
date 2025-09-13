@@ -11,6 +11,7 @@ import fr.maxlego08.quests.api.event.events.QuestDeleteAllEvent;
 import fr.maxlego08.quests.api.event.events.QuestDeleteEvent;
 import fr.maxlego08.quests.api.event.events.QuestStartEvent;
 import fr.maxlego08.quests.api.event.events.QuestUserLoadEvent;
+import fr.maxlego08.quests.api.waypoint.QuestWayPoint;
 import fr.maxlego08.quests.api.waypoint.WayPointConfiguration;
 import fr.maxlego08.quests.api.waypoint.WayPointManager;
 import fr.maxlego08.quests.zcore.utils.Colors;
@@ -83,12 +84,7 @@ public class ZWayPointManager extends ZUtils implements WayPointManager {
     }
 
     private void onQuestDeleteAll(UserQuest userQuest) {
-        var player = Bukkit.getPlayer(userQuest.getUniqueId());
-        if (player == null) return;
-
-        for (ActiveQuest activeQuest : userQuest.getActiveQuests()) {
-            this.deleteWayPoint(player, activeQuest.getQuest());
-        }
+        userQuest.deleteWayPoints();
     }
 
     private void onQuestDelete(UserQuest userQuest, Quest quest) {

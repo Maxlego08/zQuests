@@ -653,10 +653,10 @@ public abstract class VCommand extends Arguments {
     /**
      * Sends the syntax message of the commands to the sender.
      */
-    public void syntaxMessage() {
+    public void syntaxMessage(CommandSender sender) {
         this.subVCommands.forEach(command -> {
             if (command.getPermission() == null || hasPermission(sender, command.getPermission())) {
-                message(this.sender, Message.COMMAND_SYNTAX_HELP, "%syntax%", command.getSyntax(), "%description%", command.getDescription());
+                message(sender, Message.COMMAND_SYNTAX_HELP, "%syntax%", command.getSyntax(), "%description%", command.getDescription());
             }
         });
     }

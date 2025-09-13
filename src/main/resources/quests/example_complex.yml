@@ -1,0 +1,102 @@
+custom-rewards:
+  - quests:
+      - "complex-1"
+      - "complex-2"
+    actions:
+      - type: start quest
+        quests:
+          - "complex-3"
+      - type: console command
+        commands:
+          - 'give %player% diamond 16'
+  - quests:
+      - "complex-4"
+      - "complex-5"
+      - "complex-6"
+      - "complex-7"
+    actions:
+      - type: console command
+        commands:
+          - 'give %player% diamond 16'
+
+quests:
+
+  - type: INVENTORY_OPEN
+    actions:
+      - inventories:
+          - "quests-history"
+    name: "complex-1"
+    display-name: "Complex"
+    description: "#edacfcOpen the #ff94d7quest history #edacfcinventory"
+    auto-accept: true
+    goal: 1
+
+  - type: INVENTORY_OPEN
+    actions:
+      - inventories:
+          - "quests-options"
+    name: "complex-2"
+    display-name: "Complex"
+    description: "#edacfcOpen the #ff94d7quest options #edacfcinventory"
+    auto-accept: true
+    goal: 1
+
+  - type: BLOCK_BREAK
+    actions:
+      - material: OAK_LOG
+    name: "complex-3"
+    display-name: "Complex"
+    description: "#edacfcCut #ff94d74 #edacfcoak logs"
+    placeholder-description: "#edacfcCut #ff94d7%quest-remaining% #edacfcoak logs"
+    hologram:
+      location: "world,-367.5,71,-11.25,0,-90"
+      text: "&fCut me !"
+      scale: 2
+      billboard: FIXED
+      see-through: true
+    waypoint:
+      location: "world,-368,72,-13"
+      color: '#a97f45'
+    goal: 4
+    rewards:
+      - type: start quest
+        quests:
+          - "complex-4"
+          - "complex-5"
+          - "complex-6"
+          - "complex-7"
+      - type: console command
+        commands:
+          - 'give %player% diamond 16'
+
+  - type: LOOk_AT_BLOCK
+    actions:
+      - cuboid: "world,-370,70,-10,-370,70,-10"
+    name: 'complex-4'
+    display-name: "Complex"
+    description: "#edacfcLook at bedrock #ff94d7#1"
+    waypoint: bedrock1
+
+  - type: LOOk_AT_BLOCK
+    actions:
+      - cuboid: "world,-366,70,-10,-366,70,-10"
+    name: 'complex-5'
+    display-name: "Complex"
+    description: "#edacfcLook at bedrock #ff94d7#2"
+    waypoint: bedrock2
+
+  - type: LOOk_AT_BLOCK
+    actions:
+      - cuboid: "world,-366,70,-15,-366,70,-15"
+    name: 'complex-6'
+    display-name: "Complex"
+    description: "#edacfcLook at bedrock #ff94d7#3"
+    waypoint: bedrock3
+
+  - type: LOOk_AT_BLOCK
+    actions:
+      - cuboid: "world,-370,70,-15,-370,70,-15"
+    name: 'complex-7'
+    display-name: "Complex"
+    description: "#edacfcLook at bedrock #ff94d7#4"
+    waypoint: bedrock4

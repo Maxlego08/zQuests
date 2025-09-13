@@ -8,22 +8,21 @@ import fr.maxlego08.quests.zcore.enums.Permission;
 import fr.maxlego08.quests.zcore.utils.commands.CommandType;
 import org.bukkit.Bukkit;
 
-public class CommandQuestsReload extends VCommand {
+public class CommandQuestsReloadInventories extends VCommand {
 
-    public CommandQuestsReload(ZPlugin plugin) {
+    public CommandQuestsReloadInventories(ZPlugin plugin) {
         super(plugin);
-        this.setPermission(Permission.ZQUESTS_RELOAD);
-        this.addSubCommand("reload", "rl");
-        this.setDescription(Message.DESCRIPTION_RELOAD);
-        this.addSubCommand(new CommandQuestsReloadInventories(plugin));
+        this.setPermission(Permission.ZQUESTS_RELOAD_INVENTORIES);
+        this.addSubCommand("inventories");
+        this.setDescription(Message.DESCRIPTION_RELOAD_INVENTORIES);
     }
 
     @Override
     protected CommandType perform(QuestsPlugin plugin) {
 
-        plugin.reloadFiles();
-        Bukkit.getOnlinePlayers().forEach(e -> plugin.getHologramManager().refreshHologram(e));
-        message(sender, Message.RELOAD);
+        plugin.getQuestManager().loadPatterns();
+        plugin.getQuestManager().loadInventories();
+        message(sender, Message.RELOAD_INVENTORIES);
 
         return CommandType.SUCCESS;
     }

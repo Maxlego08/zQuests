@@ -1,5 +1,13 @@
 waypoints:
-  - name: EXAMPLE_1
-    location: "world,320.8,10,-9.5"
-    texture: example
+  - name: bedrock1
+    location: "world,-370,70,-10"
+    color: red
+  - name: bedrock2
+    location: "world,-366,70,-10"
+    color: red
+  - name: bedrock3
+    location: "world,-366,70,-15"
+    color: red
+  - name: bedrock4
+    location: "world,-370,70,-15"
     color: red

@@ -2,74 +2,117 @@ name: "&8Quest History &7%page%/%maxPage%"
 size: 54
 items:
 
+  back:
+    type: INVENTORY
+    inventory: quests
+    slot: 49
+    is-permanent: true
+    item:
+      material: BARRIER
+      name: "&fGo back"
+
   previous:
     type: PREVIOUS
-    slot: 8
+    slot: 47
     item:
-      material: PAPER
-      # customModelData: 10
-      name: ":left_click: #edacfc???? ??????????"
+      material: ARROW
+      name: "#edacfcPrevious page"
 
   next:
     type: NEXT
-    slot: 53
+    slot: 51
     item:
-      material: PAPER
-      # customModelData: 10
-      name: "&f%img_left_click% #edacfc???? s???????"
+      material: ARROW
+      name: "#edacfcNext Page"
 
   history:
     type: ZQUESTS_HISTORY
     enable-completed: true
     offset-custom-model-id: 10
+    additional-information:
+      enable: true
+      offset: 0
+      item:
+        material: PAPER
+        name: "%quest-description%"
+        model-id: "%quest-global-group-model-id%"
+        lore:
+          - "&8%quest-display-name%"
+          - ""
+          - "%quest-lore-line%"
+          - ""
+          - "#edacfcStarted on #ff94d7%quest-started-at%"
+      completed-item:
+        material: BARRIER
+        name: "%quest-description%"
+        model-id: "%quest-global-group-model-id%"
+        lore:
+          - "&8%quest-display-name%"
+          - ""
+          - "#ff3535✘ This quest is completed"
+          - ""
+          - "#edacfcStarted on #ff94d7%quest-started-at%"
+          - "#edacfcFinished on #ff94d7%quest-finished-at%"
     offset-slots:
-      - -4
-      - -3
-      - -2
       - -1
-      - 0
       - 1
       - 2
     slots:
-      - 4
-      - 13
-      - 22
-      - 31
-      - 40
-      - 49
+      - 3
+      - 12
+      - 21
+      - 30
+      - 39
     item:
       material: PAPER
       name: "%quest-description%"
-      model-id: '%quest-model-id%'
       lore:
+        - "&8%quest-display-name%"
+        - ""
         - "%quest-lore-line%"
-        - "&f%quest-started-at%"
+        - ""
+        - "#edacfcStarted on #ff94d7%quest-started-at%"
     completed-item:
       material: BARRIER
-      name: "&f%quest-name% &7Completed"
-      model-id: '%quest-model-id%'
+      name: "&f%quest-description%"
       lore:
-        - "&f%quest-description%"
-        - "&f%quest-started-at%"
-        - "&f%quest-finished-at%"
+        - "&8%quest-display-name%"
+        - ""
+        - "#ff3535✘ This quest is completed"
+        - ""
+        - "#edacfcStarted on #ff94d7%quest-started-at%"
+        - "#edacfcFinished on #ff94d7%quest-finished-at%"
     favorite:
       offset: 3
-      lore-enable: "&cClic to disable"
-      lore-disable: "&aClic to enable"
-      lore-cancel: "&cYou cant change the favorite status"
+      lore-enable: "#edacfcClick to #ff94d7remove #edacfcfrom favorites"
+      lore-disable: "#edacfcClick to #ff94d7add #edacfcto favorites"
+      lore-cancel: "#ff3535✘ You can't do that."
       enable:
-        material: GREEN_DYE
-        name: "%quest-name% &aFav Enable"
+        material: PAPER
+        name: "%quest-description%"
         lore:
+          - "&8%quest-display-name%"
+          - ""
+          - "%quest-lore-line%"
+          - ""
           - "%quest-lore%"
       disable:
-        material: RED_DYE
-        name: "%quest-name% &cFav Disable"
+        material: PAPER
+        name: "%quest-description%"
         lore:
+          - "&8%quest-display-name%"
+          - ""
+          - "%quest-lore-line%"
+          - ""
           - "%quest-lore%"
       completed:
-        material: GRAY_DYE
-        name: "%quest-name% &cFav Completed"
+        material: BARRIER
+        name: "%quest-description%"
         lore:
-          - "&7You cant fav a completed quest"
+          - "&8%quest-display-name%"
+          - ""
+          - "#ff3535✘ This quest is completed"
+          - ""
+          - "#edacfcStarted on #ff94d7%quest-started-at%"
+          - "#edacfcFinished on #ff94d7%quest-finished-at%"
 

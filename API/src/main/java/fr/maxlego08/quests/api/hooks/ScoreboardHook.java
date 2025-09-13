@@ -4,5 +4,10 @@ import java.util.UUID;
 
 public interface ScoreboardHook {
 
+    /**
+     * Updates the scoreboard for the given player.
+     *
+     * @param playerUniqueId the unique identifier of the player
+     */
     void updateScoreboard(UUID playerUniqueId);
 }

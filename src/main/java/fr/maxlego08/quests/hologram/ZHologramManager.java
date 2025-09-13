@@ -120,13 +120,7 @@ public class ZHologramManager implements HologramManager {
     }
 
     private void onQuestDeleteAll(UserQuest userQuest) {
-
-        var player = Bukkit.getPlayer(userQuest.getUniqueId());
-        if (player == null) return;
-
-        for (ActiveQuest activeQuest : userQuest.getActiveQuests()) {
-            this.deleteHolograms(player, activeQuest.getQuest());
-        }
+        userQuest.deleteHolograms();
     }
 
     private void onQuestDelete(UserQuest userQuest, Quest quest) {
