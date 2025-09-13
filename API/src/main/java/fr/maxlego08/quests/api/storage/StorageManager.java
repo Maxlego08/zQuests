@@ -3,8 +3,10 @@ package fr.maxlego08.quests.api.storage;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.UserQuest;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -37,7 +39,7 @@ public interface StorageManager {
      *
      * @param uuid the unique identifier of the user
      */
-    void deleteAll(UUID uuid);
+    void deleteAll(UUID uuid, Runnable runnable);
 
     /**
      * Load user quest data.
@@ -57,10 +59,10 @@ public interface StorageManager {
     /**
      * Upsert a completed quest for a user.
      *
-     * @param uuid            the unique identifier of the user
-     * @param completedQuest  the completed quest to upsert
+     * @param uuid           the unique identifier of the user
+     * @param completedQuest the completed quest to upsert
      */
-    void upsert(UUID uuid, CompletedQuest completedQuest);
+    void insert(UUID uuid, CompletedQuest completedQuest);
 
     /**
      * Delete a quest by unique identifier and name.
@@ -69,4 +71,28 @@ public interface StorageManager {
      * @param name     the name of the quest
      */
     void deleteQuest(@NotNull UUID uniqueId, String name);
+
+    /**
+     * Upsert multiple active quests in the storage.
+     *
+     * @param activeQuests the active quests to upsert
+     */
+    void upsert(List<ActiveQuest> activeQuests);
+
+    /**
+     * Delete a completed quest from the storage.
+     *
+     * @param uniqueId       the unique identifier of the user
+     * @param completedQuest the completed quest to delete
+     */
+    void delete(UUID uniqueId, CompletedQuest completedQuest);
+
+    /**
+     * Upsert the player's favorite quest configuration in the storage.
+     *
+     * @param uniqueId                the unique identifier of the user
+     * @param limit                   the maximum number of favorite quests a player can have
+     * @param favoritePlaceholderType the type of placeholder to use for favorite quests
+     */
+    void upsertPlayerFavoriteQuestConfiguration(UUID uniqueId, int limit, FavoritePlaceholderType favoritePlaceholderType);
 }

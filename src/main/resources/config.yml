@@ -6,20 +6,61 @@ enable-debug: true
 # Useful for identifying bottlenecks and optimizing performance.
 enable-debug-time: true
 
+# Displays the logs in the console by quest type, this allows you to check that everything is working properly.
+debug-quests:
+  BLOCK_BREAK: false
+  BLOCK_PLACE: false
+  ENTITY_KILL: false
+  FARMING: false
+  FISHING: false
+  TAME: false
+  ENCHANT: false
+  BREW: false
+  SMELT: false
+  CRAFT: false
+  VOTE: false
+  SELL: false
+  PURCHASE: false
+  ENTITY_DAMAGE: false
+  EXPERIENCE_GAIN: false
+  HATCHING: false
+  ITEM_CONSUME: false
+  ITEM_BREAK: false
+  ITEM_MENDING: false
+  RESURRECT: false
+  JOB_LEVEL: false
+  JOB_PRESTIGE: false
+  JOB_PRESTIGE_AND_LEVEL: false
+  SMITHING: false
+  ISLAND: false
+  COMMAND: false
+  CUBOID: false
+  CUSTOM: false
+  INVENTORY_OPEN: false
+  INVENTORY_CONTENT: false
+  SHEAR: false
+  LOOK_AT_BLOCK: false
+  LOOK_AT_ENTITY: false
+
+# Allows disabling the action of crafting an item and obtaining it directly in the off-hand.
+# For a quest of type CRAFT, it is impossible to perform this action.
+# We advise you to keep this feature active to avoid any confusion for your players.
+# When they try to do this, a message will be sent to them.
+disable-offhand-craft: true
+
 # Storage:
 # SQLITE - For the launch of the plugin only.
-# MYSQL - Allows creating a simple connection to the database, only for small servers.
-# HIKARICP - HikariCP is a fast and lightweight JDBC connection pool. It optimizes database connections, ensuring quick acquisition and low latency. This improves performance and reliability, making it ideal for high-demand applications.
+# HIKARICP - RECOMMENDED - HikariCP is a fast and lightweight JDBC connection pool. It optimizes database connections, ensuring quick acquisition and low latency. This improves performance and reliability, making it ideal for high-demand applications.
 #
-# We advise you to use MYSQL or HIKARICP, the SQLITE storage is only there to install the plugin and do some tests, not all features are available with SQLITE yet.
+# We advise you to use HIKARICP, the SQLITE storage is only there to install the plugin and do some tests, not all features are available with SQLITE yet.
 # The plugin will work, but some features like sanctions update when launching the plugin will not work.
 # This will be fixed in future plugin updates
 storage-type: SQLITE
 
 # Configuration of your database, it is recommended to use the database to store your data.
-# JSON does not support everything
 database-configuration:
-  # The prefix that will be applied to all tables, if you have several plugins with the same database you must have one.
+  # The prefix that will be applied to all tables,
+  # if you have several plugins with the same database, you must have one.
   # It is advisable not to change this value
   table-prefix: "zquests_"
   # IP Address of the machine the database is hosted on
@@ -60,6 +101,20 @@ main-command-aliases:
   - rankup
   - q
 
+# Name of the file to open the inventory with the main command
+main-command-inventory-name: "quests"
+
+# Permission that the player must have to change the page with the main command
+main-command-page:
+  - permission: "quests.page.2"
+    inventory: "quests"
+    page: 2
+    priority: 1
+  - permission: "quests.page.3"
+    inventory: "quests"
+    page: 3
+    priority: 2
+
 # Lore line placeholders:
 # active: The format for an active quest's progress in the lore, including placeholders for the progress bar, progress, and goal.
 # complete: The format for a completed quest in the lore, indicating completion with a checkmark symbol.
@@ -86,3 +141,165 @@ global-rewards:
   - type: message
     messages:
       - "&fYou have broken &7%name%&f blocks!" # Placeholder : %name%, %description% and %goal%
+
+# Allows grouping multiple quests to display them in placeholders.
+# Placeholders :
+# %zquests_group_name_<group id>% - Returns the display name of the group
+# %zquests_group_count_<group id>% - Displays the number of quests in the group
+# %zquests_group_finish_<group id>% - Displays the number of completed quests in the group
+# %zquests_group_percent_<group id>% - Displays the percentage of completed quests in the group
+# %zquests_group_total_percent_<group id>% - Displays the percentage of completed and ongoing quests, providing a more precise progress value than the placeholder above
+quests-groups:
+  block-break: # Group identifier
+    display-name: "Block Break" # Display name of the group
+    quests: # Quests present in the group
+      - "block-break-1"
+      - "block-break-2"
+      - "block-break-3"
+  complex:
+    display-name: "Complex"
+    progression: true
+    quests:
+      - "complex-1"
+      - "complex-2"
+      - "complex-3"
+      - "complex-4"
+      - "complex-5"
+      - "complex-6"
+      - "complex-7"
+
+global-group:
+  # The name of the group by default.
+  display-name: "Global"
+  # The custom model id of the group by default.
+  custom-model-id: 10546
+
+# The number of ticks after the event for the scoreboard and holograms update
+event-ticks: 2
+
+# Manages quest-related events
+events:
+  - event: QuestStartEvent # Triggered when a quest begins
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+  - event: QuestProgressEvent # Triggered when quest progress is made
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+  - event: QuestCompleteEvent # Triggered when a quest is completed
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+  - event: QuestFavoriteChangeEvent # Triggered when a quest's favorite status changes
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+  - event: QuestPostProgressEvent # Triggered after quest progress is made
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+  - event: QuestUserLoadEvent # Triggered when a user is loaded
+    enabled: true # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+  - event: QuestDeleteAllEvent # Triggered when a user is loaded
+    enabled: false # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+  - event: QuestDeleteEvent # Triggered when a user is loaded
+    enabled: false # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+  - event: QuestFavoriteChangeLimitEvent # Triggered when a user changes the limit for the favorite placeholder
+    enabled: false # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+  - event: QuestFavoriteChangePlaceholderTypeEvent # Triggered when a user changes the placeholder type for the favorite placeholder
+    enabled: false # Indicates if the event is active
+    update-scoreboard: false # Determines if the scoreboard should be updated when this event occurs
+    update-hologram: false # Determines if the hologram should be updated when this event occurs
+    update-waypoint: false # Determines if the waypoint should be updated when this event occurs
+
+# The format of dates used for placeholders that will display a date
+date-format: "dd/MM/yyyy HH:mm:ss"
+
+# Allows creating a placeholder that will group multiple favorite quests.
+# This can be used in a scoreboard or an inventory.
+# You can use the following placeholders:
+# %quest-name% - The name of the quest
+# %quest-display-name% - The display name of the quest
+# %quest-description% - The description of the quest
+# %quest-thumbnail% - The icon of the quest
+# %quest-type% - The type of the quest
+# %quest-objective% - The objective of the quest
+# %quest-lore-line% - The placeholder lore-line-placeholder
+# %quest-progress-bar% - The progress bar of the quest
+# %quest-percent% - The percentage of the quest's progress
+# %quest-progress% - The progress of the quest
+# %quest-global-group-name% - The global group name of the quest
+placeholder-favorites:
+  - type: LARGE
+    display-name: "Large"
+    min: 3
+    max: 3
+    # The message to display when there are no favorite quests
+    empty: "&cNo favorite quests"
+    # The result for each quest
+    result: "&f%quest-description%\n&8%quest-display-name%\n#fcd600%quest-progress%&8/&f%quest-objective%"
+    # The string that will be placed between two quests
+    between: "\n\n"
+  - type: NORMAL
+    display-name: "Normal"
+    # The number of favorite quests to display
+    min: 3
+    max: 6
+    # The message to display when there are no favorite quests
+    empty: "&cNo favorite quests"
+    # The result for each quest
+    result: "&f%quest-description%\n#fcd600%quest-progress%&8/&f%quest-objective%"
+    # The string that will be placed between two quests
+    between: "\n"
+  - type: SMALL
+    display-name: "Small"
+    # The number of favorite quests to display
+    min: 3
+    max: 8
+    # The message to display when there are no favorite quests
+    empty: "&cNo favorite quests"
+    # The result for each quest
+    result: "&f%quest-description% &8- #fcd600%quest-progress%&8/&f%quest-objective%"
+    # The string that will be placed between two quests
+    between: "\n"
+
+# Time in milliseconds for a placed block to no longer be considered as already used.
+# This ensures that quests of type BLOCK_PLACE can verify that players place
+# the desired number of blocks and do not place and break the same block multiple times.
+anti-block-place-abuse: 60000
+
+quest-favorite-icon: "V"
+quest-not-favorite-icon: "X"
+
+# Distance use for rayTraceBlocks method, this allows to check or the player look for LOOK_AT_BLOCK quest
+look-at-distance-block: 8
+
+# Distance use for rayTraceBlocks method, this allows to check or the player look for LOOK_AT_ENTITY quest
+look-at-distance-entity: 8

@@ -1,0 +1,129 @@
+package fr.maxlego08.quests.inventories.buttons;
+
+import fr.maxlego08.menu.api.MenuItemStack;
+import fr.maxlego08.menu.api.button.PaginateButton;
+import fr.maxlego08.menu.api.engine.InventoryEngine;
+import fr.maxlego08.menu.api.utils.Placeholders;
+import fr.maxlego08.quests.QuestsPlugin;
+import fr.maxlego08.quests.api.Quest;
+import fr.maxlego08.quests.api.QuestManager;
+import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeEvent;
+import fr.maxlego08.quests.api.utils.QuestHistory;
+import fr.maxlego08.quests.save.Config;
+import fr.maxlego08.quests.zcore.utils.QuestPlaceholderUtil;
+import org.bukkit.entity.Player;
+
+import java.util.List;
+
+public class QuestHistoryButton extends PaginateButton {
+
+    private final QuestsPlugin plugin;
+    private final List<Integer> offsetSlots;
+    private final MenuItemStack completedItem;
+    private final int offsetCustomModelId;
+    private final FavConfiguration favConfiguration;
+    private final MenuItemStack additionalInformationItem;
+    private final MenuItemStack additionalInformationCompletedItem;
+    private final int additionalInformationOffset;
+    private final boolean enableAdditionalInformation;
+    private final QuestManager manager;
+
+    public QuestHistoryButton(QuestsPlugin plugin, List<Integer> offsetSlots, MenuItemStack completedItem, int offsetCustomModelId, FavConfiguration favConfiguration, MenuItemStack additionalInformation, MenuItemStack additionalInformationCompletedItem, int additionalInformationOffset, boolean enableAdditionalInformation) {
+        this.plugin = plugin;
+        this.offsetSlots = offsetSlots;
+        this.completedItem = completedItem;
+        this.offsetCustomModelId = offsetCustomModelId;
+        this.favConfiguration = favConfiguration;
+        this.additionalInformationItem = additionalInformation;
+        this.additionalInformationCompletedItem = additionalInformationCompletedItem;
+        this.additionalInformationOffset = additionalInformationOffset;
+        this.enableAdditionalInformation = enableAdditionalInformation;
+        this.manager = this.plugin.getQuestManager();
+    }
+
+    @Override
+    public boolean hasSpecialRender() {
+        return true;
+    }
+
+    @Override
+    public boolean isPermanent() {
+        return true;
+    }
+
+    @Override
+    public void onRender(Player player, InventoryEngine inventory) {
+
+        var quests = this.manager.getDisplayQuests(player);
+
+        this.paginate(quests, inventory, (slot, questHistory) -> {
+
+            var menuItemStack = questHistory.isActive() ? this.getItemStack() : this.completedItem;
+
+            var quest = questHistory.getQuest();
+            if (quest == null) {
+                this.plugin.getLogger().info("Quest is null ! " + questHistory);
+                return;
+            }
+
+            Placeholders placeholders = createPlaceholder(quest, player, questHistory);
+
+            for (Integer offsetSlot : this.offsetSlots) {
+
+                placeholders.register("quest-model-id", String.valueOf(offsetSlot == 0 ? quest.getCustomModelId() : this.offsetCustomModelId));
+
+                inventory.addItem(slot + offsetSlot, menuItemStack.build(player, false, placeholders)).setClick(e -> super.onClick(player, e, inventory, slot, placeholders));
+            }
+
+            // Fav Configuration
+            this.displayFav(player, questHistory, inventory, slot, placeholders);
+            
+            if (this.enableAdditionalInformation) {
+                var menuItemStackAdditionalInfo = questHistory.isActive() ? this.additionalInformationItem : this.additionalInformationCompletedItem;
+                inventory.addItem(slot + this.additionalInformationOffset, menuItemStackAdditionalInfo.build(player, false, placeholders));
+            }
+        });
+    }
+
+    private void displayFav(Player player, QuestHistory questHistory, InventoryEngine inventory, int slot, Placeholders placeholders) {
+
+        var quest = questHistory.getQuest();
+        var menuItemStack = questHistory.isActive() ? questHistory.activeQuest().isFavorite() ? this.favConfiguration.enable : this.favConfiguration.disable : this.favConfiguration.completed;
+
+        placeholders.register("quest-lore", quest.canChangeFavorite() && questHistory.isActive() ? questHistory.activeQuest().isFavorite() ? this.favConfiguration.loreEnable : this.favConfiguration.loreDisable : this.favConfiguration.loreCancel);
+
+        inventory.addItem(slot + this.favConfiguration.offset, menuItemStack.build(player, false, placeholders)).setClick(e -> {
+
+            if (!questHistory.isActive()) return;
+            if (!quest.canChangeFavorite()) return;
+
+            var activeQuest = questHistory.activeQuest();
+            QuestFavoriteChangeEvent event = new QuestFavoriteChangeEvent(player, activeQuest, !activeQuest.isFavorite());
+            if (this.plugin.getQuestManager().callQuestEvent(player.getUniqueId(), event)) return;
+
+            activeQuest.setFavorite(event.isFavorite());
+            this.plugin.getStorageManager().upsert(activeQuest);
+
+            this.plugin.getInventoryManager().updateInventory(player);
+        });
+    }
+
+    private Placeholders createPlaceholder(Quest quest, Player player, QuestHistory questHistory) {
+        Placeholders placeholders = QuestPlaceholderUtil.createPlaceholder(this.plugin, player, quest);
+
+        placeholders.register("quest-started-at", questHistory.getStartedAt(Config.simpleDateFormat));
+        placeholders.register("quest-finished-at", questHistory.getFinishedAt(Config.simpleDateFormat));
+
+        return placeholders;
+    }
+
+    @Override
+    public int getPaginationSize(Player player) {
+        return this.manager.getDisplayQuests(player).size();
+    }
+
+    public record FavConfiguration(int offset, MenuItemStack enable, MenuItemStack disable, MenuItemStack completed,
+                                   String loreEnable, String loreDisable, String loreCancel) {
+
+    }
+}

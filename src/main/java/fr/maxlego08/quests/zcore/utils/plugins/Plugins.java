@@ -11,8 +11,10 @@ public enum Plugins {
 	ZTRANSLATOR("zTranslator"),
 	BLOCKTRACKER("BlockTracker"),
 	WILDSTACKER("WildStacker"),
-
-	;
+	ZJOBS("zJobs"),
+	SUPERIORSKYBLOCK2("SuperiorSkyblock2"),
+	ZSHOP("zShop"),
+    ZESSENTIALS("zEssentials"),;
 
 	private final String name;
 

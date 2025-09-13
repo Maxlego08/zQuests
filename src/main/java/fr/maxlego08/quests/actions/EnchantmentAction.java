@@ -49,7 +49,7 @@ public class EnchantmentAction implements QuestAction {
                 }
             }
 
-            return minimumCost >= event.getExpLevelCost();
+            return event.getExpLevelCost() >= minimumCost;
         }
 
         return false;

@@ -4,29 +4,50 @@ import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.UserQuest;
+import fr.maxlego08.quests.api.hologram.QuestHologram;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
+import fr.maxlego08.quests.api.waypoint.QuestWayPoint;
+import fr.maxlego08.quests.save.Config;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ZUserQuest implements UserQuest {
 
+    private final UUID uniqueId;
     private final List<ActiveQuest> activeQuests;
     private final List<CompletedQuest> completedQuests;
+    private final List<QuestHologram> questHolograms = new ArrayList<>();
+    private final List<QuestWayPoint> questWayPoints = new ArrayList<>();
+    private String currentGroup;
+    private boolean isExtend;
+    private int favoriteLimit;
+    private FavoritePlaceholderType favoritePlaceholderType;
 
-    public ZUserQuest() {
-        this.activeQuests = new ArrayList<>();
-        this.completedQuests = new ArrayList<>();
+    public ZUserQuest(UUID uniqueId) {
+        this(uniqueId, new ArrayList<>(), new ArrayList<>(), Config.placeholderFavorites.get(FavoritePlaceholderType.LARGE).maxFavorite(), FavoritePlaceholderType.LARGE);
     }
 
-    public ZUserQuest(List<ActiveQuest> activeQuests, List<CompletedQuest> completedQuests) {
+    public ZUserQuest(UUID uniqueId, List<ActiveQuest> activeQuests, List<CompletedQuest> completedQuests, int favoriteLimit, FavoritePlaceholderType favoritePlaceholderType) {
+        this.uniqueId = uniqueId;
         this.activeQuests = activeQuests;
         this.completedQuests = completedQuests;
+        this.favoriteLimit = favoriteLimit;
+        this.favoritePlaceholderType = favoritePlaceholderType;
     }
 
     @Override
     public List<ActiveQuest> getActiveQuests() {
         return this.activeQuests;
+    }
+
+    @Override
+    public List<ActiveQuest> getSortActiveQuests() {
+        return this.activeQuests.stream().sorted(Comparator.comparingInt(q -> q.getQuest().isUnique() ? 0 : 1)).toList();
     }
 
     @Override
@@ -41,7 +62,7 @@ public class ZUserQuest implements UserQuest {
 
     @Override
     public boolean isQuestCompleted(Quest quest) {
-        return this.completedQuests.stream().anyMatch(completedQuest -> completedQuest.quest().equals(quest));
+        return isQuestCompleted(quest.getName());
     }
 
     @Override
@@ -62,5 +83,140 @@ public class ZUserQuest implements UserQuest {
     @Override
     public Optional<ActiveQuest> findActive(String questName) {
         return this.activeQuests.stream().filter(activeQuest -> activeQuest.getQuest().getName().equalsIgnoreCase(questName)).findFirst();
+    }
+
+    @Override
+    public Optional<ActiveQuest> findActive(Quest quest) {
+        return findActive(quest.getName());
+    }
+
+    @Override
+    public void removeActiveQuest(ActiveQuest activeQuest) {
+        this.activeQuests.remove(activeQuest);
+    }
+
+    @Override
+    public List<ActiveQuest> getFavoriteQuests() {
+        return this.activeQuests.stream().filter(ActiveQuest::isFavorite).toList();
+    }
+
+    @Override
+    public Optional<CompletedQuest> findComplete(String questName) {
+        return this.completedQuests.stream().filter(e -> e.quest().getName().equals(questName)).findFirst();
+    }
+
+    @Override
+    public Optional<CompletedQuest> findComplete(Quest quest) {
+        return this.findComplete(quest.getName());
+    }
+
+    @Override
+    public boolean isExtend() {
+        return this.isExtend;
+    }
+
+    @Override
+    public void setExtend(boolean extend) {
+        this.isExtend = extend;
+    }
+
+    @Override
+    public List<QuestHologram> getHolograms() {
+        return this.questHolograms;
+    }
+
+    @Override
+    public void addHologram(QuestHologram questHologram) {
+        this.questHolograms.add(questHologram);
+    }
+
+    @Override
+    public void removeHologram(QuestHologram questHologram) {
+        this.questHolograms.remove(questHologram);
+    }
+
+    @Override
+    public String getCurrentGroup() {
+        return this.currentGroup;
+    }
+
+    @Override
+    public void setCurrentGroup(String currentGroup) {
+        this.currentGroup = currentGroup;
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return this.uniqueId;
+    }
+
+    @Override
+    public Optional<QuestHologram> getHologram(Quest quest) {
+        String name = quest.getHologramName(this.uniqueId);
+        return this.questHolograms.stream().filter(questHologram -> questHologram.match(name)).findFirst();
+    }
+
+    @Override
+    public boolean isFavorite(String questId) {
+        return this.activeQuests.stream().anyMatch(e -> e.getQuest().getName().equals(questId) && e.isFavorite());
+    }
+
+    @Override
+    public int getFavoriteLimit() {
+        return this.favoriteLimit;
+    }
+
+    @Override
+    public void setFavoriteLimit(int favoriteLimit) {
+        this.favoriteLimit = favoriteLimit;
+    }
+
+    @Override
+    public FavoritePlaceholderType getFavoritePlaceholderType() {
+        return favoritePlaceholderType;
+    }
+
+    @Override
+    public void setFavoritePlaceholderType(FavoritePlaceholderType favoritePlaceholderType) {
+        this.favoritePlaceholderType = favoritePlaceholderType;
+    }
+
+    @Override
+    public List<QuestWayPoint> getQuestWayPoints() {
+        return this.questWayPoints;
+    }
+
+    @Override
+    public void addWayPoint(QuestWayPoint questWayPoint) {
+        this.questWayPoints.add(questWayPoint);
+    }
+
+    @Override
+    public void removeWayPoint(QuestWayPoint questWayPoint) {
+        this.questWayPoints.remove(questWayPoint);
+    }
+
+    @Override
+    public Optional<QuestWayPoint> getWayPoint(Quest quest) {
+        return this.questWayPoints.stream().filter(questHologram -> questHologram.match(quest)).findFirst();
+    }
+
+    @Override
+    public void deleteHolograms() {
+
+        var player = Bukkit.getPlayer(this.uniqueId);
+        if (player == null) return;
+
+        this.questHolograms.forEach(questHologram -> questHologram.delete(player));
+        this.questHolograms.clear();
+    }
+
+    @Override
+    public void deleteWayPoints() {
+        var player = Bukkit.getPlayer(this.uniqueId);
+        if (player == null) return;
+
+        this.questWayPoints.forEach(questWayPoint -> questWayPoint.delete(player));
+        this.questWayPoints.clear();
     }
 }

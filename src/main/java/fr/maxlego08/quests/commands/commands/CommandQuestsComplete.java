@@ -16,7 +16,7 @@ public class CommandQuestsComplete extends VCommand {
         super(plugin);
         this.setPermission(Permission.ZQUESTS_COMPLETE);
         this.addSubCommand("complete");
-        this.setDescription(Message.DESCRIPTION_RELOAD);
+        this.setDescription(Message.DESCRIPTION_COMPLETE);
         this.addRequireArg("player");
         this.addRequireArg("quest", (sender, args) -> {
 

@@ -5,18 +5,34 @@ import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.menu.api.pattern.PatternManager;
 import fr.maxlego08.quests.api.QuestManager;
+import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.api.hologram.HologramManager;
 import fr.maxlego08.quests.api.hooks.BlockHook;
+import fr.maxlego08.quests.api.hooks.ScoreboardHook;
 import fr.maxlego08.quests.api.hooks.StackerHook;
 import fr.maxlego08.quests.api.storage.StorageManager;
+import fr.maxlego08.quests.api.utils.PlayTimeHelper;
+import fr.maxlego08.quests.api.waypoint.WayPointManager;
 import fr.maxlego08.quests.commands.commands.CommandQuests;
+import fr.maxlego08.quests.hologram.ZHologramManager;
 import fr.maxlego08.quests.hooks.blocks.BlockTrackerHook;
 import fr.maxlego08.quests.hooks.blocks.EmptyBlockHook;
+import fr.maxlego08.quests.hooks.playtime.ZEssentialsPlayTime;
+import fr.maxlego08.quests.hooks.scoreboard.EmptyScoreboardHook;
+import fr.maxlego08.quests.hooks.scoreboard.ZEssentialsScoreboardHook;
 import fr.maxlego08.quests.hooks.stacker.EmptyStackerHook;
 import fr.maxlego08.quests.hooks.stacker.WildStackerHook;
+import fr.maxlego08.quests.listeners.IslandListener;
+import fr.maxlego08.quests.listeners.QuestListener;
+import fr.maxlego08.quests.listeners.ZJobListener;
+import fr.maxlego08.quests.listeners.ZShopListener;
 import fr.maxlego08.quests.placeholder.LocalPlaceholder;
 import fr.maxlego08.quests.save.Config;
 import fr.maxlego08.quests.storage.ZStorageManager;
+import fr.maxlego08.quests.waypoint.ZWayPointManager;
 import fr.maxlego08.quests.zcore.ZPlugin;
+import fr.maxlego08.quests.zcore.utils.SpigotPlayTime;
+import fr.maxlego08.quests.zcore.utils.plugins.Metrics;
 import fr.maxlego08.quests.zcore.utils.plugins.Plugins;
 
 /**
@@ -29,11 +45,16 @@ public class QuestsPlugin extends ZPlugin {
 
     private final StorageManager storageManager = new ZStorageManager(this);
     private final QuestManager questManager = new ZQuestManager(this);
+    private final HologramManager hologramManager = new ZHologramManager(this);
+    private final WayPointManager wayPointManager = new ZWayPointManager(this);
+    private PlayTimeHelper playTimeHelper = new SpigotPlayTime();
+    private ScoreboardHook scoreboardHook = new EmptyScoreboardHook();
     private BlockHook blockHook = new EmptyBlockHook();
     private StackerHook stackerHook = new EmptyStackerHook();
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
     private PatternManager patternManager;
+    private QuestPlaceholder questPlaceholder;
 
     @Override
     public void onEnable() {
@@ -52,11 +73,15 @@ public class QuestsPlugin extends ZPlugin {
 
         this.commandManager.registerCommand(this, "zquests", new CommandQuests(this), getConfig().getStringList("main-command-aliases"));
 
+        this.questManager.loadButtons();
+
         this.loadFiles();
         this.questManager.loadQuests();
         this.storageManager.loadDatabase();
 
         this.addListener(new QuestListener(this, this.questManager));
+        this.addListener(this.hologramManager);
+        this.addListener(this.wayPointManager);
 
         if (isEnable(Plugins.BLOCKTRACKER)) {
             getLogger().info("Using BlockTracker");
@@ -68,11 +93,64 @@ public class QuestsPlugin extends ZPlugin {
             this.stackerHook = new WildStackerHook();
         }
 
-        new QuestPlaceholder().register(this, this.questManager);
+        if (isEnable(Plugins.ZJOBS)) {
+            getLogger().info("Using zJobs");
+            this.addListener(new ZJobListener(this, this.questManager));
+        }
 
-        this.questManager.loadButtons();
+        if (isEnable(Plugins.ZSHOP)) {
+            getLogger().info("Using zShop");
+            this.addListener(new ZShopListener(this, this.questManager));
+        }
+
+        if (isEnable(Plugins.SUPERIORSKYBLOCK2)) {
+            getLogger().info("Using SuperiorSkyBlock2");
+            this.addListener(new IslandListener(this.questManager));
+        }
+
+        if (isEnable(Plugins.ZESSENTIALS)) {
+            getLogger().info("Using zEssentials");
+            this.scoreboardHook = new ZEssentialsScoreboardHook();
+            this.playTimeHelper = new ZEssentialsPlayTime(this);
+        }
+
+        this.questPlaceholder = new QuestPlaceholder();
+        this.questPlaceholder.register(this, this.questManager);
+
         this.questManager.loadPatterns();
         this.questManager.loadInventories();
+
+        new Metrics(this, 25647);
+
+        /*List<String> strings = new ArrayList<>();
+
+        this.questManager.getGroup().forEach((groupName, group) -> {
+            strings.add(groupName + "\n");
+            for (Quest quest : group.getQuests()) {
+                strings.add("* " + quest.getDescription().replaceAll("#[0-9a-fA-F]{6}", "") + "\n");
+            }
+        });
+
+        try (var writer = new BufferedWriter(new FileWriter(this.getDataFolder().getAbsoluteFile() + "/map.txt"))) {
+            for (String string : strings) {
+                writer.write(string);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        /*var map = this.questManager.getQuests().stream().collect(Collectors.toMap(Quest::getName, Quest::getDescription));
+        try (var writer = new BufferedWriter(new FileWriter("map.txt"))) {
+            map.forEach((key, value) -> {
+                try {
+                    writer.write(key + "=" + value + "\n");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
 
         this.postEnable();
     }
@@ -123,5 +201,37 @@ public class QuestsPlugin extends ZPlugin {
         this.questManager.loadQuests();
         this.questManager.loadPatterns();
         this.questManager.loadInventories();
+    }
+
+    public void debug(QuestType questType, String string) {
+        if (Config.isDebug(questType)) {
+            this.getLogger().info(string);
+        }
+    }
+
+    public void debug(String string) {
+        if (Config.enableDebug) {
+            this.getLogger().info(string);
+        }
+    }
+
+    public ScoreboardHook getScoreboardHook() {
+        return scoreboardHook;
+    }
+
+    public QuestPlaceholder getQuestPlaceholder() {
+        return questPlaceholder;
+    }
+
+    public HologramManager getHologramManager() {
+        return hologramManager;
+    }
+
+    public WayPointManager getWayPointManager() {
+        return wayPointManager;
+    }
+
+    public PlayTimeHelper getPlayTimeHelper() {
+        return playTimeHelper;
     }
 }

@@ -15,7 +15,7 @@ public class CommandQuestsStart extends VCommand {
         super(plugin);
         this.setPermission(Permission.ZQUESTS_START);
         this.addSubCommand("start");
-        this.setDescription(Message.DESCRIPTION_RELOAD);
+        this.setDescription(Message.DESCRIPTION_START);
         this.addRequireArg("player");
         this.addRequireArg("quest", (sender, args) -> {
 

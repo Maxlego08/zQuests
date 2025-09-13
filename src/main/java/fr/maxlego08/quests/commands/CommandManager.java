@@ -2,7 +2,6 @@ package fr.maxlego08.quests.commands;
 
 import fr.maxlego08.quests.QuestsPlugin;
 import fr.maxlego08.quests.messages.Message;
-import fr.maxlego08.quests.zcore.ZPlugin;
 import fr.maxlego08.quests.zcore.logger.Logger;
 import fr.maxlego08.quests.zcore.logger.Logger.LogType;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
@@ -17,11 +16,16 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandManager extends ZUtils implements CommandExecutor, TabCompleter {
 
@@ -42,11 +46,6 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
     private final QuestsPlugin plugin;
     private final List<VCommand> commands = new ArrayList<VCommand>();
 
-    /**
-     * F
-     *
-     * @param template
-     */
     public CommandManager(QuestsPlugin template) {
         this.plugin = template;
     }
@@ -57,28 +56,21 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
     public void validCommands() {
         this.plugin.getLog().log("Loading " + getUniqueCommand() + " commands", LogType.SUCCESS);
         this.commandChecking();
+        try {
+            this.generateMarkdownFile();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 
     /**
-     * @param command
-     * @return
+     * Register a command
+     *
+     * @param command the command to register
+     * @return the command
      */
     public VCommand registerCommand(VCommand command) {
         this.commands.add(command);
-        return command;
-    }
-
-    /**
-     * Allows you to register a command
-     *
-     * @param string
-     * @param command
-     * @return VCommand
-     */
-    public VCommand registerCommand(String string, VCommand command) {
-        this.commands.add(command.addSubCommand(string));
-        this.plugin.getCommand(string).setExecutor(this);
-        this.plugin.getCommand(string).setTabCompleter(this);
         return command;
     }
 
@@ -100,10 +92,12 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
     }
 
     /**
-     * @param args
-     * @param cmd
-     * @param command
-     * @return true if can execute
+     * Determines if a command can be executed based on the provided arguments and command structure.
+     *
+     * @param args    The command arguments.
+     * @param cmd     The command name.
+     * @param command The command object containing sub-commands and parent command information.
+     * @return true if the command can be executed; false otherwise.
      */
     private boolean canExecute(String[] args, String cmd, VCommand command) {
         for (int index = args.length - 1; index > -1; index--) {
@@ -118,11 +112,13 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
     }
 
     /**
-     * @param args
-     * @param cmd
-     * @param command
-     * @param index
-     * @return
+     * Recursively checks if the provided arguments match the command structure.
+     *
+     * @param args    The command arguments.
+     * @param cmd     The command name.
+     * @param command The command object containing sub-commands and parent command information.
+     * @param index   The index of the argument to check.
+     * @return true if the command can be executed; false otherwise.
      */
     private boolean canExecute(String[] args, String cmd, VCommand command, int index) {
         if (index < 0 && command.getSubCommands().contains(cmd.toLowerCase())) {
@@ -180,15 +176,6 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
 
     private int getUniqueCommand() {
         return (int) this.commands.stream().filter(command -> command.getParent() == null).count();
-    }
-
-    /**
-     * @param command
-     * @param commandString
-     * @return
-     */
-    public boolean isValid(VCommand command, String commandString) {
-        return command.getParent() != null ? isValid(command.getParent(), commandString) : command.getSubCommands().contains(commandString.toLowerCase());
     }
 
     /**
@@ -264,6 +251,7 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
      * register a command in the spigot without using the plugin.yml This saves
      * time and understanding, the plugin.yml file is clearer
      *
+     * @param plugin   - Plugin
      * @param string   - Main command
      * @param vCommand - Command object
      * @param aliases  - Command aliases
@@ -274,6 +262,9 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
             command.setExecutor(this);
             command.setTabCompleter(this);
             command.setAliases(aliases);
+            if (vCommand.getPermission() != null) {
+                command.setPermission(vCommand.getPermission());
+            }
 
             commands.add(vCommand.addSubCommand(string));
             vCommand.addSubCommand(aliases);
@@ -284,6 +275,58 @@ public class CommandManager extends ZUtils implements CommandExecutor, TabComple
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+    }
+
+    /**
+     * Generate a Markdown file listing all the commands.
+     * <p>
+     * This method creates a file named {@code commands.md} in the plugin's data folder.
+     * The file contains a Markdown table with the following columns:
+     * <ul>
+     * <li>{@code Command}: The command name.
+     * <li>{@code Aliases}: The aliases of the command.
+     * <li>{@code Permission}: The permission required to execute the command.
+     * <li>{@code Description}: The description of the command.
+     * </ul>
+     *
+     * @throws IOException if the file cannot be written.
+     */
+    public void generateMarkdownFile() throws IOException {
+
+        List<VCommand> commands = new ArrayList<>();
+        this.commands.stream().filter(e -> e.getParent() == null).sorted(Comparator.comparing(VCommand::getFirst)).forEach(command -> {
+            commands.add(command);
+            commands.addAll(this.commands.stream().filter(e -> e.getMainParent() == command).sorted(Comparator.comparing(VCommand::getFirst)).toList());
+        });
+
+        StringBuilder sb = new StringBuilder();
+        // Markdown table header
+        sb.append("| Command | Aliases | Permission | Description |\n");
+        sb.append("|---------|---------|------------|-------------|\n");
+
+        for (VCommand command : commands) {
+            // Gather command data
+            String cmd = command.getSyntax(); // Assuming getSyntax() gives the command
+            List<String> aliasesList = new ArrayList<>(command.getSubCommands());
+            if (!aliasesList.isEmpty()) {
+                aliasesList.removeFirst();  // Remove the first element
+            }
+            String aliases = aliasesList.stream().map(alias -> "/" + alias)  // Add '/' before each alias
+                    .collect(Collectors.joining(", "));
+            String perm = command.getPermission(); // getPermission() for permissions
+            String desc = command.getDescription(); // getDescription() for the description
+
+            // Escape special Markdown characters in descriptions
+            desc = desc == null ? "" : desc.replace("|", "\\|");
+            perm = perm == null ? "" : perm;
+
+            // Add row to the Markdown table
+            sb.append(String.format("| `%s` | %s | %s | %s |\n", cmd, aliases, perm, desc));
+        }
+
+        // Write the StringBuilder content to the file
+        var path = new File(plugin.getDataFolder(), "commands.md").toPath();
+        Files.writeString(path, sb.toString());
     }
 
 }

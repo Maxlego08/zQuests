@@ -1,0 +1,118 @@
+name: "&8Quest History &7%page%/%maxPage%"
+size: 54
+items:
+
+  back:
+    type: INVENTORY
+    inventory: quests
+    slot: 49
+    is-permanent: true
+    item:
+      material: BARRIER
+      name: "&fGo back"
+
+  previous:
+    type: PREVIOUS
+    slot: 47
+    item:
+      material: ARROW
+      name: "#edacfcPrevious page"
+
+  next:
+    type: NEXT
+    slot: 51
+    item:
+      material: ARROW
+      name: "#edacfcNext Page"
+
+  history:
+    type: ZQUESTS_HISTORY
+    enable-completed: true
+    offset-custom-model-id: 10
+    additional-information:
+      enable: true
+      offset: 0
+      item:
+        material: PAPER
+        name: "%quest-description%"
+        model-id: "%quest-global-group-model-id%"
+        lore:
+          - "&8%quest-display-name%"
+          - ""
+          - "%quest-lore-line%"
+          - ""
+          - "#edacfcStarted on #ff94d7%quest-started-at%"
+      completed-item:
+        material: BARRIER
+        name: "%quest-description%"
+        model-id: "%quest-global-group-model-id%"
+        lore:
+          - "&8%quest-display-name%"
+          - ""
+          - "#ff3535✘ This quest is completed"
+          - ""
+          - "#edacfcStarted on #ff94d7%quest-started-at%"
+          - "#edacfcFinished on #ff94d7%quest-finished-at%"
+    offset-slots:
+      - -1
+      - 1
+      - 2
+    slots:
+      - 3
+      - 12
+      - 21
+      - 30
+      - 39
+    item:
+      material: PAPER
+      name: "%quest-description%"
+      lore:
+        - "&8%quest-display-name%"
+        - ""
+        - "%quest-lore-line%"
+        - ""
+        - "#edacfcStarted on #ff94d7%quest-started-at%"
+    completed-item:
+      material: BARRIER
+      name: "&f%quest-description%"
+      lore:
+        - "&8%quest-display-name%"
+        - ""
+        - "#ff3535✘ This quest is completed"
+        - ""
+        - "#edacfcStarted on #ff94d7%quest-started-at%"
+        - "#edacfcFinished on #ff94d7%quest-finished-at%"
+    favorite:
+      offset: 3
+      lore-enable: "#edacfcClick to #ff94d7remove #edacfcfrom favorites"
+      lore-disable: "#edacfcClick to #ff94d7add #edacfcto favorites"
+      lore-cancel: "#ff3535✘ You can't do that."
+      enable:
+        material: PAPER
+        name: "%quest-description%"
+        lore:
+          - "&8%quest-display-name%"
+          - ""
+          - "%quest-lore-line%"
+          - ""
+          - "%quest-lore%"
+      disable:
+        material: PAPER
+        name: "%quest-description%"
+        lore:
+          - "&8%quest-display-name%"
+          - ""
+          - "%quest-lore-line%"
+          - ""
+          - "%quest-lore%"
+      completed:
+        material: BARRIER
+        name: "%quest-description%"
+        lore:
+          - "&8%quest-display-name%"
+          - ""
+          - "#ff3535✘ This quest is completed"
+          - ""
+          - "#edacfcStarted on #ff94d7%quest-started-at%"
+          - "#edacfcFinished on #ff94d7%quest-finished-at%"
+

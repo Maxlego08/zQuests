@@ -1,5 +1,8 @@
 package fr.maxlego08.quests.api;
 
+import fr.maxlego08.menu.api.engine.InventoryEngine;
+
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -22,25 +25,25 @@ public interface ActiveQuest {
     Quest getQuest();
 
     /**
-     * Gets the current progress amount of the quest.
+     * Gets the current progress limit of the quest.
      *
-     * @return the progress amount
+     * @return the progress limit
      */
     long getAmount();
 
     /**
-     * Adds to the current progress amount of the quest.
+     * Sets the current progress limit of the quest.
      *
-     * @param amount the amount to add
-     */
-    void addAmount(long amount);
-
-    /**
-     * Sets the current progress amount of the quest.
-     *
-     * @param amount the amount to set
+     * @param amount the limit to set
      */
     void setAmount(long amount);
+
+    /**
+     * Adds to the current progress limit of the quest.
+     *
+     * @param amount the limit to add
+     */
+    void addAmount(long amount);
 
     /**
      * Checks if the quest is complete.
@@ -66,12 +69,21 @@ public interface ActiveQuest {
     boolean owningBy(UUID uniqueId);
 
     /**
-     * Increments the current progress amount of the quest.
+     * Increments the current progress limit of the quest.
      *
-     * @param amount the amount to increment
+     * @param amount the limit to increment
      * @return true if the quest became complete as a result of the increment, false otherwise
      */
-    boolean increment(int amount);
+    boolean increment(long amount);
+
+    /**
+     * This method sets the progress limit directly, instead of incrementing it.
+     * For example, for verifying a player's job level.
+     *
+     * @param amount the limit to set for the progress
+     * @return true if the quest became complete as a result of setting the progress, false otherwise
+     */
+    boolean incrementStatic(long amount);
 
     /**
      * Completes the quest and returns the completed quest data.
@@ -87,4 +99,36 @@ public interface ActiveQuest {
      * @return true if it is a quest action, false otherwise
      */
     boolean isQuestAction(Object object);
+
+    /**
+     * Checks if the quest is marked as favorite.
+     *
+     * @return true if the quest is marked as favorite, false otherwise
+     */
+    boolean isFavorite();
+
+    /**
+     * Sets whether the quest is marked as favorite or not.
+     *
+     * @param favorite true if the quest should be marked as favorite, false otherwise
+     */
+    void setFavorite(boolean favorite);
+
+    /**
+     * Gets the date when this active quest was created.
+     *
+     * @return the creation date
+     */
+    Date getCreatedAt();
+
+    /**
+     * Checks if the player can complete the quest.
+     *
+     * @param uuid            the player's unique identifier
+     * @param inventoryEngine the inventory engine used to check the player's inventory
+     * @return true if the player can complete the quest, false otherwise
+     */
+    boolean canComplete(UUID uuid, InventoryEngine inventoryEngine);
+
+    long getStartPlayTime();
 }

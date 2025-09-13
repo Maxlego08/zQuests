@@ -6,10 +6,6 @@ import fr.maxlego08.quests.messages.types.ClassicMessage;
 import fr.maxlego08.quests.messages.types.TitleMessage;
 import fr.maxlego08.quests.messages.types.ZMessage;
 import fr.maxlego08.quests.zcore.ZPlugin;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -21,7 +17,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class MessageLoader {
 
@@ -50,11 +45,11 @@ public class MessageLoader {
                     List<ZMessage> newMessages = new ArrayList<>();
                     for (ZMessage message : value.getMessages()) {
                         if (message instanceof ClassicMessage classicMessage) {
-                            newMessages.add(new ClassicMessage(classicMessage.messageType(), classicMessage.messages().stream().map(this::replaceMessagesColors).toList()));
+                            newMessages.add(new ClassicMessage(classicMessage.messageType(), new ArrayList<>(classicMessage.messages())));
                         } else if (message instanceof BossBarMessage bossBarMessage) {
-                            newMessages.add(new BossBarMessage(this.replaceMessagesColors(bossBarMessage.text()), bossBarMessage.color(), bossBarMessage.overlay(), bossBarMessage.flags(), bossBarMessage.duration(), bossBarMessage.isStatic()));
+                            newMessages.add(new BossBarMessage(bossBarMessage.text(), bossBarMessage.color(), bossBarMessage.overlay(), bossBarMessage.flags(), bossBarMessage.duration(), bossBarMessage.isStatic()));
                         } else if (message instanceof TitleMessage titleMessage) {
-                            newMessages.add(new TitleMessage(this.replaceMessagesColors(titleMessage.title()), this.replaceMessagesColors(titleMessage.subtitle()), titleMessage.start(), titleMessage.time(), titleMessage.end()));
+                            newMessages.add(new TitleMessage(titleMessage.title(), titleMessage.subtitle(), titleMessage.start(), titleMessage.time(), titleMessage.end()));
                         }
                     }
                     value.setMessages(newMessages);
@@ -297,9 +292,9 @@ public class MessageLoader {
 
                         List<String> messages = configuration.getStringList(key + ".messages");
                         if (messages.isEmpty()) {
-                            messages.add(replaceMessagesColors(configuration.getString(key + ".message")));
+                            messages.add(configuration.getString(key + ".message"));
                         } else {
-                            messages = messages.stream().map(this::replaceMessagesColors).collect(Collectors.toList());
+                            messages = new ArrayList<>(messages);
                         }
 
                         messages.removeIf(Objects::isNull);
@@ -317,9 +312,9 @@ public class MessageLoader {
 
                     List<String> messages = configuration.getStringList(key);
                     if (messages.isEmpty()) {
-                        messages.add(replaceMessagesColors(configuration.getString(key)));
+                        messages.add(configuration.getString(key));
                     } else {
-                        messages = messages.stream().map(this::replaceMessagesColors).collect(Collectors.toList());
+                        messages = new ArrayList<>(messages);
                     }
 
                     messages.removeIf(Objects::isNull);
@@ -342,13 +337,6 @@ public class MessageLoader {
             }
         }
 
-    }
-
-    private String replaceMessagesColors(String message) {
-        MiniMessage miniMessage = MiniMessage.miniMessage();
-        Component component = miniMessage.deserialize(message);
-        String legacy = LegacyComponentSerializer.legacyAmpersand().serialize(component);
-        return ChatColor.translateAlternateColorCodes('&', legacy);
     }
 
     private List<String> getMessage(Map<?, ?> map) {

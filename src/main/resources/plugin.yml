@@ -1,7 +1,7 @@
-name: '${name}'
+name: 'zQuests'
 version: '${version}'
 main: fr.maxlego08.quests.QuestsPlugin
-description: Default plugin description
+description: The quest plugin with the most features
 website: https://groupez.dev
 author: Maxlego08
 api-version: 1.21
@@ -9,3 +9,7 @@ depend:
   - zMenu
 softdepend:
   - PlaceholderAPI
+  - zJobs
+  - WildStacker
+  - BlockTracker
+  - SuperiorSkyblock2

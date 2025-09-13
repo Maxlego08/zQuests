@@ -321,7 +321,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
 	}
 
 	/**
-	 * Expand the Cuboid in the given direction by the given amount. Negative
+	 * Expand the Cuboid in the given direction by the given limit. Negative
 	 * amounts will shrink the Cuboid in the given direction. Shrinking a
 	 * cuboid's face past the opposite face is not an error and will return a
 	 * valid Cuboid.
@@ -330,7 +330,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
 	 *            - The direction in which to expand
 	 * @param amount
 	 *            - The number of blocks by which to expand
-	 * @return A new Cuboid expanded by the given direction and amount
+	 * @return A new Cuboid expanded by the given direction and limit
 	 */
 	public Cuboid expand(CuboidDirection dir, int amount) {
 		switch (dir) {
@@ -352,27 +352,27 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
 	}
 
 	/**
-	 * Shift the Cuboid in the given direction by the given amount.
+	 * Shift the Cuboid in the given direction by the given limit.
 	 *
 	 * @param dir
 	 *            - The direction in which to shift
 	 * @param amount
 	 *            - The number of blocks by which to shift
-	 * @return A new Cuboid shifted by the given direction and amount
+	 * @return A new Cuboid shifted by the given direction and limit
 	 */
 	public Cuboid shift(CuboidDirection dir, int amount) {
 		return expand(dir, amount).expand(dir.opposite(), -amount);
 	}
 
 	/**
-	 * Outset (grow) the Cuboid in the given direction by the given amount.
+	 * Outset (grow) the Cuboid in the given direction by the given limit.
 	 *
 	 * @param dir
 	 *            - The direction in which to outset (must be Horizontal,
 	 *            Vertical, or Both)
 	 * @param amount
 	 *            - The number of blocks by which to outset
-	 * @return A new Cuboid outset by the given direction and amount
+	 * @return A new Cuboid outset by the given direction and limit
 	 */
 	public Cuboid outset(CuboidDirection dir, int amount) {
 		Cuboid c;
@@ -394,15 +394,15 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
 	}
 
 	/**
-	 * Inset (shrink) the Cuboid in the given direction by the given amount.
-	 * Equivalent to calling outset() with a negative amount.
+	 * Inset (shrink) the Cuboid in the given direction by the given limit.
+	 * Equivalent to calling outset() with a negative limit.
 	 *
 	 * @param dir
 	 *            - The direction in which to inset (must be Horizontal,
 	 *            Vertical, or Both)
 	 * @param amount
 	 *            - The number of blocks by which to inset
-	 * @return A new Cuboid inset by the given direction and amount
+	 * @return A new Cuboid inset by the given direction and limit
 	 */
 	public Cuboid inset(CuboidDirection dir, int amount) {
 		return this.outset(dir, -amount);

@@ -2,6 +2,7 @@ package fr.maxlego08.quests.actions;
 
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 public class EntityAction implements QuestAction {
@@ -21,6 +22,6 @@ public class EntityAction implements QuestAction {
 
     @Override
     public boolean isAction(Object target) {
-        return target instanceof EntityType entityType && this.target == entityType;
+        return target instanceof Entity entity && this.target == entity.getType();
     }
 }

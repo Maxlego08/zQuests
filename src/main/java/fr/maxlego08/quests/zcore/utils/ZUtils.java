@@ -184,7 +184,7 @@ public abstract class ZUtils extends MessageUtils {
     }
 
     /**
-     * Removes a specified number of items from the player's hand. If the amount to be removed is not specified, it defaults to 64.
+     * Removes a specified number of items from the player's hand. If the limit to be removed is not specified, it defaults to 64.
      *
      * @param player the player from whose hand the items will be removed.
      */

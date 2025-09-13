@@ -1,18 +1,27 @@
 package fr.maxlego08.quests.api;
 
+import fr.maxlego08.quests.api.event.QuestEvent;
 import fr.maxlego08.quests.api.utils.CustomReward;
+import fr.maxlego08.quests.api.utils.FavoritePlaceholderType;
+import fr.maxlego08.quests.api.utils.InventoryContent;
+import fr.maxlego08.quests.api.utils.QuestHistory;
+import fr.maxlego08.quests.api.utils.QuestInventoryPage;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public interface QuestManager {
 
     /**
-     * Load button actions for quests.
+     * Loads all the buttons related to quests.
      */
     void loadButtons();
 
@@ -65,18 +74,95 @@ public interface QuestManager {
      *
      * @param uuid   the unique identifier of the user
      * @param type   the type of quest
-     * @param amount the amount to increment
+     * @param amount the limit to increment
      * @param object additional data for the quest action
+     * @return the active quests that were updated
      */
-    void handleQuests(UUID uuid, QuestType type, int amount, Object object);
+    Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object);
+
+    /**
+     * Handle quest actions for a user.
+     *
+     * @param uuid     the unique identifier of the user
+     * @param type     the type of quest
+     * @param amount   the limit to increment
+     * @param object   additional data for the quest action
+     * @param consumer a consumer that will be called with the
+     *                 updated active quest, if the quest is complete
+     *                 it will be called after the quest has been
+     *                 completed
+     * @return the active quests that were updated
+     */
+    Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
+
+    /**
+     * Handle static quests (quests that can be completed multiple times)
+     * for a user.
+     *
+     * @param uuid   the unique identifier of the user
+     * @param type   the type of quest
+     * @param amount the limit to increment
+     * @param object additional data for the quest action
+     * @return the active quests that were updated
+     */
+    Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
+
+
+    /**
+     * Handle quests for a user.
+     *
+     * <p>This method processes the active quests of a user, updating the progress
+     * based on the given amount and quest type. If the quest is marked as static,
+     * it can be completed multiple times.</p>
+     *
+     * @param uuid     the unique identifier of the user
+     * @param type     the type of quest
+     * @param amount   the amount to increment the quest progress
+     * @param object   additional data required for the quest action
+     * @param consumer a consumer that is called with the updated active quest
+     *                 when a quest is completed
+     * @param isStatic whether the quest is static and can be completed multiple times
+     * @return the set of active quests that were updated
+     */
+    Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer, boolean isStatic);
+
+    /**
+     * Handle inventory quests for the player.
+     *
+     * @param inventoryContent the player's current inventory content
+     * @return the active quests that were updated
+     */
+    Set<ActiveQuest> handleInventoryQuests(InventoryContent inventoryContent);
+
+    /**
+     * Handle static quests (quests that can be completed multiple times)
+     * for a user.
+     * <p>
+     * This method is similar to {@link #handleQuests(UUID, QuestType, int, Object, Consumer)}
+     * but it won't remove the active quest from the player's active quests
+     * if it is complete.
+     *
+     * @param uuid     the unique identifier of the user
+     * @param type     the type of quest
+     * @param amount   the limit to increment
+     * @param object   additional data for the quest action
+     * @param consumer a consumer that will be called with the
+     *                 updated active quest, if the quest is complete
+     *                 it will be called after the quest has been
+     *                 completed
+     * @return the active quests that were updated
+     */
+    Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
 
     /**
      * Add a quest to a player's active quests.
      *
      * @param uuid  the player to add the quest to
      * @param quest the quest to add
+     * @param store whether to store the active quest
+     * @return an optional containing the added active quest if successful, empty otherwise
      */
-    void addQuestToPlayer(UUID uuid, Quest quest);
+    Optional<ActiveQuest> addQuestToPlayer(UUID uuid, Quest quest, boolean store);
 
     /**
      * Retrieve active quests for a player.
@@ -118,6 +204,8 @@ public interface QuestManager {
      */
     void activateQuest(CommandSender sender, Player player, String questName);
 
+    void activateQuestGroup(CommandSender sender, Player player, String groupName);
+
     /**
      * Complete a quest for a player.
      *
@@ -126,6 +214,15 @@ public interface QuestManager {
      * @param questName the name of the quest to complete
      */
     void completeQuest(CommandSender sender, Player player, String questName);
+
+    /**
+     * Complete a quest group for a player.
+     *
+     * @param sender    the command sender
+     * @param player    the player to complete the quest group for
+     * @param groupName the name of the quest group to complete
+     */
+    void completeQuestGroup(CommandSender sender, Player player, String groupName);
 
     /**
      * Delete a quest from a player's active quests.
@@ -150,7 +247,7 @@ public interface QuestManager {
      * @param sender    the command sender
      * @param player    the player to set the progress for
      * @param questName the name of the quest to set the progress for
-     * @param amount    the amount to set the progress to
+     * @param amount    the limit to set the progress to
      */
     void setQuestProgress(CommandSender sender, Player player, String questName, int amount);
 
@@ -160,16 +257,17 @@ public interface QuestManager {
      * @param sender    the command sender
      * @param player    the player to add progress to
      * @param questName the name of the quest to add progress to
-     * @param amount    the amount to add to the progress
+     * @param amount    the limit to add to the progress
      */
     void addQuestProgress(CommandSender sender, Player player, String questName, int amount);
 
     /**
      * Open the quest inventory for a player.
      *
-     * @param player the player to open the quest inventory for
+     * @param player             the player to open the quest inventory for
+     * @param questInventoryPage the page to open
      */
-    void openQuestInventory(Player player);
+    void openQuestInventory(Player player, QuestInventoryPage questInventoryPage);
 
 
     /**
@@ -178,4 +276,150 @@ public interface QuestManager {
      * @return a list of all the custom rewards
      */
     List<CustomReward> getCustomRewards();
+
+    /**
+     * Retrieves a quest group by its name.
+     *
+     * @param key the name of the quest group to retrieve
+     * @return an Optional containing the quest group if found, otherwise an empty Optional
+     */
+    Optional<QuestsGroup> getGroup(String key);
+
+    /**
+     * Retrieve all quest groups.
+     *
+     * @return a map where the keys are group names and the values are the corresponding quest groups
+     */
+    Map<String, QuestsGroup> getGroup();
+
+    /**
+     * Starts all the given quests for the player with the given uuid.
+     *
+     * @param uuid   the uuid of the player to start the quests for
+     * @param quests the list of quests to start
+     */
+    void startQuests(UUID uuid, List<Quest> quests);
+
+    /**
+     * Set a quest as favorite for a player.
+     *
+     * @param sender    the command sender
+     * @param player    the player to set the favorite for
+     * @param questName the name of the quest to set as favorite
+     * @param amount    true if the quest should be marked as favorite, false otherwise
+     */
+    void setFavorite(CommandSender sender, Player player, String questName, boolean amount);
+
+    /**
+     * Call a quest event. This method will call the event and return
+     * whether or not the event was cancelled.
+     *
+     * @param playerUniqueId the uuid of the player that the event is for
+     * @param event          the event to call
+     * @return true if the event was cancelled, false otherwise
+     */
+    boolean callQuestEvent(UUID playerUniqueId, QuestEvent event);
+
+    /**
+     * Restarts a quest for a player.
+     *
+     * @param sender        the command sender
+     * @param offlinePlayer the player to restart the quest for
+     * @param questName     the name of the quest to restart
+     */
+    void restartUserQuest(CommandSender sender, OfflinePlayer offlinePlayer, String questName);
+
+    /**
+     * Retrieves the quest group of the given quest.
+     *
+     * @param quest the quest to get the group of
+     * @return an Optional containing the quest group if found, otherwise an empty Optional
+     */
+    List<QuestsGroup> getGroups(Quest quest);
+
+    /**
+     * Retrieves the quest group that the given quest is part of.
+     *
+     * @param quest the quest to get the group of
+     * @return an Optional containing the quest group if found, otherwise an empty Optional
+     */
+    Optional<QuestsGroup> getGroup(Quest quest);
+
+    /**
+     * Retrieves the global quest group that the given quest is part of.
+     * <p>
+     * This method returns an empty Optional if the quest is not part of a global group.
+     * <p>
+     * A global group is a group that is not associated with any player.
+     *
+     * @param quest the quest to get the global group of
+     * @return an Optional containing the global quest group if found, otherwise an empty Optional
+     */
+    Optional<QuestsGroup> getGlobalGroup(Quest quest);
+
+    /**
+     * Retrieves a list of quests to display for the given player.
+     *
+     * @param player the player for whom the quests will be displayed
+     * @return a list of QuestHistory objects representing the quests to display
+     */
+    List<QuestHistory> getDisplayQuests(Player player);
+
+    /**
+     * Retrieves the custom model id of the global group.
+     * <p>
+     * The global group is the group that contains all the quests that are not part of a group.
+     * <p>
+     * This method returns the custom model id of the global group, or 0 if the global group does not have a custom model.
+     *
+     * @return the custom model id of the global group
+     */
+    int getGlobalGroupCustomModelId();
+
+    /**
+     * Retrieves the display name of the global group.
+     * <p>
+     * The global group is the group that contains all the quests that are not part of a group.
+     * <p>
+     * This method returns the display name of the global group, or "Global" if the display name is not set.
+     *
+     * @return the display name of the global group
+     */
+    String getGlobalGroupDisplayName();
+
+    /**
+     * Sends a message to the given command sender with a list of quests
+     * that the given offline player has completed.
+     *
+     * @param sender        the command sender to send the message to
+     * @param offlinePlayer the offline player whose quests to show
+     */
+    void showQuests(CommandSender sender, OfflinePlayer offlinePlayer);
+
+    /**
+     * Sets the number of quests that the given offline player can bookmark.
+     *
+     * @param sender        the command sender
+     * @param offlinePlayer the offline player to set the favorite limit for
+     * @param amount        the number of quests that the player can bookmark
+     */
+    void setFavoriteLimit(CommandSender sender, OfflinePlayer offlinePlayer, int amount);
+
+    /**
+     * Sets the favorite placeholder type for the given offline player.
+     *
+     * @param sender                  the command sender
+     * @param offlinePlayer           the offline player to set the favorite placeholder type for
+     * @param favoritePlaceholderType the favorite placeholder type to set
+     */
+    void setFavoriteType(CommandSender sender, OfflinePlayer offlinePlayer, FavoritePlaceholderType favoritePlaceholderType);
+
+    /**
+     * Gives the reward of the given quest to the given player.
+     *
+     * @param sender    the command sender
+     * @param player    the player to give the reward to
+     * @param questName the name of the quest to give the reward of
+     */
+    void giveQuestReward(CommandSender sender, Player player, String questName);
 }

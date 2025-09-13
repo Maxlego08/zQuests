@@ -128,6 +128,12 @@ public abstract class VCommand extends Arguments {
         return parent;
     }
 
+    public VCommand getMainParent() {
+        if (parent == null) return null;
+        if (parent.getParent() == null) return parent;
+        else return parent.getMainParent();
+    }
+
     /**
      * Sets the parent command.
      *
@@ -380,7 +386,7 @@ public abstract class VCommand extends Arguments {
      * @return the first sub-command.
      */
     public String getFirst() {
-        return this.subCommands.get(0);
+        return this.subCommands.getFirst();
     }
 
     //
@@ -647,10 +653,10 @@ public abstract class VCommand extends Arguments {
     /**
      * Sends the syntax message of the commands to the sender.
      */
-    public void syntaxMessage() {
+    public void syntaxMessage(CommandSender sender) {
         this.subVCommands.forEach(command -> {
             if (command.getPermission() == null || hasPermission(sender, command.getPermission())) {
-                message(this.sender, Message.COMMAND_SYNTAX_HELP, "%syntax%", command.getSyntax(), "%description%", command.getDescription());
+                message(sender, Message.COMMAND_SYNTAX_HELP, "%syntax%", command.getSyntax(), "%description%", command.getDescription());
             }
         });
     }

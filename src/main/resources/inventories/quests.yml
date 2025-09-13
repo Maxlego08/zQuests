@@ -1,10 +1,73 @@
 name: "&8Quests"
 size: 54
 items:
-  quest-1:
-    slot: 22
+
+  options:
+    type: INVENTORY
+    inventory: quests-options
+    slot: 48
     item:
-      material: BARRIER
-      name: "&cNo Quests"
-      lore:
-        - "&8You need to do it yourself."
+      material: COMPASS
+      name: "&fOptions"
+
+  history:
+    type: INVENTORY
+    inventory: quests-history
+    slot: 50
+    item:
+      material: CLOCK
+      name: "&fHistory"
+
+  quest-1:
+    pattern:
+      fileName: quest-display
+      pluginName: zQuests
+      slot: 21
+      number: 1
+      quests:
+        - "complex-1"
+        - "complex-2"
+      objectives:
+        - " %zquests_description_complex-1% %zquests_favorite_icon_complex-1%"
+        - "%zquests_lore_line_complex-1%"
+        - " %zquests_description_complex-2% %zquests_favorite_icon_complex-2%"
+        - "%zquests_lore_line_complex-2%"
+      rewards:
+        - " &8• &fx16 &7Diamants"
+
+  quest-2:
+    pattern:
+      fileName: quest-display
+      pluginName: zQuests
+      slot: 22
+      number: 2
+      quests:
+        - "complex-3"
+      objectives:
+        - " %zquests_description_complex-3% %zquests_favorite_icon_complex-3%"
+        - "%zquests_lore_line_complex-3%"
+      rewards:
+        - " &8• &fx16 &7Diamants"
+
+  quest-3:
+    pattern:
+      fileName: quest-display
+      pluginName: zQuests
+      slot: 23
+      number: 3
+      quests:
+        - "complex-4"
+        - "complex-5"
+        - "complex-6"
+        - "complex-7"
+      objectives:
+        - " %zquests_description_complex-4% %zquests_favorite_icon_complex-4%"
+        - "%zquests_lore_line_complex-4%"
+        - " %zquests_description_complex-5% %zquests_favorite_icon_complex-5%"
+        - "%zquests_lore_line_complex-5%"
+        - " %zquests_description_complex-6% %zquests_favorite_icon_complex-6%"
+        - "%zquests_lore_line_complex-6%"
+        - " %zquests_description_complex-7% %zquests_favorite_icon_complex-7%"
+        - "%zquests_lore_line_complex-7%"
+      rewards:
+        - " &8• &fx16 &7Diamants"

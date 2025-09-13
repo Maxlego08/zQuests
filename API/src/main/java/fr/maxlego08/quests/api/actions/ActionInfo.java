@@ -12,10 +12,20 @@ public abstract class ActionInfo<T> {
         this.value = value;
     }
 
+    /**
+     * Gets the type of quest associated with this action.
+     *
+     * @return The type of quest.
+     */
     public QuestType getQuestType() {
         return questType;
     }
 
+    /**
+     * Gets the value associated with the action.
+     *
+     * @return The value associated with the action.
+     */
     public T getValue() {
         return value;
     }

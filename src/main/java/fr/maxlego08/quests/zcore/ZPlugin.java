@@ -77,6 +77,7 @@ public abstract class ZPlugin extends JavaPlugin {
      */
     private long enableTime;
     private PlatformScheduler scheduler;
+    private final MessageLoader messageLoader = new MessageLoader(this);
 
     /**
      * Called when the plugin is enabled. This method is called after the
@@ -97,7 +98,6 @@ public abstract class ZPlugin extends JavaPlugin {
         this.gson = getGsonBuilder().create();
         this.persist = new Persist(this);
 
-        MessageLoader messageLoader = new MessageLoader(this);
         messageLoader.load();
 
         this.commandManager = new CommandManager((QuestsPlugin) this);
@@ -199,7 +199,7 @@ public abstract class ZPlugin extends JavaPlugin {
      * @param classz the class to get the provider for
      * @return the provider
      */
-    protected <T> T getProvider(Class<T> classz) {
+    public <T> T getProvider(Class<T> classz) {
         RegisteredServiceProvider<T> provider = getServer().getServicesManager().getRegistration(classz);
         if (provider == null) {
             log.log("Unable to retrieve the provider " + classz, LogType.WARNING);
@@ -225,7 +225,7 @@ public abstract class ZPlugin extends JavaPlugin {
      */
     protected boolean isEnable(Plugins plugins) {
         Plugin plugin = getPlugin(plugins);
-        return plugin != null && plugin.isEnabled();
+        return plugin != null;
     }
 
     /**
@@ -267,6 +267,7 @@ public abstract class ZPlugin extends JavaPlugin {
      * Reloads all the savers for the plugin.
      */
     public void reloadFiles() {
+        this.messageLoader.load();
         this.savers.forEach(save -> {
             if (!(save instanceof NoReloadable)) {
                 save.load(this.persist);
