@@ -189,4 +189,10 @@ public interface Quest {
      */
     List<Permissible> getActionPermissibles();
 
+    /**
+     * Retrieves the permissibles associated with the quest's force completion conditions.
+     *
+     * @return the permissibles associated with the quest's force completion conditions
+     */
+    List<Permissible> getForceConditions();
 }

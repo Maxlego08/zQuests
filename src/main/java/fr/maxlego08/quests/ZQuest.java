@@ -40,8 +40,9 @@ public class ZQuest implements Quest {
     private final List<HologramConfiguration> hologramConfigurations;
     private final WayPointConfiguration wayPointConfiguration;
     private final List<Permissible> permissibles;
+    private final List<Permissible> forceConditions;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Permissible> permissibleRewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration, WayPointConfiguration wayPointConfiguration, List<Permissible> permissibles) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Permissible> permissibleRewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration, WayPointConfiguration wayPointConfiguration, List<Permissible> permissibles, List<Permissible> forceConditions) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -64,6 +65,7 @@ public class ZQuest implements Quest {
         this.hologramConfigurations = hologramConfiguration;
         this.wayPointConfiguration = wayPointConfiguration;
         this.permissibles = permissibles;
+        this.forceConditions = forceConditions;
     }
 
     @Override
@@ -79,9 +81,9 @@ public class ZQuest implements Quest {
     @Override
     public void onComplete(ActiveQuest activeQuest) {
 
-        Player player = Bukkit.getPlayer(activeQuest.getUniqueId());
+        Player player = Bukkit.getPlayer(activeQuest.getPlayerUUID());
         if (player == null) {
-            this.plugin.getLogger().severe("[COMPLETE] Player not found: " + activeQuest.getUniqueId() + ", unable to handle rewards for quest " + activeQuest.getQuest().getName());
+            this.plugin.getLogger().severe("[COMPLETE] Player not found: " + activeQuest.getPlayerUUID() + ", unable to handle rewards for quest " + activeQuest.getQuest().getName());
             return;
         }
 
@@ -207,5 +209,10 @@ public class ZQuest implements Quest {
     @Override
     public List<Permissible> getActionPermissibles() {
         return this.permissibles;
+    }
+
+    @Override
+    public List<Permissible> getForceConditions() {
+        return this.forceConditions;
     }
 }

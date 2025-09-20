@@ -1,7 +1,5 @@
 package fr.maxlego08.quests.api;
 
-import fr.maxlego08.menu.api.engine.InventoryEngine;
-
 import java.util.Date;
 import java.util.UUID;
 
@@ -15,7 +13,7 @@ public interface ActiveQuest {
      *
      * @return the unique identifier
      */
-    UUID getUniqueId();
+    UUID getPlayerUUID();
 
     /**
      * Gets the quest associated with this active quest.
@@ -124,11 +122,22 @@ public interface ActiveQuest {
     /**
      * Checks if the player can complete the quest.
      *
-     * @param uuid            the player's unique identifier
-     * @param inventoryEngine the inventory engine used to check the player's inventory
      * @return true if the player can complete the quest, false otherwise
      */
-    boolean canComplete(UUID uuid, InventoryEngine inventoryEngine);
+    boolean canComplete();
 
+    /**
+     * Checks if the player can force complete the conditions of the quest.
+     * This usually involves checking if the player has the required permissions or if the quest is configured to allow force completion.
+     *
+     * @return true if the player can force complete the quest, false otherwise
+     */
+    boolean canForceCompleteConditions();
+
+    /**
+     * Gets the time when the player started playing this active quest.
+     *
+     * @return the start play time in milliseconds
+     */
     long getStartPlayTime();
 }

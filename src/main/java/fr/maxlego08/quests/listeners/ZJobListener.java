@@ -42,9 +42,8 @@ public class ZJobListener implements Listener {
 
         var activeQuest = event.getActiveQuest();
         var quest = activeQuest.getQuest();
-        var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
 
-        if (!activeQuest.canComplete(event.getPlayerUUID(), fakeInventory)) return;
+        if (!activeQuest.canComplete()) return;
 
         var optional = jobManager.getPlayerJobs(event.getPlayerUUID());
         if (optional.isPresent()) {

@@ -117,7 +117,7 @@ public class ZStorageManager implements StorageManager {
 
     private Consumer<Schema> upsertToSchema(ActiveQuest activeQuest) {
         return table -> {
-            table.uuid("unique_id", activeQuest.getUniqueId()).primary();
+            table.uuid("unique_id", activeQuest.getPlayerUUID()).primary();
             table.string("name", activeQuest.getQuest().getName()).primary();
             table.bigInt("amount", activeQuest.getAmount());
             table.bool("is_favorite", activeQuest.isFavorite());
@@ -155,7 +155,7 @@ public class ZStorageManager implements StorageManager {
         if (future != null) future.cancel(true);
 
         executor.execute(() -> this.requestHelper.delete("%prefix%" + Tables.ACTIVE_QUESTS, table -> {
-            table.where("unique_id", activeQuest.getUniqueId());
+            table.where("unique_id", activeQuest.getPlayerUUID());
             table.where("name", activeQuest.getQuest().getName());
         }));
     }

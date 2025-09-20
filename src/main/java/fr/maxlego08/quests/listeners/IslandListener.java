@@ -37,7 +37,7 @@ public class IslandListener implements Listener {
 
         if (quest.getType() == QuestType.ISLAND) {
 
-            var superiorPlayer = SuperiorSkyblockAPI.getPlayer(activeQuest.getUniqueId());
+            var superiorPlayer = SuperiorSkyblockAPI.getPlayer(activeQuest.getPlayerUUID());
             if (superiorPlayer == null) return;
 
             var island = superiorPlayer.getIsland();
