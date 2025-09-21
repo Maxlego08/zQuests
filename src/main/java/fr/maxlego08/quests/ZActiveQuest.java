@@ -130,6 +130,9 @@ public class ZActiveQuest implements ActiveQuest {
 
     @Override
     public boolean canForceCompleteConditions() {
+
+        if (this.quest.getForceConditions().isEmpty()) return false;
+        
         return this.checkPermissible(this.quest.getForceConditions());
     }
 
