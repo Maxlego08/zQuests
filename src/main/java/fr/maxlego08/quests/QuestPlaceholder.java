@@ -12,10 +12,12 @@ import fr.maxlego08.quests.zcore.utils.QuestPlaceholderUtil;
 import fr.maxlego08.quests.zcore.utils.ZUtils;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class QuestPlaceholder extends ZUtils {
 
@@ -62,7 +64,7 @@ public class QuestPlaceholder extends ZUtils {
 
         placeholder.register("group_percent_", (player, groupKey) -> {
             long completedQuestsCount = getCompletedQuestsCount(player, groupKey);
-            long totalQuestsCount = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>()).size();
+            long totalQuestsCount = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(Collections.emptyList()).size();
             return format(percent(completedQuestsCount, totalQuestsCount));
         });
 
@@ -71,14 +73,16 @@ public class QuestPlaceholder extends ZUtils {
             var user = questManager.getUserQuest(player.getUniqueId());
             var activeQuests = user.getActiveQuests();
 
-            var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>());
+            var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(Collections.emptyList());
             if (groupQuests.isEmpty()) return "0";
 
+            Set<Quest> groupQuestSet = new HashSet<>(groupQuests);
+
             int totalQuests = groupQuests.size();
-            var completedQuests = user.getCompletedQuests().stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
+            var completedQuests = user.getCompletedQuests().stream().filter(completedQuest -> groupQuestSet.contains(completedQuest.quest())).count();
             double completedProgress = completedQuests * 100;
 
-            var inProgressSum = activeQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.getQuest())).mapToDouble(q -> getPercent(player, q.getQuest())).average().orElse(0.0);
+            var inProgressSum = activeQuests.stream().filter(completedQuest -> groupQuestSet.contains(completedQuest.getQuest())).mapToDouble(q -> getPercent(player, q.getQuest())).average().orElse(0.0);
 
             return format((completedProgress + inProgressSum) / totalQuests);
         });
@@ -202,10 +206,12 @@ public class QuestPlaceholder extends ZUtils {
     public long getCompletedQuestsCount(Player player, String groupKey) {
         var user = questManager.getUserQuest(player.getUniqueId());
         var completedQuests = user.getCompletedQuests();
-        var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(new ArrayList<>());
+        var groupQuests = questManager.getGroup(groupKey).map(QuestsGroup::getQuests).orElse(Collections.emptyList());
         if (groupQuests.isEmpty()) return 0;
 
-        return completedQuests.stream().filter(completedQuest -> groupQuests.contains(completedQuest.quest())).count();
+        Set<Quest> groupQuestSet = new HashSet<>(groupQuests);
+
+        return completedQuests.stream().filter(completedQuest -> groupQuestSet.contains(completedQuest.quest())).count();
     }
 
     public String getLoreLine(Player player, String questId) {
