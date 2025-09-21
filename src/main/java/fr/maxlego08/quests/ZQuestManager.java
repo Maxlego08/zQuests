@@ -62,6 +62,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -74,6 +75,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     private final QuestsPlugin plugin;
     private final List<Quest> quests = new ArrayList<>();
+    private final Map<String, Quest> questCache = new HashMap<>();
     private final Map<UUID, UserQuest> usersQuests = new HashMap<>();
     private final List<CustomReward> customRewards = new ArrayList<>();
     private final QuestGroupManager groupManager;
@@ -170,6 +172,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         this.quests.clear();
         this.customRewards.clear();
+        this.questCache.clear();
 
         this.files(folder, file -> this.quests.addAll(this.loadQuests(file)));
 
@@ -183,6 +186,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 iterator.remove();
             }
         }
+
+        this.refreshQuestCache();
 
         this.plugin.getLogger().info(this.quests.size() + " quests loaded");
         this.updateOnlyPlayers();
@@ -245,6 +250,16 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             List<String> quests = typedMapAccessor.getStringList("quests");
             List<Action> actions = this.plugin.getButtonManager().loadActions((List<Map<String, Object>>) typedMapAccessor.getList("actions"), "custom-rewards", file);
             this.customRewards.add(new CustomReward(quests, actions));
+        }
+    }
+
+    private void refreshQuestCache() {
+        this.questCache.clear();
+        for (Quest quest : this.quests) {
+            String questName = quest.getName();
+            if (questName != null) {
+                this.questCache.put(questName.toLowerCase(Locale.ROOT), quest);
+            }
         }
     }
 
@@ -523,7 +538,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     @Override
     public Optional<Quest> getQuest(String name) {
-        return this.quests.stream().filter(quest -> quest.getName().equalsIgnoreCase(name)).findFirst();
+        if (name == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(this.questCache.get(name.toLowerCase(Locale.ROOT)));
     }
 
     @Override
