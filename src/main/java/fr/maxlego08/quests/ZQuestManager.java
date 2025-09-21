@@ -62,6 +62,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -328,21 +329,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(playerUUID);
 
-        Consumer<ActiveQuest> after = activeQuest -> {
-
-            QuestCompleteEvent completeEvent = new QuestCompleteEvent(playerUUID, activeQuest);
-            if (callQuestEvent(playerUUID, completeEvent)) return;
-
-            userQuest.removeActiveQuest(activeQuest);
-            this.completeQuest(activeQuest);
-
-            if (consumer != null) {
-                consumer.accept(activeQuest);
-            }
-        };
-
         // Stream through the active quests of the user
-        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
+        ListIterator<ActiveQuest> iterator = userQuest.getActiveQuests().listIterator();
+        while (iterator.hasNext()) {
+            ActiveQuest activeQuest = iterator.next();
             if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
 
                 // Check if player can complete the quest
@@ -353,13 +343,18 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
                 amount = progressEvent.getAmount();
 
-                if (isStatic) {
-                    if (activeQuest.incrementStatic(amount)) {
-                        after.accept(activeQuest);
+                boolean completed = isStatic ? activeQuest.incrementStatic(amount) : activeQuest.increment(amount);
+                if (completed) {
+                    QuestCompleteEvent completeEvent = new QuestCompleteEvent(playerUUID, activeQuest);
+                    if (callQuestEvent(playerUUID, completeEvent)) {
+                        continue;
                     }
-                } else {
-                    if (activeQuest.increment(amount)) {
-                        after.accept(activeQuest);
+
+                    iterator.remove();
+                    this.completeQuest(activeQuest);
+
+                    if (consumer != null) {
+                        consumer.accept(activeQuest);
                     }
                 }
                 activeQuests.add(activeQuest);
@@ -412,7 +407,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(player.getUniqueId());
 
-        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
+        ListIterator<ActiveQuest> iterator = userQuest.getActiveQuests().listIterator();
+        while (iterator.hasNext()) {
+            ActiveQuest activeQuest = iterator.next();
             if (activeQuest.getQuest().getType() == QuestType.INVENTORY_CONTENT && !activeQuest.isComplete() && activeQuest.isQuestAction(inventoryContent)) {
 
                 var optional = activeQuest.getQuest().getActions().stream().filter(e -> e instanceof InventoryContentAction).map(e -> (InventoryContentAction) e).findFirst();
@@ -434,9 +431,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 if (activeQuest.increment(amount)) { // Increment the progress of the quest
 
                     QuestCompleteEvent completeEvent = new QuestCompleteEvent(player.getUniqueId(), activeQuest);
-                    if (callQuestEvent(player.getUniqueId(), completeEvent)) continue;
+                    if (callQuestEvent(player.getUniqueId(), completeEvent)) {
+                        continue;
+                    }
 
-                    userQuest.removeActiveQuest(activeQuest);
+                    iterator.remove();
                     this.completeQuest(activeQuest);
                     amount = (int) (activeQuest.getQuest().getGoal() - before);
                 }
