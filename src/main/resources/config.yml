@@ -30,7 +30,6 @@ debug-quests:
   RESURRECT: false
   JOB_LEVEL: false
   JOB_PRESTIGE: false
-  JOB_PRESTIGE_AND_LEVEL: false
   SMITHING: false
   ISLAND: false
   COMMAND: false

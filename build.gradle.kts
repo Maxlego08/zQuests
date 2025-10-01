@@ -62,7 +62,7 @@ allprojects {
         compileOnly("fr.maxlego08.shop:zshop-api:3.3.0")
 
         implementation("com.tcoded:FoliaLib:0.5.1")
-        implementation("fr.maxlego08.sarah:sarah:1.18")
+        implementation("fr.maxlego08.sarah:sarah:7c60616")
     }
 
 }

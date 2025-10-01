@@ -1,3 +1,5 @@
+import java.util.Locale
+
 plugins {
     `maven-publish`
 }
@@ -23,10 +25,13 @@ tasks {
 }
 
 publishing {
+
+    var repository = System.getProperty("repository.name", "snapshots").replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
     repositories {
         maven {
-            name = "groupezSnapshots"
-            url = uri("https://repo.groupez.dev/snapshots")
+            name = "groupez${repository}"
+            url = uri("https://repo.groupez.dev/${repository.lowercase()}")
             credentials {
                 username = findProperty("${name}Username") as String? ?: System.getenv("MAVEN_USERNAME")
                 password = findProperty("${name}Password") as String? ?: System.getenv("MAVEN_PASSWORD")
@@ -43,7 +48,11 @@ publishing {
                 groupId = project.group as String?
                 name = "${rootProject.name}-${project.name}"
                 artifactId = name.get().lowercase()
-                version = project.version as String?
+                version = if (repository.lowercase() == "snapshots") {
+                    System.getProperty("github.sha")
+                } else {
+                    project.version as String?
+                }
 
                 scm {
                     connection = "scm:git:git://github.com/MaxLego08/${rootProject.name}.git"

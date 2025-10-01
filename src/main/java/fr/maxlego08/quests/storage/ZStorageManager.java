@@ -7,7 +7,6 @@ import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
 import fr.maxlego08.quests.api.UserQuest;
 import fr.maxlego08.quests.api.storage.StorageManager;
-import fr.maxlego08.quests.api.storage.StorageType;
 import fr.maxlego08.quests.api.storage.Tables;
 import fr.maxlego08.quests.api.storage.dto.ActiveQuestDTO;
 import fr.maxlego08.quests.api.storage.dto.CompletedQuestDTO;
@@ -63,12 +62,12 @@ public class ZStorageManager implements StorageManager {
     public void loadDatabase() {
 
         FileConfiguration configuration = this.plugin.getConfig();
-        StorageType storageType = StorageType.valueOf(configuration.getString("storage-type", StorageType.SQLITE.name()).toUpperCase());
+        DatabaseType storageType = DatabaseType.valueOf(configuration.getString("storage-type", DatabaseType.SQLITE.name()).toUpperCase());
 
         DatabaseConfiguration databaseConfiguration = getDatabaseConfiguration(configuration, storageType);
         DatabaseConnection connection = switch (storageType) {
             case SQLITE -> new SqliteConnection(databaseConfiguration, this.plugin.getDataFolder());
-            case HIKARICP, MYSQL -> new HikariDatabaseConnection(databaseConfiguration);
+            case MARIADB, MYSQL -> new HikariDatabaseConnection(databaseConfiguration);
         };
         this.requestHelper = new RequestHelper(connection, JULogger.from(plugin.getLogger()));
 
@@ -76,7 +75,7 @@ public class ZStorageManager implements StorageManager {
             plugin.getLogger().severe("Unable to connect to database!");
             Bukkit.getPluginManager().disablePlugin(plugin);
         } else {
-            if (storageType == StorageType.SQLITE) {
+            if (storageType == DatabaseType.SQLITE) {
                 plugin.getLogger().info("The database connection is valid! (SQLITE)");
             } else {
                 plugin.getLogger().info("The database connection is valid! (" + connection.getDatabaseConfiguration().getHost() + ")");
@@ -93,7 +92,7 @@ public class ZStorageManager implements StorageManager {
         MigrationManager.execute(connection, JULogger.from(this.plugin.getLogger()));
     }
 
-    private DatabaseConfiguration getDatabaseConfiguration(FileConfiguration configuration, StorageType storageType) {
+    private DatabaseConfiguration getDatabaseConfiguration(FileConfiguration configuration, DatabaseType databaseType) {
         GlobalDatabaseConfiguration globalDatabaseConfiguration = new GlobalDatabaseConfiguration(configuration);
         String tablePrefix = globalDatabaseConfiguration.getTablePrefix();
         String host = globalDatabaseConfiguration.getHost();
@@ -103,7 +102,7 @@ public class ZStorageManager implements StorageManager {
         String database = globalDatabaseConfiguration.getDatabase();
         boolean debug = globalDatabaseConfiguration.isDebug();
 
-        return new DatabaseConfiguration(tablePrefix, user, password, port, host, database, debug, storageType == StorageType.SQLITE ? DatabaseType.SQLITE : DatabaseType.MYSQL);
+        return new DatabaseConfiguration(tablePrefix, user, password, port, host, database, debug, databaseType);
     }
 
     @Override
