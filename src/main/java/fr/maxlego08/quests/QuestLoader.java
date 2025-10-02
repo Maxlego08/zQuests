@@ -133,12 +133,13 @@ public class QuestLoader extends ZUtils {
 
             List<HologramConfiguration> hologramConfiguration = loadHologram(accessor, name, file);
             WayPointConfiguration waypointConfiguration = loadWaypoint(accessor, name, file);
-            List<Permissible> requirements = loadRequirements(accessor, name, file);
+            List<Permissible> requirements = loadRequirements(accessor, name, file, "action-requirements");
+            List<Permissible> forceConditions = loadRequirements(accessor, name, file, "action-requirements");
 
             return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, //
                     thumbnail, goal, autoAccept, rewards, permissibleRewards, startActions, questActions, //
                     useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, //
-                    isHidden, hologramConfiguration, waypointConfiguration, requirements);
+                    isHidden, hologramConfiguration, waypointConfiguration, requirements, forceConditions);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;
@@ -426,16 +427,16 @@ public class QuestLoader extends ZUtils {
      * @param file      The file containing the configuration.
      * @return The list of action requirements.
      */
-    private List<Permissible> loadRequirements(TypedMapAccessor accessor, String questName, File file) {
+    private List<Permissible> loadRequirements(TypedMapAccessor accessor, String questName, File file, String path) {
 
-        if (!accessor.contains("action-requirements")) return List.of();
+        if (!accessor.contains(path)) return List.of();
 
-        Object object = accessor.getObject("action-requirements");
+        Object object = accessor.getObject(path);
         if (object instanceof List<?> map) {
 
-            return this.plugin.getButtonManager().loadPermissible((List<Map<String, Object>>) map, "action-requirements", file);
+            return this.plugin.getButtonManager().loadPermissible((List<Map<String, Object>>) map, path, file);
         } else {
-            logSevere("Invalid action requirements for quest " + questName + " in file " + file.getAbsolutePath());
+            logSevere("Invalid " + path + " for quest " + questName + " in file " + file.getAbsolutePath());
             return List.of();
         }
     }

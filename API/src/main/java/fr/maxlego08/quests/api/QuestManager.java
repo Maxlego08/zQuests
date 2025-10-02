@@ -65,25 +65,25 @@ public interface QuestManager {
     /**
      * Handle player quit event related to quests.
      *
-     * @param uuid the unique identifier of the player
+     * @param playerUUID the unique identifier of the player
      */
-    void handleQuit(UUID uuid);
+    void handleQuit(UUID playerUUID);
 
     /**
      * Handle quest actions for a user.
      *
-     * @param uuid   the unique identifier of the user
+     * @param playerUUID   the unique identifier of the user
      * @param type   the type of quest
      * @param amount the limit to increment
      * @param object additional data for the quest action
      * @return the active quests that were updated
      */
-    Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object);
+    Set<ActiveQuest> handleQuests(UUID playerUUID, QuestType type, int amount, Object object);
 
     /**
      * Handle quest actions for a user.
      *
-     * @param uuid     the unique identifier of the user
+     * @param playerUUID     the unique identifier of the user
      * @param type     the type of quest
      * @param amount   the limit to increment
      * @param object   additional data for the quest action
@@ -93,19 +93,19 @@ public interface QuestManager {
      *                 completed
      * @return the active quests that were updated
      */
-    Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
+    Set<ActiveQuest> handleQuests(UUID playerUUID, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
 
     /**
      * Handle static quests (quests that can be completed multiple times)
      * for a user.
      *
-     * @param uuid   the unique identifier of the user
+     * @param playerUUID   the unique identifier of the user
      * @param type   the type of quest
      * @param amount the limit to increment
      * @param object additional data for the quest action
      * @return the active quests that were updated
      */
-    Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object);
+    Set<ActiveQuest> handleStaticQuests(UUID playerUUID, QuestType type, int amount, Object object);
 
 
     /**
@@ -115,7 +115,7 @@ public interface QuestManager {
      * based on the given amount and quest type. If the quest is marked as static,
      * it can be completed multiple times.</p>
      *
-     * @param uuid     the unique identifier of the user
+     * @param playerUUID     the unique identifier of the user
      * @param type     the type of quest
      * @param amount   the amount to increment the quest progress
      * @param object   additional data required for the quest action
@@ -124,7 +124,7 @@ public interface QuestManager {
      * @param isStatic whether the quest is static and can be completed multiple times
      * @return the set of active quests that were updated
      */
-    Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer, boolean isStatic);
+    Set<ActiveQuest> handleQuests(UUID playerUUID, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer, boolean isStatic);
 
     /**
      * Handle inventory quests for the player.
@@ -142,7 +142,7 @@ public interface QuestManager {
      * but it won't remove the active quest from the player's active quests
      * if it is complete.
      *
-     * @param uuid     the unique identifier of the user
+     * @param playerUUID     the unique identifier of the user
      * @param type     the type of quest
      * @param amount   the limit to increment
      * @param object   additional data for the quest action
@@ -152,25 +152,25 @@ public interface QuestManager {
      *                 completed
      * @return the active quests that were updated
      */
-    Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
+    Set<ActiveQuest> handleStaticQuests(UUID playerUUID, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer);
 
     /**
      * Add a quest to a player's active quests.
      *
-     * @param uuid  the player to add the quest to
+     * @param playerUUID  the player to add the quest to
      * @param quest the quest to add
      * @param store whether to store the active quest
      * @return an optional containing the added active quest if successful, empty otherwise
      */
-    Optional<ActiveQuest> addQuestToPlayer(UUID uuid, Quest quest, boolean store);
+    Optional<ActiveQuest> addQuestToPlayer(UUID playerUUID, Quest quest, boolean store);
 
     /**
      * Retrieve active quests for a player.
      *
-     * @param uuid the unique identifier of the player
+     * @param playerUUID the unique identifier of the player
      * @return a list of active quests
      */
-    List<ActiveQuest> getQuestsFromPlayer(UUID uuid);
+    List<ActiveQuest> getQuestsFromPlayer(UUID playerUUID);
 
     /**
      * Retrieve a quest by name.

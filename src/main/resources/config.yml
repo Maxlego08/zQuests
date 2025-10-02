@@ -30,7 +30,6 @@ debug-quests:
   RESURRECT: false
   JOB_LEVEL: false
   JOB_PRESTIGE: false
-  JOB_PRESTIGE_AND_LEVEL: false
   SMITHING: false
   ISLAND: false
   COMMAND: false
@@ -50,9 +49,10 @@ disable-offhand-craft: true
 
 # Storage:
 # SQLITE - For the launch of the plugin only.
-# HIKARICP - RECOMMENDED - HikariCP is a fast and lightweight JDBC connection pool. It optimizes database connections, ensuring quick acquisition and low latency. This improves performance and reliability, making it ideal for high-demand applications.
+# MARIADB - RECOMMENDED
+# MYSQL
 #
-# We advise you to use HIKARICP, the SQLITE storage is only there to install the plugin and do some tests, not all features are available with SQLITE yet.
+# We advise you to use MARIADB or MYSQL, the SQLITE storage is only there to install the plugin and do some tests, not all features are available with SQLITE yet.
 # The plugin will work, but some features like sanctions update when launching the plugin will not work.
 # This will be fixed in future plugin updates
 storage-type: SQLITE

@@ -62,6 +62,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -74,6 +76,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
     private final QuestsPlugin plugin;
     private final List<Quest> quests = new ArrayList<>();
+    private final Map<String, Quest> questCache = new HashMap<>();
     private final Map<UUID, UserQuest> usersQuests = new HashMap<>();
     private final List<CustomReward> customRewards = new ArrayList<>();
     private final QuestGroupManager groupManager;
@@ -170,6 +173,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         this.quests.clear();
         this.customRewards.clear();
+        this.questCache.clear();
 
         this.files(folder, file -> this.quests.addAll(this.loadQuests(file)));
 
@@ -183,6 +187,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 iterator.remove();
             }
         }
+
+        this.refreshQuestCache();
 
         this.plugin.getLogger().info(this.quests.size() + " quests loaded");
         this.updateOnlyPlayers();
@@ -207,7 +213,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 Optional<Quest> optionalQuest = this.getQuest(activeQuest.getQuest().getName());
                 if (optionalQuest.isPresent()) {
                     Quest quest = optionalQuest.get();
-                    activeQuests.set(i, new ZActiveQuest(this.plugin, activeQuest.getUniqueId(), quest, activeQuest.getCreatedAt(), activeQuest.getAmount(), activeQuest.isFavorite(), playTimeHelper.getPlayTime(player.getUniqueId())));
+                    activeQuests.set(i, new ZActiveQuest(this.plugin, activeQuest.getPlayerUUID(), quest, activeQuest.getCreatedAt(), activeQuest.getAmount(), activeQuest.isFavorite(), playTimeHelper.getPlayTime(player.getUniqueId())));
                 }
             }
 
@@ -245,6 +251,16 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             List<String> quests = typedMapAccessor.getStringList("quests");
             List<Action> actions = this.plugin.getButtonManager().loadActions((List<Map<String, Object>>) typedMapAccessor.getList("actions"), "custom-rewards", file);
             this.customRewards.add(new CustomReward(quests, actions));
+        }
+    }
+
+    private void refreshQuestCache() {
+        this.questCache.clear();
+        for (Quest quest : this.quests) {
+            String questName = quest.getName();
+            if (questName != null) {
+                this.questCache.put(questName.toLowerCase(Locale.ROOT), quest);
+            }
         }
     }
 
@@ -314,54 +330,46 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public void handleQuit(UUID uuid) {
-        UserQuest userQuest = this.usersQuests.remove(uuid);
+    public void handleQuit(UUID playerUUID) {
+        UserQuest userQuest = this.usersQuests.remove(playerUUID);
         if (userQuest == null) return;
         // userQuest.getActiveQuests().forEach(activeQuest -> this.plugin.getStorageManager().upsert(activeQuest));
         this.plugin.getStorageManager().upsert(userQuest.getActiveQuests());
     }
 
     @Override
-    public Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer, boolean isStatic) {
+    public Set<ActiveQuest> handleQuests(UUID playerUUID, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer, boolean isStatic) {
 
         Set<ActiveQuest> activeQuests = new HashSet<>();
         // Retrieve the user's quest data or create a new ZUserQuest if not found
-        var userQuest = getUserQuest(uuid);
-
-        Consumer<ActiveQuest> after = activeQuest -> {
-
-            QuestCompleteEvent completeEvent = new QuestCompleteEvent(uuid, activeQuest);
-            if (callQuestEvent(uuid, completeEvent)) return;
-
-            userQuest.removeActiveQuest(activeQuest);
-            this.completeQuest(activeQuest);
-
-            if (consumer != null) {
-                consumer.accept(activeQuest);
-            }
-        };
-
-        var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
+        var userQuest = getUserQuest(playerUUID);
 
         // Stream through the active quests of the user
-        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
+        ListIterator<ActiveQuest> iterator = userQuest.getActiveQuests().listIterator();
+        while (iterator.hasNext()) {
+            ActiveQuest activeQuest = iterator.next();
             if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
 
                 // Check if player can complete the quest
-                if (!activeQuest.canComplete(uuid, fakeInventory)) continue;
+                if (!activeQuest.canComplete()) continue;
 
-                QuestProgressEvent progressEvent = new QuestProgressEvent(uuid, activeQuest, amount);
-                if (callQuestEvent(uuid, progressEvent)) continue;
+                QuestProgressEvent progressEvent = new QuestProgressEvent(playerUUID, activeQuest, amount);
+                if (callQuestEvent(playerUUID, progressEvent)) continue;
 
                 amount = progressEvent.getAmount();
 
-                if (isStatic) {
-                    if (activeQuest.incrementStatic(amount)) {
-                        after.accept(activeQuest);
+                boolean completed = isStatic ? activeQuest.incrementStatic(amount) : activeQuest.increment(amount);
+                if (completed) {
+                    QuestCompleteEvent completeEvent = new QuestCompleteEvent(playerUUID, activeQuest);
+                    if (callQuestEvent(playerUUID, completeEvent)) {
+                        continue;
                     }
-                } else {
-                    if (activeQuest.increment(amount)) {
-                        after.accept(activeQuest);
+
+                    iterator.remove();
+                    this.completeQuest(activeQuest);
+
+                    if (consumer != null) {
+                        consumer.accept(activeQuest);
                     }
                 }
                 activeQuests.add(activeQuest);
@@ -378,7 +386,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
 
         if (!activeQuests.isEmpty()) {
-            callQuestEvent(uuid, new QuestPostProgressEvent(uuid, activeQuests));
+            callQuestEvent(playerUUID, new QuestPostProgressEvent(playerUUID, activeQuests));
         }
 
         return activeQuests;
@@ -386,23 +394,23 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer) {
-        return this.handleQuests(uuid, type, amount, object, consumer, false);
+    public Set<ActiveQuest> handleQuests(UUID playerUUID, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer) {
+        return this.handleQuests(playerUUID, type, amount, object, consumer, false);
     }
 
     @Override
-    public Set<ActiveQuest> handleQuests(UUID uuid, QuestType type, int amount, Object object) {
-        return this.handleQuests(uuid, type, amount, object, null);
+    public Set<ActiveQuest> handleQuests(UUID playerUUID, QuestType type, int amount, Object object) {
+        return this.handleQuests(playerUUID, type, amount, object, null);
     }
 
     @Override
-    public Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object) {
-        return this.handleStaticQuests(uuid, type, amount, object, null);
+    public Set<ActiveQuest> handleStaticQuests(UUID playerUUID, QuestType type, int amount, Object object) {
+        return this.handleStaticQuests(playerUUID, type, amount, object, null);
     }
 
     @Override
-    public Set<ActiveQuest> handleStaticQuests(UUID uuid, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer) {
-        return this.handleQuests(uuid, type, amount, object, consumer, true);
+    public Set<ActiveQuest> handleStaticQuests(UUID playerUUID, QuestType type, int amount, Object object, Consumer<ActiveQuest> consumer) {
+        return this.handleQuests(playerUUID, type, amount, object, consumer, true);
     }
 
     @Override
@@ -413,9 +421,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(player.getUniqueId());
-        var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
 
-        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
+        ListIterator<ActiveQuest> iterator = userQuest.getActiveQuests().listIterator();
+        while (iterator.hasNext()) {
+            ActiveQuest activeQuest = iterator.next();
             if (activeQuest.getQuest().getType() == QuestType.INVENTORY_CONTENT && !activeQuest.isComplete() && activeQuest.isQuestAction(inventoryContent)) {
 
                 var optional = activeQuest.getQuest().getActions().stream().filter(e -> e instanceof InventoryContentAction).map(e -> (InventoryContentAction) e).findFirst();
@@ -426,7 +435,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 if (amount == 0) continue;
 
                 // Check if player can complete the quest
-                if (!activeQuest.canComplete(player.getUniqueId(), fakeInventory)) continue;
+                if (!activeQuest.canComplete()) continue;
 
                 QuestProgressEvent progressEvent = new QuestProgressEvent(player.getUniqueId(), activeQuest, amount);
                 if (callQuestEvent(player.getUniqueId(), progressEvent)) continue;
@@ -437,9 +446,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                 if (activeQuest.increment(amount)) { // Increment the progress of the quest
 
                     QuestCompleteEvent completeEvent = new QuestCompleteEvent(player.getUniqueId(), activeQuest);
-                    if (callQuestEvent(player.getUniqueId(), completeEvent)) continue;
+                    if (callQuestEvent(player.getUniqueId(), completeEvent)) {
+                        continue;
+                    }
 
-                    userQuest.removeActiveQuest(activeQuest);
+                    iterator.remove();
                     this.completeQuest(activeQuest);
                     amount = (int) (activeQuest.getQuest().getGoal() - before);
                 }
@@ -466,9 +477,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public Optional<ActiveQuest> addQuestToPlayer(UUID uuid, Quest quest, boolean store) {
+    public Optional<ActiveQuest> addQuestToPlayer(UUID playerUUID, Quest quest, boolean store) {
 
-        var userQuest = getUserQuest(uuid);
+        var userQuest = getUserQuest(playerUUID);
 
         boolean isFavorite = quest.isFavorite();
         if (!isFavorite) {
@@ -480,20 +491,20 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         }
 
         // Create a new active quest for the player
-        ActiveQuest activeQuest = new ZActiveQuest(this.plugin, uuid, quest, new Date(), 0, isFavorite, this.plugin.getPlayTimeHelper().getPlayTime(uuid));
+        ActiveQuest activeQuest = new ZActiveQuest(this.plugin, playerUUID, quest, new Date(), 0, isFavorite, this.plugin.getPlayTimeHelper().getPlayTime(playerUUID));
 
         // Check if the user already completes the quest
         if (userQuest.getCompletedQuests().stream().anyMatch(completedQuest -> completedQuest.quest().equals(quest))) {
             return Optional.empty(); // Exit if the quest is already completed
         }
 
-        QuestStartEvent event = new QuestStartEvent(uuid, activeQuest);
-        if (callQuestEvent(uuid, event)) return Optional.empty();
+        QuestStartEvent event = new QuestStartEvent(playerUUID, activeQuest);
+        if (callQuestEvent(playerUUID, event)) return Optional.empty();
 
         // Add the active quest to the user's active quests
         userQuest.getActiveQuests().add(event.getActiveQuest());
 
-        var offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+        var offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
         if (offlinePlayer.isOnline()) {
             var player = offlinePlayer.getPlayer();
             if (player != null) {
@@ -520,23 +531,26 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     }
 
     @Override
-    public List<ActiveQuest> getQuestsFromPlayer(UUID uuid) {
-        return getUserQuest(uuid).getActiveQuests();
+    public List<ActiveQuest> getQuestsFromPlayer(UUID playerUUID) {
+        return getUserQuest(playerUUID).getActiveQuests();
     }
 
     @Override
     public Optional<Quest> getQuest(String name) {
-        return this.quests.stream().filter(quest -> quest.getName().equalsIgnoreCase(name)).findFirst();
+        if (name == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(this.questCache.get(name.toLowerCase(Locale.ROOT)));
     }
 
     @Override
     public void completeQuest(ActiveQuest activeQuest) {
 
-        var userQuest = getUserQuest(activeQuest.getUniqueId());
+        var userQuest = getUserQuest(activeQuest.getPlayerUUID());
 
         CompletedQuest completedQuest = activeQuest.complete();
         userQuest.getCompletedQuests().add(completedQuest);
-        this.plugin.getStorageManager().insert(activeQuest.getUniqueId(), completedQuest);
+        this.plugin.getStorageManager().insert(activeQuest.getPlayerUUID(), completedQuest);
         this.plugin.getStorageManager().delete(activeQuest);
 
         this.handleCustomReward(userQuest, activeQuest);
@@ -754,9 +768,9 @@ public class ZQuestManager extends ZUtils implements QuestManager {
      */
     private void handleCustomReward(UserQuest userQuest, ActiveQuest activeQuest) {
 
-        Player player = Bukkit.getPlayer(activeQuest.getUniqueId());
+        Player player = Bukkit.getPlayer(activeQuest.getPlayerUUID());
         if (player == null) {
-            this.plugin.getLogger().severe("[CUSTOM REWARD] Player not found: " + activeQuest.getUniqueId() + ", unable to handle custom reward for quest " + activeQuest.getQuest().getName());
+            this.plugin.getLogger().severe("[CUSTOM REWARD] Player not found: " + activeQuest.getPlayerUUID() + ", unable to handle custom reward for quest " + activeQuest.getQuest().getName());
             return;
         }
 

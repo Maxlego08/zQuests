@@ -1,6 +1,6 @@
 package fr.maxlego08.quests;
 
-import fr.maxlego08.menu.api.engine.InventoryEngine;
+import fr.maxlego08.menu.api.requirement.Permissible;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.quests.api.ActiveQuest;
 import fr.maxlego08.quests.api.CompletedQuest;
@@ -9,21 +9,22 @@ import fr.maxlego08.quests.api.QuestType;
 import org.bukkit.Bukkit;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class ZActiveQuest implements ActiveQuest {
 
     private final QuestsPlugin plugin;
-    private final UUID uniqueId;
+    private final UUID playerUUID;
     private final Quest quest;
     private final Date createdAt;
     private final long startPlayTime;
     private long amount;
     private boolean isFavorite;
 
-    public ZActiveQuest(QuestsPlugin plugin, UUID uniqueId, Quest quest, Date createdAt, long amount, boolean isFavorite, long startPlayTime) {
+    public ZActiveQuest(QuestsPlugin plugin, UUID playerUUID, Quest quest, Date createdAt, long amount, boolean isFavorite, long startPlayTime) {
         this.plugin = plugin;
-        this.uniqueId = uniqueId;
+        this.playerUUID = playerUUID;
         this.quest = quest;
         this.createdAt = createdAt;
         this.amount = amount;
@@ -32,8 +33,8 @@ public class ZActiveQuest implements ActiveQuest {
     }
 
     @Override
-    public UUID getUniqueId() {
-        return this.uniqueId;
+    public UUID getPlayerUUID() {
+        return this.playerUUID;
     }
 
     @Override
@@ -68,11 +69,12 @@ public class ZActiveQuest implements ActiveQuest {
 
     @Override
     public boolean owningBy(UUID uniqueId) {
-        return this.uniqueId.equals(uniqueId);
+        return this.playerUUID.equals(uniqueId);
     }
 
     private boolean postCheck() {
-        if (this.isComplete()) {
+
+        if (this.isComplete() || this.canForceCompleteConditions()) {
             this.quest.onComplete(this);
             return true;
         }
@@ -98,7 +100,7 @@ public class ZActiveQuest implements ActiveQuest {
 
     @Override
     public CompletedQuest complete() {
-        return new CompletedQuest(this.quest, new Date(), this.createdAt, this.isFavorite, this.startPlayTime, this.plugin.getPlayTimeHelper().getPlayTime(this.uniqueId));
+        return new CompletedQuest(this.quest, new Date(), this.createdAt, this.isFavorite, this.startPlayTime, this.plugin.getPlayTimeHelper().getPlayTime(this.playerUUID));
     }
 
     @Override
@@ -122,20 +124,32 @@ public class ZActiveQuest implements ActiveQuest {
     }
 
     @Override
-    public boolean canComplete(UUID uuid, InventoryEngine inventoryEngine) {
+    public boolean canComplete() {
+        return this.checkPermissible(this.quest.getActionPermissibles());
+    }
 
-        var permissibles = this.quest.getActionPermissibles();
+    @Override
+    public boolean canForceCompleteConditions() {
+
+        if (this.quest.getForceConditions().isEmpty()) return false;
+        
+        return this.checkPermissible(this.quest.getForceConditions());
+    }
+
+    private boolean checkPermissible(List<Permissible> permissibles) {
         if (permissibles.isEmpty()) return true;
 
-        var player = Bukkit.getPlayer(uuid);
+        var player = Bukkit.getPlayer(this.playerUUID);
         if (player == null) return false;
+
+        var fakeInventory = this.plugin.getInventoryManager().getFakeInventory();
 
         var placeholders = new Placeholders();
         placeholders.register("player", player.getName());
         return permissibles.stream().allMatch(permissible -> {
-            var result = permissible.isValid() && permissible.hasPermission(player, null, inventoryEngine, placeholders);
+            var result = permissible.isValid() && permissible.hasPermission(player, null, fakeInventory, placeholders);
             var actions = result ? permissible.getSuccessActions() : permissible.getDenyActions();
-            actions.forEach(action -> action.preExecute(player, null, inventoryEngine, placeholders));
+            actions.forEach(action -> action.preExecute(player, null, fakeInventory, placeholders));
             return result;
         });
     }
