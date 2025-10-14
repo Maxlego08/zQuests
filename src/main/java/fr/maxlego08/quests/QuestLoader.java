@@ -134,7 +134,7 @@ public class QuestLoader extends ZUtils {
             List<HologramConfiguration> hologramConfiguration = loadHologram(accessor, name, file);
             WayPointConfiguration waypointConfiguration = loadWaypoint(accessor, name, file);
             List<Permissible> requirements = loadRequirements(accessor, name, file, "action-requirements");
-            List<Permissible> forceConditions = loadRequirements(accessor, name, file, "action-requirements");
+            List<Permissible> forceConditions = loadRequirements(accessor, name, file, "force-conditions");
 
             return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, //
                     thumbnail, goal, autoAccept, rewards, permissibleRewards, startActions, questActions, //
