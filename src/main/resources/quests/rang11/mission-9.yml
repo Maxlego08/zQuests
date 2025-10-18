@@ -1,0 +1,106 @@
+quests:
+  - type: BLOCK_BREAK
+    actions:
+      - material: END_STONE
+    name: "rang11_mission9_end_stone_break"
+    display-name: "Rang 11 - Mission 9"
+    description: "#edacfcCasser #ff94d75000 #edacfcblocs de pierre de l'End"
+    placeholder-description: "#edacfcCasser #ff94d7%quest-remaining% #edacfcblocs de pierre de l'End"
+    thumbnail: END_STONE
+    goal: 5000
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcTu as extrait la pierre de l'End avec succès !"
+
+  - type: CRAFT
+    actions:
+      - material: END_STONE_BRICKS
+    name: "rang11_mission9_end_stone_bricks_craft"
+    display-name: "Rang 11 - Mission 9"
+    description: "#edacfcCrafter #ff94d75000 #edacfcblocs de pierre taillée de l'End"
+    placeholder-description: "#edacfcCrafter #ff94d7%quest-remaining% #edacfcblocs de pierre taillée de l'End"
+    thumbnail: END_STONE_BRICKS
+    goal: 5000
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcLa pierre taillée de l'End remplit tes coffres !"
+
+  - type: CRAFT
+    actions:
+      - material: END_STONE_BRICK_STAIRS
+    name: "rang11_mission9_end_stone_brick_stairs_craft"
+    display-name: "Rang 11 - Mission 9"
+    description: "#edacfcCrafter #ff94d72500 #edacfcescaliers en pierre taillée de l'End"
+    placeholder-description: "#edacfcCrafter #ff94d7%quest-remaining% #edacfcescaliers en pierre taillée de l'End"
+    thumbnail: END_STONE_BRICK_STAIRS
+    goal: 2500
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcCes escaliers guideront tes conquêtes endériennes."
+
+  - type: CRAFT
+    actions:
+      - material: END_STONE_BRICK_SLAB
+    name: "rang11_mission9_end_stone_brick_slab_craft"
+    display-name: "Rang 11 - Mission 9"
+    description: "#edacfcCrafter #ff94d72500 #edacfcdalles de pierre taillée de l'End"
+    placeholder-description: "#edacfcCrafter #ff94d7%quest-remaining% #edacfcdalles de pierre taillée de l'End"
+    thumbnail: END_STONE_BRICK_SLAB
+    goal: 2500
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcLes dalles de l'End sont prêtes pour tes constructions."
+
+  - type: CRAFT
+    actions:
+      - material: END_STONE_BRICK_WALL
+    name: "rang11_mission9_end_stone_brick_wall_craft"
+    display-name: "Rang 11 - Mission 9"
+    description: "#edacfcCrafter #ff94d72500 #edacfcmurets en pierre taillée de l'End"
+    placeholder-description: "#edacfcCrafter #ff94d7%quest-remaining% #edacfcmurets en pierre taillée de l'End"
+    thumbnail: END_STONE_BRICK_WALL
+    goal: 2500
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcDes remparts d'Ender se dressent grâce à toi !"
+
+  - type: ENTITY_KILL
+    actions:
+      - entity: SHULKER
+    name: "rang11_mission9_shulker_kill"
+    display-name: "Rang 11 - Mission 9"
+    description: "#edacfcTuer #ff94d7200 #edacfcShulkers"
+    placeholder-description: "#edacfcTuer #ff94d7%quest-remaining% #edacfcShulkers"
+    thumbnail: SHULKER_SHELL
+    goal: 200
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcLes Shulkers ne sont plus une menace !"
+
+  - type: CRAFT
+    actions:
+      - material: SHULKER_BOX
+    name: "rang11_mission9_shulker_box_craft"
+    display-name: "Rang 11 - Mission 9"
+    description: "#edacfcCrafter #ff94d764 #edacfcboîtes de Shulker"
+    placeholder-description: "#edacfcCrafter #ff94d7%quest-remaining% #edacfcboîtes de Shulker"
+    thumbnail: SHULKER_BOX
+    goal: 64
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcTon inventaire est prêt pour l'expédition dans l'End."
+

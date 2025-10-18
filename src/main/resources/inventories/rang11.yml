@@ -1,0 +1,90 @@
+name: "#edacfcMissions #ff94d7Rang XI"
+size: 54
+items:
+
+  back:
+    type: INVENTORY
+    inventory: quests
+    slot: 49
+    item:
+      material: ARROW
+      name: "&fRetour"
+
+  history:
+    type: INVENTORY
+    inventory: quests-history
+    slot: 50
+    item:
+      material: CLOCK
+      name: "&fHistorique"
+
+  mission-9:
+    pattern:
+      fileName: quest-display
+      pluginName: zQuests
+      slot: 21
+      number: 9
+      quests:
+        - "rang11_mission9_end_stone_break"
+        - "rang11_mission9_end_stone_bricks_craft"
+        - "rang11_mission9_end_stone_brick_stairs_craft"
+        - "rang11_mission9_end_stone_brick_slab_craft"
+        - "rang11_mission9_end_stone_brick_wall_craft"
+        - "rang11_mission9_shulker_kill"
+        - "rang11_mission9_shulker_box_craft"
+      objectives:
+        - " %zquests_description_rang11_mission9_end_stone_break% %zquests_favorite_icon_rang11_mission9_end_stone_break%"
+        - "%zquests_lore_line_rang11_mission9_end_stone_break%"
+        - " %zquests_description_rang11_mission9_end_stone_bricks_craft% %zquests_favorite_icon_rang11_mission9_end_stone_bricks_craft%"
+        - "%zquests_lore_line_rang11_mission9_end_stone_bricks_craft%"
+        - " %zquests_description_rang11_mission9_end_stone_brick_stairs_craft% %zquests_favorite_icon_rang11_mission9_end_stone_brick_stairs_craft%"
+        - "%zquests_lore_line_rang11_mission9_end_stone_brick_stairs_craft%"
+        - " %zquests_description_rang11_mission9_end_stone_brick_slab_craft% %zquests_favorite_icon_rang11_mission9_end_stone_brick_slab_craft%"
+        - "%zquests_lore_line_rang11_mission9_end_stone_brick_slab_craft%"
+        - " %zquests_description_rang11_mission9_end_stone_brick_wall_craft% %zquests_favorite_icon_rang11_mission9_end_stone_brick_wall_craft%"
+        - "%zquests_lore_line_rang11_mission9_end_stone_brick_wall_craft%"
+        - " %zquests_description_rang11_mission9_shulker_kill% %zquests_favorite_icon_rang11_mission9_shulker_kill%"
+        - "%zquests_lore_line_rang11_mission9_shulker_kill%"
+        - " %zquests_description_rang11_mission9_shulker_box_craft% %zquests_favorite_icon_rang11_mission9_shulker_box_craft%"
+        - "%zquests_lore_line_rang11_mission9_shulker_box_craft%"
+      rewards:
+        - " &8• &fRécompenses de mission"
+
+  mission-10:
+    pattern:
+      fileName: quest-display
+      pluginName: zQuests
+      slot: 23
+      number: 10
+      quests:
+        - "rang11_mission10_netherite_block_deliver"
+        - "rang11_mission10_diamond_block_deliver"
+        - "rang11_mission10_emerald_block_deliver"
+        - "rang11_mission10_iron_block_deliver"
+        - "rang11_mission10_coal_block_deliver"
+        - "rang11_mission10_lapis_block_deliver"
+        - "rang11_mission10_redstone_block_deliver"
+        - "rang11_mission10_copper_block_deliver"
+        - "rang11_mission10_wither_skull_deliver"
+      objectives:
+        - " %zquests_description_rang11_mission10_netherite_block_deliver% %zquests_favorite_icon_rang11_mission10_netherite_block_deliver%"
+        - "%zquests_lore_line_rang11_mission10_netherite_block_deliver%"
+        - " %zquests_description_rang11_mission10_diamond_block_deliver% %zquests_favorite_icon_rang11_mission10_diamond_block_deliver%"
+        - "%zquests_lore_line_rang11_mission10_diamond_block_deliver%"
+        - " %zquests_description_rang11_mission10_emerald_block_deliver% %zquests_favorite_icon_rang11_mission10_emerald_block_deliver%"
+        - "%zquests_lore_line_rang11_mission10_emerald_block_deliver%"
+        - " %zquests_description_rang11_mission10_iron_block_deliver% %zquests_favorite_icon_rang11_mission10_iron_block_deliver%"
+        - "%zquests_lore_line_rang11_mission10_iron_block_deliver%"
+        - " %zquests_description_rang11_mission10_coal_block_deliver% %zquests_favorite_icon_rang11_mission10_coal_block_deliver%"
+        - "%zquests_lore_line_rang11_mission10_coal_block_deliver%"
+        - " %zquests_description_rang11_mission10_lapis_block_deliver% %zquests_favorite_icon_rang11_mission10_lapis_block_deliver%"
+        - "%zquests_lore_line_rang11_mission10_lapis_block_deliver%"
+        - " %zquests_description_rang11_mission10_redstone_block_deliver% %zquests_favorite_icon_rang11_mission10_redstone_block_deliver%"
+        - "%zquests_lore_line_rang11_mission10_redstone_block_deliver%"
+        - " %zquests_description_rang11_mission10_copper_block_deliver% %zquests_favorite_icon_rang11_mission10_copper_block_deliver%"
+        - "%zquests_lore_line_rang11_mission10_copper_block_deliver%"
+        - " %zquests_description_rang11_mission10_wither_skull_deliver% %zquests_favorite_icon_rang11_mission10_wither_skull_deliver%"
+        - "%zquests_lore_line_rang11_mission10_wither_skull_deliver%"
+      rewards:
+        - " &8• &fRécompenses de mission"
+
