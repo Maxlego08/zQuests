@@ -1,0 +1,145 @@
+quests:
+  - type: INVENTORY_CONTENT
+    actions:
+      - material: NETHERITE_BLOCK
+        citizen-name: intendant
+    name: "rang11_mission10_netherite_block_deliver"
+    display-name: "Rang 11 - Mission 10"
+    description: "#edacfcApporter #ff94d72 #edacfcblocs de netherite à l'Intendant"
+    placeholder-description: "#edacfcApporter #ff94d7%quest-remaining% #edacfcblocs de netherite à l'Intendant"
+    thumbnail: NETHERITE_BLOCK
+    goal: 2
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcL'Intendant reçoit la netherite avec gratitude."
+
+  - type: INVENTORY_CONTENT
+    actions:
+      - material: DIAMOND_BLOCK
+        citizen-name: intendant
+    name: "rang11_mission10_diamond_block_deliver"
+    display-name: "Rang 11 - Mission 10"
+    description: "#edacfcApporter #ff94d716 #edacfcblocs de diamant à l'Intendant"
+    placeholder-description: "#edacfcApporter #ff94d7%quest-remaining% #edacfcblocs de diamant à l'Intendant"
+    thumbnail: DIAMOND_BLOCK
+    goal: 16
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcLes réserves de diamants sont impeccables !"
+
+  - type: INVENTORY_CONTENT
+    actions:
+      - material: EMERALD_BLOCK
+        citizen-name: intendant
+    name: "rang11_mission10_emerald_block_deliver"
+    display-name: "Rang 11 - Mission 10"
+    description: "#edacfcApporter #ff94d732 #edacfcblocs d'émeraude à l'Intendant"
+    placeholder-description: "#edacfcApporter #ff94d7%quest-remaining% #edacfcblocs d'émeraude à l'Intendant"
+    thumbnail: EMERALD_BLOCK
+    goal: 32
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcLes coffres d'émeraudes sont bien remplis."
+
+  - type: INVENTORY_CONTENT
+    actions:
+      - material: IRON_BLOCK
+        citizen-name: intendant
+    name: "rang11_mission10_iron_block_deliver"
+    display-name: "Rang 11 - Mission 10"
+    description: "#edacfcApporter #ff94d764 #edacfcblocs de fer à l'Intendant"
+    placeholder-description: "#edacfcApporter #ff94d7%quest-remaining% #edacfcblocs de fer à l'Intendant"
+    thumbnail: IRON_BLOCK
+    goal: 64
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcUn stock de fer impressionnant est livré."
+
+  - type: INVENTORY_CONTENT
+    actions:
+      - material: COAL_BLOCK
+        citizen-name: intendant
+    name: "rang11_mission10_coal_block_deliver"
+    display-name: "Rang 11 - Mission 10"
+    description: "#edacfcApporter #ff94d7128 #edacfcblocs de charbon à l'Intendant"
+    placeholder-description: "#edacfcApporter #ff94d7%quest-remaining% #edacfcblocs de charbon à l'Intendant"
+    thumbnail: COAL_BLOCK
+    goal: 128
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcLe charbon afflue dans les entrepôts du royaume."
+
+  - type: INVENTORY_CONTENT
+    actions:
+      - material: LAPIS_BLOCK
+        citizen-name: intendant
+    name: "rang11_mission10_lapis_block_deliver"
+    display-name: "Rang 11 - Mission 10"
+    description: "#edacfcApporter #ff94d7128 #edacfcblocs de lapis à l'Intendant"
+    placeholder-description: "#edacfcApporter #ff94d7%quest-remaining% #edacfcblocs de lapis à l'Intendant"
+    thumbnail: LAPIS_BLOCK
+    goal: 128
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcLes enchanteurs remercient ta livraison de lapis."
+
+  - type: INVENTORY_CONTENT
+    actions:
+      - material: REDSTONE_BLOCK
+        citizen-name: intendant
+    name: "rang11_mission10_redstone_block_deliver"
+    display-name: "Rang 11 - Mission 10"
+    description: "#edacfcApporter #ff94d7128 #edacfcblocs de redstone à l'Intendant"
+    placeholder-description: "#edacfcApporter #ff94d7%quest-remaining% #edacfcblocs de redstone à l'Intendant"
+    thumbnail: REDSTONE_BLOCK
+    goal: 128
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcLa redstone se met à circuler dans toutes les machines."
+
+  - type: INVENTORY_CONTENT
+    actions:
+      - material: COPPER_BLOCK
+        citizen-name: intendant
+    name: "rang11_mission10_copper_block_deliver"
+    display-name: "Rang 11 - Mission 10"
+    description: "#edacfcApporter #ff94d7128 #edacfcblocs de cuivre à l'Intendant"
+    placeholder-description: "#edacfcApporter #ff94d7%quest-remaining% #edacfcblocs de cuivre à l'Intendant"
+    thumbnail: COPPER_BLOCK
+    goal: 128
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcLe cuivre frais est prêt pour les artisans du royaume."
+
+  - type: INVENTORY_CONTENT
+    actions:
+      - material: WITHER_SKELETON_SKULL
+        citizen-name: intendant
+    name: "rang11_mission10_wither_skull_deliver"
+    display-name: "Rang 11 - Mission 10"
+    description: "#edacfcApporter #ff94d764 #edacfctêtes de wither à l'Intendant"
+    placeholder-description: "#edacfcApporter #ff94d7%quest-remaining% #edacfctêtes de wither à l'Intendant"
+    thumbnail: WITHER_SKELETON_SKULL
+    goal: 64
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "#edacfcL'Intendant garde précieusement ces têtes de wither."
+
