@@ -489,6 +489,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
         var userQuest = getUserQuest(playerUUID);
 
+        Optional<ActiveQuest> optionalActiveQuest = userQuest.findActive(quest);
+        if (optionalActiveQuest.isPresent()) {
+            return Optional.empty();
+        }
+
         boolean isFavorite = quest.isFavorite();
         if (!isFavorite) {
             var optional = getGroup(quest);
