@@ -63,7 +63,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -287,15 +286,18 @@ public class ZQuestManager extends ZUtils implements QuestManager {
 
             this.plugin.getScheduler().runNextTick(w -> {
 
-                var iterator = userQuest.getActiveQuests().listIterator();
+                var toRemove = new ArrayList<ActiveQuest>();
 
-                while (iterator.hasNext()) {
-                    ActiveQuest activeQuest = iterator.next();
+                for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
                     if (activeQuest.isComplete()) {
-                        iterator.remove();
+                        toRemove.add(activeQuest);
                         activeQuest.getQuest().onComplete(activeQuest);
                         this.completeQuest(activeQuest);
                     }
+                }
+
+                if (!toRemove.isEmpty()) {
+                    userQuest.getActiveQuests().removeAll(toRemove);
                 }
 
                 handleDefaultQuest(player.getUniqueId());
@@ -345,9 +347,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         var userQuest = getUserQuest(playerUUID);
 
         // Stream through the active quests of the user
-        ListIterator<ActiveQuest> iterator = userQuest.getActiveQuests().listIterator();
-        while (iterator.hasNext()) {
-            ActiveQuest activeQuest = iterator.next();
+        List<ActiveQuest> toRemove = new ArrayList<>();
+        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
             if (activeQuest.getQuest().getType() == type && !activeQuest.isComplete() && activeQuest.isQuestAction(object)) {
 
                 // Check if player can complete the quest
@@ -365,7 +366,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                         continue;
                     }
 
-                    iterator.remove();
+                    toRemove.add(activeQuest);
                     this.completeQuest(activeQuest);
 
                     if (consumer != null) {
@@ -383,6 +384,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                     break;
                 }
             }
+        }
+
+        if (!toRemove.isEmpty()) {
+            userQuest.getActiveQuests().removeAll(toRemove);
         }
 
         if (!activeQuests.isEmpty()) {
@@ -422,9 +427,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         // Retrieve the user's quest data or create a new ZUserQuest if not found
         var userQuest = getUserQuest(player.getUniqueId());
 
-        ListIterator<ActiveQuest> iterator = userQuest.getActiveQuests().listIterator();
-        while (iterator.hasNext()) {
-            ActiveQuest activeQuest = iterator.next();
+        List<ActiveQuest> toRemove = new ArrayList<>();
+        for (ActiveQuest activeQuest : new ArrayList<>(userQuest.getActiveQuests())) {
             if (activeQuest.getQuest().getType() == QuestType.INVENTORY_CONTENT && !activeQuest.isComplete() && activeQuest.isQuestAction(inventoryContent)) {
 
                 var optional = activeQuest.getQuest().getActions().stream().filter(e -> e instanceof InventoryContentAction).map(e -> (InventoryContentAction) e).findFirst();
@@ -450,7 +454,7 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                         continue;
                     }
 
-                    iterator.remove();
+                    toRemove.add(activeQuest);
                     this.completeQuest(activeQuest);
                     amount = (int) (activeQuest.getQuest().getGoal() - before);
                 }
@@ -469,6 +473,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             }
         }
 
+        if (!toRemove.isEmpty()) {
+            userQuest.getActiveQuests().removeAll(toRemove);
+        }
+
         if (!activeQuests.isEmpty()) {
             callQuestEvent(player.getUniqueId(), new QuestPostProgressEvent(player.getUniqueId(), activeQuests));
         }
@@ -480,6 +488,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     public Optional<ActiveQuest> addQuestToPlayer(UUID playerUUID, Quest quest, boolean store) {
 
         var userQuest = getUserQuest(playerUUID);
+
+        Optional<ActiveQuest> optionalActiveQuest = userQuest.findActive(quest);
+        if (optionalActiveQuest.isPresent()) {
+            return Optional.empty();
+        }
 
         boolean isFavorite = quest.isFavorite();
         if (!isFavorite) {
