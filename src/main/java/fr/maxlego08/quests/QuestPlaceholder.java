@@ -52,7 +52,9 @@ public class QuestPlaceholder extends ZUtils {
 
         placeholder.register("objective_", (player, questId) -> String.valueOf(getQuestObjective(player, questId)));
         placeholder.register("is_completed_", (player, questId) -> String.valueOf(getQuestIsCompleted(player, questId)));
+        placeholder.register("complete_", (player, questId) -> getQuestIsCompleted(player, questId) ? Config.placeholderQuestCompleteOK : Config.placeholderQuestCompleteKO);
         placeholder.register("is_active_", (player, questId) -> String.valueOf(getQuestIsActive(player, questId)));
+        placeholder.register("active_", (player, questId) -> getQuestIsActive(player, questId) ? Config.placeholderQuestActiveOK : Config.placeholderQuestActiveKO);
         placeholder.register("progress_bar_", this::getProgressBar);
         placeholder.register("percent_", this::getPercent);
         placeholder.register("progress_", (player, questId) -> String.valueOf(getProgress(player, questId)));
@@ -151,7 +153,7 @@ public class QuestPlaceholder extends ZUtils {
 
     public String getQuestName(Player player, String questId) {
         Optional<Quest> optional = questManager.getQuest(questId);
-        return optional.map(Quest::getName).orElse("Unknown");
+        return optional.map(Quest::getDisplayName).orElse("Unknown");
     }
 
     public String getQuestDescription(Player player, String questId) {

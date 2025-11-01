@@ -23,6 +23,10 @@ public class Config {
     public static ProgressBarConfig progressBar;
     public static String loreLinePlaceholderActive;
     public static String loreLinePlaceholderComplete;
+    public static String placeholderQuestCompleteOK;
+    public static String placeholderQuestCompleteKO;
+    public static String placeholderQuestActiveOK;
+    public static String placeholderQuestActiveKO;
     public static String mainCommandInventoryName;
     public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
     public static SimpleDateFormat simpleDateFormat;
@@ -75,6 +79,12 @@ public class Config {
 
         loreLinePlaceholderActive = configuration.getString("lore-line-placeholder.active", "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘");
         loreLinePlaceholderComplete = configuration.getString("lore-line-placeholder.complete", "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔");
+
+        placeholderQuestCompleteKO = configuration.getString("complete-placeholder.active", "&c✘");
+        placeholderQuestCompleteOK = configuration.getString("complete-placeholder.complete", "&a✔");
+
+        placeholderQuestActiveKO = configuration.getString("active-placeholder.active", "&c✘");
+        placeholderQuestActiveOK = configuration.getString("active-placeholder.complete", "&a✔");
 
         this.loadFavorites(configuration.getMapList("placeholder-favorites"));
 
