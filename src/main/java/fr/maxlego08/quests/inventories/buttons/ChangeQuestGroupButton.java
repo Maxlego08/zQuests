@@ -9,6 +9,7 @@ import fr.maxlego08.quests.save.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -31,9 +32,7 @@ public class ChangeQuestGroupButton extends Button {
     }
 
     @Override
-    public ItemStack getCustomItemStack(Player player) {
-
-        Placeholders placeholders = new Placeholders();
+    public ItemStack getCustomItemStack(Player player, @NonNull Placeholders placeholders) {
 
         UserQuest userQuest = this.plugin.getQuestManager().getUserQuest(player.getUniqueId());
         String currentGroup = userQuest.getCurrentGroup();
