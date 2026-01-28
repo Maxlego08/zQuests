@@ -122,6 +122,14 @@ lore-line-placeholder:
   active: "%progress-bar% &8- &6%progress%&8/&f%goal% &c✘"
   complete: "%progress-bar% &8- &6%progress%&8/&f%goal% &a✔"
 
+complete-placeholder:
+  active: "&c✘"
+  complete: "&a✔"
+
+active-placeholder:
+  active: "&c✘"
+  complete: "&a✔"
+
 # Custom rewards:
 # Allows configuration of specific rewards when certain quests are completed.
 # quests: A list of quests that need to be completed to trigger the reward.

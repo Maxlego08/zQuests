@@ -1,3 +1,8 @@
+# 1.0.0.3
+
+- Update to last zMenu and Sarah version
+- Create placeholders ``%zquests_complete_<quest_id>%`` and ``%zquests_active_<quest_id>%``
+
 # 1.0.0.2
 
 - Fixed ``force-conditions`` behavior
