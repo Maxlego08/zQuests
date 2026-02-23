@@ -9,6 +9,7 @@ import fr.maxlego08.quests.api.event.events.QuestFavoriteChangeEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class QuestFavoriteButton extends Button {
     }
 
     @Override
-    public ItemStack getCustomItemStack(@NonNull Player player, Placeholders placeholders) {
+    public ItemStack getCustomItemStack(@NotNull Player player, boolean useCache, @NotNull Placeholders placeholders) {
 
         List<ActiveQuest> relevantQuests = getRelevantActiveQuests(player);
         boolean isFavorite = relevantQuests.stream().allMatch(ActiveQuest::isFavorite);
