@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "fr.maxlego08.quests"
-version = "1.0.0.3"
+version = "1.0.0.4"
 
 extra.set("targetFolder", file("target/"))
 extra.set("apiFolder", file("target-api/"))
@@ -58,7 +58,7 @@ allprojects {
 
         compileOnly(files("libs/zJobs-1.0.0.jar"))
         compileOnly(files("libs/zEssentials-1.0.2.6.jar"))
-        compileOnly("fr.maxlego08.menu:zmenu-api:1.1.0.8")
+        compileOnly("fr.maxlego08.menu:zmenu-api:1.1.1.0")
         compileOnly("fr.maxlego08.shop:zshop-api:3.3.0")
 
         implementation("com.tcoded:FoliaLib:0.5.1")

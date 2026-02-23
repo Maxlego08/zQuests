@@ -32,7 +32,7 @@ public class ChangeQuestGroupButton extends Button {
     }
 
     @Override
-    public ItemStack getCustomItemStack(Player player, @NonNull Placeholders placeholders) {
+    public ItemStack getCustomItemStack(Player player, boolean useCache, @NonNull Placeholders placeholders) {
 
         UserQuest userQuest = this.plugin.getQuestManager().getUserQuest(player.getUniqueId());
         String currentGroup = userQuest.getCurrentGroup();
