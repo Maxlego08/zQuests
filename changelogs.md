@@ -1,3 +1,7 @@
+# 1.0.0.4
+
+- Update to last zMenu version
+
 # 1.0.0.3
 
 - Update to last zMenu and Sarah version
