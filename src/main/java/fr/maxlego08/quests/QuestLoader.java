@@ -7,6 +7,7 @@ import fr.maxlego08.quests.actions.EntityDamageAction;
 import fr.maxlego08.quests.actions.ExperienceGainAction;
 import fr.maxlego08.quests.actions.HatchingAction;
 import fr.maxlego08.quests.actions.IslandAction;
+import fr.maxlego08.quests.actions.PlayerKillAction;
 import fr.maxlego08.quests.actions.ResurrectAction;
 import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestAction;
@@ -15,6 +16,7 @@ import fr.maxlego08.quests.api.QuestType;
 import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import fr.maxlego08.quests.api.waypoint.WayPointConfiguration;
+import fr.maxlego08.quests.loader.AdvancementQuestLoader;
 import fr.maxlego08.quests.loader.BrewQuestLoader;
 import fr.maxlego08.quests.loader.CommandQuestLoader;
 import fr.maxlego08.quests.loader.CuboidQuestLoader;
@@ -58,6 +60,7 @@ public class QuestLoader extends ZUtils {
         this.loaders.add(new InventoryOpenQuestLoader(plugin));
         this.loaders.add(new JobQuestLoader(plugin));
         this.loaders.add(new MaterialQuestLoader(plugin));
+        this.loaders.add(new AdvancementQuestLoader(plugin));
     }
 
     /**
@@ -316,6 +319,7 @@ public class QuestLoader extends ZUtils {
             case ENTITY_DAMAGE -> defaults.add(new EntityDamageAction());
             case EXPERIENCE_GAIN -> defaults.add(new ExperienceGainAction());
             case RESURRECT -> defaults.add(new ResurrectAction());
+            case PLAYER_KILL -> defaults.add(new PlayerKillAction());
             case ISLAND -> defaults.add(new IslandAction());
             default -> {
                 // no default for other types
