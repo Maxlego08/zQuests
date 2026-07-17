@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "fr.maxlego08.quests"
-version = "1.0.0.4"
+version = "1.0.0.5"
 
 extra.set("targetFolder", file("target/"))
 extra.set("apiFolder", file("target-api/"))
