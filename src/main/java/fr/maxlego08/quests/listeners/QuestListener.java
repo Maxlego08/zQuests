@@ -19,6 +19,7 @@ import org.bukkit.block.Furnace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.type.SeaPickle;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -29,9 +30,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -40,9 +43,12 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
@@ -50,6 +56,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -529,5 +536,50 @@ public class QuestListener extends ZUtils implements Listener {
         if (isNPC(player)) return;
 
         this.manager.handleQuests(player.getUniqueId(), QuestType.ITEM_CONSUME, 1, event.getItem());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBreed(EntityBreedEvent event) {
+        if (!(event.getBreeder() instanceof Player player)) return;
+        if (isNPC(player)) return;
+        this.manager.handleQuests(player.getUniqueId(), QuestType.BREED, 1, event.getEntity());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onMilk(PlayerInteractEntityEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) return;
+        Player player = event.getPlayer();
+        if (isNPC(player)) return;
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        if (itemInHand.getType() != Material.BUCKET) return;
+        Entity entity = event.getRightClicked();
+        EntityType type = entity.getType();
+        if (type != EntityType.COW && type != EntityType.GOAT && type != EntityType.MOOSHROOM) return;
+        this.manager.handleQuests(player.getUniqueId(), QuestType.MILK, 1, entity);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerKill(PlayerDeathEvent event) {
+        Player killed = event.getEntity();
+        Player killer = killed.getKiller();
+        if (killer == null) return;
+        if (isNPC(killer)) return;
+        this.manager.handleQuests(killer.getUniqueId(), QuestType.PLAYER_KILL, 1, 0);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBucketFill(PlayerBucketFillEvent event) {
+        Player player = event.getPlayer();
+        if (isNPC(player)) return;
+        Material bucket = event.getItemStack().getType();
+        this.manager.handleQuests(player.getUniqueId(), QuestType.BUCKET_FILL, 1, bucket);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onAdvancement(PlayerAdvancementDoneEvent event) {
+        Player player = event.getPlayer();
+        if (isNPC(player)) return;
+        String key = event.getAdvancement().getKey().toString();
+        this.manager.handleQuests(player.getUniqueId(), QuestType.ADVANCEMENT, 1, key);
     }
 }

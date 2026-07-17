@@ -1,3 +1,12 @@
+# 1.0.0.5
+
+- Added 5 new quest types: `BREED`, `MILK`, `PLAYER_KILL`, `BUCKET_FILL`, `ADVANCEMENT`
+- `BREED` - Track when players breed animals
+- `MILK` - Track when players milk cows, goats, or mooshrooms
+- `PLAYER_KILL` - Track when players kill other players
+- `BUCKET_FILL` - Track when players fill buckets (water, lava, etc.)
+- `ADVANCEMENT` - Track when players unlock Minecraft advancements
+
 # 1.0.0.4
 
 - Update to last zMenu version

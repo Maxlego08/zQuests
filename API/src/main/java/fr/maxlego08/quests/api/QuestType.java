@@ -1,6 +1,7 @@
 package fr.maxlego08.quests.api;
 
 import fr.maxlego08.quests.api.actions.ActionInfo;
+import fr.maxlego08.quests.api.actions.AdvancementAction;
 import fr.maxlego08.quests.api.actions.BrewAction;
 import fr.maxlego08.quests.api.actions.CommandAction;
 import fr.maxlego08.quests.api.actions.CustomAction;
@@ -16,6 +17,7 @@ import fr.maxlego08.quests.api.actions.ItemStackAction;
 import fr.maxlego08.quests.api.actions.JobAction;
 import fr.maxlego08.quests.api.actions.LocationAction;
 import fr.maxlego08.quests.api.actions.MaterialAction;
+import fr.maxlego08.quests.api.actions.PlayerKillAction;
 import fr.maxlego08.quests.api.actions.ResurrectAction;
 import fr.maxlego08.quests.api.actions.VoteAction;
 import fr.maxlego08.quests.api.utils.InventoryContent;
@@ -63,14 +65,19 @@ public enum QuestType {
     SHEAR,
     LOOK_AT_BLOCK,
     LOOK_AT_ENTITY,
+    BREED,
+    MILK,
+    PLAYER_KILL,
+    BUCKET_FILL,
+    ADVANCEMENT,
     ;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
             case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, PURCHASE, ITEM_BREAK, ITEM_MENDING,
-                 SMITHING -> new MaterialAction(this, (Material) target);
+                 SMITHING, BUCKET_FILL -> new MaterialAction(this, (Material) target);
             case CRAFT, ITEM_CONSUME -> new ItemStackAction(this, (ItemStack) target);
-            case ENTITY_KILL, TAME, SHEAR -> new EntityAction(this, (Entity) target);
+            case ENTITY_KILL, TAME, SHEAR, BREED, MILK -> new EntityAction(this, (Entity) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
             case BREW -> new BrewAction(this, (BrewEvent) target);
             case VOTE -> new VoteAction(this);
@@ -78,9 +85,11 @@ public enum QuestType {
             case ENTITY_DAMAGE -> new EntityDamageAction(this, (EntityDamageByEntityEvent) target);
             case EXPERIENCE_GAIN -> new ExperienceGainAction(this, (Integer) target);
             case RESURRECT -> new ResurrectAction(this);
+            case PLAYER_KILL -> new PlayerKillAction(this);
             case JOB_LEVEL, JOB_PRESTIGE -> new JobAction(this, (String) target);
             case ISLAND -> new IslandAction(target);
             case COMMAND -> new CommandAction((String) target);
+            case ADVANCEMENT -> new AdvancementAction((String) target);
             case CUBOID, LOOK_AT_BLOCK, LOOK_AT_ENTITY -> new LocationAction(this, (Location) target);
             case CUSTOM -> new CustomAction((String) target);
             case INVENTORY_OPEN -> new InventoryOpenAction((String) target);
@@ -91,13 +100,13 @@ public enum QuestType {
     public boolean isMaterial() {
         return switch (this) {
             case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING,
-                 PURCHASE -> true;
+                 PURCHASE, BUCKET_FILL -> true;
             default -> false;
         };
     }
 
     public boolean isEntityType() {
-        return this == ENTITY_KILL || this == TAME || this == SHEAR;
+        return this == ENTITY_KILL || this == TAME || this == SHEAR || this == BREED || this == MILK;
     }
 
 }

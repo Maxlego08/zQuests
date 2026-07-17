@@ -1,10 +1,10 @@
 plugins {
     `java-library`
-    id("com.gradleup.shadow") version "9.0.0-beta11"
+    id("com.gradleup.shadow") version "9.0.0"
 }
 
 group = "fr.maxlego08.quests"
-version = "1.0.0.4"
+version = "1.0.0.5"
 
 extra.set("targetFolder", file("target/"))
 extra.set("apiFolder", file("target-api/"))
@@ -35,6 +35,9 @@ allprojects {
     }
 
     java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(25))
+        }
         withSourcesJar()
         withJavadocJar()
     }
@@ -48,7 +51,7 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
+        compileOnly("io.papermc.paper:paper-api:26.2.build.62-beta")
         compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("dev.krakenied:blocktracker:1.0.6")
         compileOnly("com.bgsoftware:WildStackerAPI:2024.3")
@@ -58,11 +61,11 @@ allprojects {
 
         compileOnly(files("libs/zJobs-1.0.0.jar"))
         compileOnly(files("libs/zEssentials-1.0.2.6.jar"))
-        compileOnly("fr.maxlego08.menu:zmenu-api:1.1.1.0")
+        compileOnly("fr.maxlego08.menu:zmenu-api:1.1.1.6")
         compileOnly("fr.maxlego08.shop:zshop-api:3.3.0")
 
         implementation("com.tcoded:FoliaLib:0.5.1")
-        implementation("fr.maxlego08.sarah:sarah:1.21.3")
+        implementation("fr.maxlego08.sarah:sarah:1.23")
     }
 
 }
@@ -90,7 +93,7 @@ tasks {
     }
 
     compileJava {
-        options.release = 21
+        options.release = 25
     }
 
     processResources {

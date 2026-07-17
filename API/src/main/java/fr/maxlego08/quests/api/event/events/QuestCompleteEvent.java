@@ -5,7 +5,7 @@ import fr.maxlego08.quests.api.event.CancelledQuestEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public class QuestCompleteEvent extends CancelledQuestEvent {
