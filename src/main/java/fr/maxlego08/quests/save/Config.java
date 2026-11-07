@@ -32,6 +32,11 @@ public class Config {
     public static String rewardsDisplayItem = "%amount%x %item%";
     public static String rewardsDisplayMoney = "%amount% %currency%";
     public static String rewardsDisplayDefaultCurrency = "$";
+    public static String premiumPermission = "zquests.premium";
+    public static String premiumRewardsSeparator = "\n";
+    public static String premiumRewardsFormat = "&6•%reward%";
+    public static String premiumRewardsLockedFormat = "&8•&7&m%reward%";
+    public static String premiumRewardsEmpty = "";
     public static String placeholderQuestActiveKO;
     public static String mainCommandInventoryName;
     public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
@@ -99,6 +104,12 @@ public class Config {
         rewardsDisplayItem = configuration.getString("rewards-placeholder.item", "%amount%x %item%");
         rewardsDisplayMoney = configuration.getString("rewards-placeholder.money", "%amount% %currency%");
         rewardsDisplayDefaultCurrency = configuration.getString("rewards-placeholder.default-currency", "$");
+
+        premiumPermission = configuration.getString("premium-rewards.permission", "zquests.premium");
+        premiumRewardsSeparator = configuration.getString("premium-rewards.separator", "\n").replace("\\n", "\n");
+        premiumRewardsFormat = configuration.getString("premium-rewards.format", "&6•%reward%");
+        premiumRewardsLockedFormat = configuration.getString("premium-rewards.locked-format", "&8•&7&m%reward%");
+        premiumRewardsEmpty = configuration.getString("premium-rewards.empty", "");
 
         this.loadFavorites(configuration.getMapList("placeholder-favorites"));
 
@@ -176,4 +187,11 @@ public class Config {
         return questDebugs.getOrDefault(questType, false);
     }
 
+
+    /**
+     * @return true when the player has the premium permission ({@code premium-rewards.permission})
+     */
+    public static boolean isPremium(org.bukkit.entity.Player player) {
+        return player != null && premiumPermission != null && !premiumPermission.isEmpty() && player.hasPermission(premiumPermission);
+    }
 }

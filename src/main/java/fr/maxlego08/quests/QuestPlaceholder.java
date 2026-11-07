@@ -43,6 +43,12 @@ public class QuestPlaceholder extends ZUtils {
         // Registered after "current_rewards_count_" (prefix matching, first match wins)
         placeholder.register("current_rewards", player -> this.getCurrentRewards(player, "1"));
         placeholder.register("current_rewards_", this::getCurrentRewards);
+        // Premium rewards: shown with "format" for premium players, "locked-format" (greyed) for the others
+        placeholder.register("is_premium", player -> String.valueOf(Config.isPremium(player)));
+        placeholder.register("current_premium_rewards_count", player -> this.getCurrentPremiumRewardsCount(player, "1"));
+        placeholder.register("current_premium_rewards_count_", this::getCurrentPremiumRewardsCount);
+        placeholder.register("current_premium_rewards", player -> this.getCurrentPremiumRewards(player, "1"));
+        placeholder.register("current_premium_rewards_", this::getCurrentPremiumRewards);
         placeholder.register("name_", this::getQuestName);
         placeholder.register("description_", this::getQuestDescription);
         placeholder.register("placeholder_description_", this::getQuestPlaceholderDescription);
@@ -76,6 +82,9 @@ public class QuestPlaceholder extends ZUtils {
         // Must be registered before "rewards_" (prefix matching, first match wins)
         placeholder.register("rewards_count_", (player, questId) -> String.valueOf(questManager.getQuest(questId).map(quest -> quest.getRewardsLore().size()).orElse(0)));
         placeholder.register("rewards_", (player, questId) -> questManager.getQuest(questId).map(this::formatRewards).orElse(Config.rewardsPlaceholderEmpty));
+        // Must be registered before "premium_rewards_" (prefix matching, first match wins)
+        placeholder.register("premium_rewards_count_", (player, questId) -> String.valueOf(questManager.getQuest(questId).map(quest -> quest.getPremiumRewardsLore().size()).orElse(0)));
+        placeholder.register("premium_rewards_", (player, questId) -> questManager.getQuest(questId).map(quest -> this.formatPremiumRewards(player, quest)).orElse(Config.premiumRewardsEmpty));
 
         placeholder.register("group_name_", (player, groupKey) -> questManager.getGroup(groupKey).map(QuestsGroup::getDisplayName).orElse("Quests group " + groupKey + " was not found"));
         placeholder.register("group_count_", (player, groupKey) -> String.valueOf(questManager.getGroup(groupKey).map(QuestsGroup::getQuests).map(List::size).orElse(0)));
@@ -165,6 +174,21 @@ public class QuestPlaceholder extends ZUtils {
         if (lines.isEmpty()) return Config.rewardsPlaceholderEmpty;
         // "\n" in the separator makes one lore line per reward (zMenu splits lore lines on new lines)
         return lines.stream().map(line -> Config.rewardsPlaceholderFormat.replace("%reward%", line)).collect(Collectors.joining(Config.rewardsPlaceholderSeparator));
+    }
+
+    public String formatPremiumRewards(Player player, Quest quest) {
+        List<String> lines = quest.getPremiumRewardsLore();
+        if (lines.isEmpty()) return Config.premiumRewardsEmpty;
+        String format = Config.isPremium(player) ? Config.premiumRewardsFormat : Config.premiumRewardsLockedFormat;
+        return lines.stream().map(line -> format.replace("%reward%", line)).collect(Collectors.joining(Config.premiumRewardsSeparator));
+    }
+
+    private String getCurrentPremiumRewards(Player player, String slot) {
+        return this.getCurrentAt(player, slot).map(active -> this.formatPremiumRewards(player, active.getQuest())).orElse(Config.premiumRewardsEmpty);
+    }
+
+    private String getCurrentPremiumRewardsCount(Player player, String slot) {
+        return this.getCurrentAt(player, slot).map(active -> String.valueOf(active.getQuest().getPremiumRewardsLore().size())).orElse("0");
     }
 
     private String getCurrentRewardsCount(Player player, String slot) {

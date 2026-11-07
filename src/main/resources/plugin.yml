@@ -19,5 +19,9 @@ softdepend:
   - WildStacker
   - BlockTracker
   - SuperiorSkyblock2
+permissions:
+  zquests.premium:
+    description: Receive the premium rewards of the quests
+    default: false
 libraries:
   - org.mariadb.jdbc:mariadb-java-client:3.5.6

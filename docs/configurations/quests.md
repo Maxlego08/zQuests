@@ -330,6 +330,23 @@ permissible-rewards:
           - "&aVIP bonus reward!"
 ```
 
+### `premium-rewards`
+
+Extra rewards executed on completion when the player has the premium permission (`premium-rewards.permission` in `config.yml`, `zquests.premium` by default). They are given in addition to `rewards`.
+
+- **Default:** Empty list.
+- **Notes:** Same format as `rewards`. Displayed with `%zquests_premium_rewards_<quest>%`: players without the permission see them with `premium-rewards.locked-format` (greyed out by default). The lines come from `premium-rewards-lore` when present, otherwise they are generated from the `give` / `eco give` commands.
+
+**Example:**
+
+```yaml
+premium-rewards:
+  - type: console_command
+    commands:
+      - "give %player% diamond 10"
+      - "eco give %player% 500"
+```
+
 ### `action-requirements`
 
 Requirements that must be met for the quest to register progress. If the player does not satisfy these conditions, the quest will not advance.

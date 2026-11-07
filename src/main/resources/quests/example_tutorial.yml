@@ -50,6 +50,12 @@ quests:
       - type: console_command
         commands:
           - "give %player% diamond 5"
+    # Extra rewards for players with the premium permission (premium-rewards.permission in config.yml)
+    premium-rewards:
+      - type: console_command
+        commands:
+          - "give %player% diamond 10"
+          - "eco give %player% 500"
   - type: DIALOG_CLICK
     actions:
       - dialog: "welcome"   # ou dialogs: [...], ou "*" pour tous les dialogs

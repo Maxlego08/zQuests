@@ -155,6 +155,20 @@ rewards-placeholder:
   money: "%amount% %currency%"
   default-currency: "$" # Used when the eco command has no currency name
 
+# Premium rewards:
+# Extra rewards given on quest completion to players with the permission below,
+# set in the "premium-rewards" section of a quest (same format as "rewards").
+# Placeholders: %zquests_premium_rewards_<quest>%, %zquests_premium_rewards_count_<quest>%,
+# %zquests_current_premium_rewards[_<slot>]%, %zquests_current_premium_rewards_count[_<slot>]%
+# and %zquests_is_premium% (true / false).
+# Players without the permission still see the premium rewards, with "locked-format" (greyed out).
+premium-rewards:
+  permission: "zquests.premium"
+  separator: "\n"
+  format: "&6• %reward%" # Player has the permission
+  locked-format: "&8•&7&m%reward%" # Player does not have the permission
+  empty: "" # Displayed when the quest has no premium reward
+
 # Custom rewards:
 # Allows configuration of specific rewards when certain quests are completed.
 # quests: A list of quests that need to be completed to trigger the reward.
