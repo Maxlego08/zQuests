@@ -135,6 +135,20 @@ active-placeholder:
   active: "&c✘"
   complete: "&a✔"
 
+# Rewards placeholders: %zquests_rewards_<quest>% and %zquests_rewards_count_<quest>%
+# The lines come from the "rewards-lore" section of the quest when present,
+# otherwise they are generated from the give / eco commands of the "rewards" section:
+#   give %player% diamond 5              -> 5x Diamond
+#   eco give %player% 500                -> 500 $
+#   eco give coins 500 %player%          -> 500 coins
+# Other actions (messages, other commands) are not displayed.
+rewards-placeholder:
+  separator: ", " # Between two lines in %zquests_rewards_<quest>%
+  empty: "" # Displayed when the quest has no displayable reward
+  item: "%amount%x %item%"
+  money: "%amount% %currency%"
+  default-currency: "$" # Used when the eco command has no currency name
+
 # Custom rewards:
 # Allows configuration of specific rewards when certain quests are completed.
 # quests: A list of quests that need to be completed to trigger the reward.
