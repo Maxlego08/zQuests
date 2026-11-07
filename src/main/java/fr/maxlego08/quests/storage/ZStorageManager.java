@@ -67,7 +67,7 @@ public class ZStorageManager implements StorageManager {
         DatabaseConfiguration databaseConfiguration = getDatabaseConfiguration(configuration, storageType);
         DatabaseConnection connection = switch (storageType) {
             case SQLITE -> new SqliteConnection(databaseConfiguration, this.plugin.getDataFolder(), JULogger.from(this.plugin.getLogger()));
-            case MARIADB, MYSQL -> new HikariDatabaseConnection(databaseConfiguration, JULogger.from(this.plugin.getLogger()));
+            case MARIADB, MYSQL, POSTGRESQL -> new HikariDatabaseConnection(databaseConfiguration, JULogger.from(this.plugin.getLogger()));
         };
         this.requestHelper = new RequestHelper(connection, JULogger.from(plugin.getLogger()));
 
@@ -196,16 +196,21 @@ public class ZStorageManager implements StorageManager {
     @Override
     public void load(UUID uuid, Consumer<UserQuest> consumer) {
         executor.execute(() -> {
+            try {
 
-            List<ActiveQuestDTO> activeQuestDTOS = requestHelper.select("%prefix%" + Tables.ACTIVE_QUESTS, ActiveQuestDTO.class, table -> table.where("unique_id", uuid));
-            List<CompletedQuestDTO> completedQuestDTOS = requestHelper.select("%prefix%" + Tables.COMPLETED_QUESTS, CompletedQuestDTO.class, table -> table.where("unique_id", uuid));
+                List<ActiveQuestDTO> activeQuestDTOS = requestHelper.select("%prefix%" + Tables.ACTIVE_QUESTS, ActiveQuestDTO.class, table -> table.where("unique_id", uuid));
+                List<CompletedQuestDTO> completedQuestDTOS = requestHelper.select("%prefix%" + Tables.COMPLETED_QUESTS, CompletedQuestDTO.class, table -> table.where("unique_id", uuid));
 
-            List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(this.plugin, uuid, quest, dto.created_at(), dto.amount(), dto.is_favorite(), dto.start_play_time())).orElse(null));
-            List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at(), dto.started_at(), dto.is_favorite(), dto.start_play_time(), dto.complet_play_time())).orElse(null));
-            var playerFavoriteAmountDTO = requestHelper.select("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, PlayerFavoriteConfigurationDTO.class, table -> table.where("unique_id", uuid)).stream().findFirst().orElse(new PlayerFavoriteConfigurationDTO(uuid, Config.placeholderFavorites.get(FavoritePlaceholderType.LARGE).maxFavorite(), FavoritePlaceholderType.LARGE));
+                List<ActiveQuest> activeQuests = mapDTOsToQuests(activeQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new ZActiveQuest(this.plugin, uuid, quest, dto.created_at(), dto.amount(), dto.is_favorite(), dto.start_play_time())).orElse(null));
+                List<CompletedQuest> completedQuests = mapDTOsToQuests(completedQuestDTOS, dto -> plugin.getQuestManager().getQuest(dto.name()).map(quest -> new CompletedQuest(quest, dto.completed_at(), dto.started_at(), dto.is_favorite(), dto.start_play_time(), dto.complet_play_time())).orElse(null));
+                var playerFavoriteAmountDTO = requestHelper.select("%prefix%" + Tables.PLAYER_FAVORITE_CONFIGURATION, PlayerFavoriteConfigurationDTO.class, table -> table.where("unique_id", uuid)).stream().findFirst().orElse(new PlayerFavoriteConfigurationDTO(uuid, Config.placeholderFavorites.get(FavoritePlaceholderType.LARGE).maxFavorite(), FavoritePlaceholderType.LARGE));
 
-            // activeQuests.removeIf(ActiveQuest::isComplete);
-            consumer.accept(new ZUserQuest(uuid, activeQuests, completedQuests, playerFavoriteAmountDTO.amount(), playerFavoriteAmountDTO.placeholder_type()));
+                // activeQuests.removeIf(ActiveQuest::isComplete);
+                consumer.accept(new ZUserQuest(uuid, activeQuests, completedQuests, playerFavoriteAmountDTO.amount(), playerFavoriteAmountDTO.placeholder_type()));
+            } catch (Exception exception) {
+                // Since Sarah 1.27, select throws instead of returning an empty list: never load an empty user on a database error
+                this.plugin.getLogger().log(java.util.logging.Level.SEVERE, "Unable to load the quests of " + uuid, exception);
+            }
         });
     }
 
