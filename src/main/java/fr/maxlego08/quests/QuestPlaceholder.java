@@ -61,6 +61,9 @@ public class QuestPlaceholder extends ZUtils {
         placeholder.register("percent_", this::getPercent);
         placeholder.register("progress_", (player, questId) -> String.valueOf(getProgress(player, questId)));
         placeholder.register("lore_line_", this::getLoreLine);
+        // Must be registered before "rewards_" (prefix matching, first match wins)
+        placeholder.register("rewards_count_", (player, questId) -> String.valueOf(questManager.getQuest(questId).map(quest -> quest.getRewardsLore().size()).orElse(0)));
+        placeholder.register("rewards_", (player, questId) -> questManager.getQuest(questId).map(this::formatRewards).orElse(Config.rewardsPlaceholderEmpty));
 
         placeholder.register("group_name_", (player, groupKey) -> questManager.getGroup(groupKey).map(QuestsGroup::getDisplayName).orElse("Quests group " + groupKey + " was not found"));
         placeholder.register("group_count_", (player, groupKey) -> String.valueOf(questManager.getGroup(groupKey).map(QuestsGroup::getQuests).map(List::size).orElse(0)));
@@ -122,6 +125,11 @@ public class QuestPlaceholder extends ZUtils {
 
             return builder.toString();
         });
+    }
+
+    public String formatRewards(Quest quest) {
+        List<String> lines = quest.getRewardsLore();
+        return lines.isEmpty() ? Config.rewardsPlaceholderEmpty : String.join(Config.rewardsPlaceholderSeparator, lines);
     }
 
     public long getProgress(Player player, String questId) {

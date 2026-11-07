@@ -44,6 +44,17 @@ public interface Quest {
     String getPlaceholderDescription();
 
     /**
+     * Gets the human-readable lines describing the rewards of the quest.
+     * Uses the {@code rewards-lore} section when present, otherwise lines generated
+     * from the give / eco commands of the rewards.
+     *
+     * @return the rewards lines, never null
+     */
+    default List<String> getRewardsLore() {
+        return java.util.Collections.emptyList();
+    }
+
+    /**
      * Gets the thumbnail material of the quest.
      *
      * @return the thumbnail material of the quest

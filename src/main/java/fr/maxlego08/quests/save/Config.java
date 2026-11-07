@@ -26,6 +26,11 @@ public class Config {
     public static String placeholderQuestCompleteOK;
     public static String placeholderQuestCompleteKO;
     public static String placeholderQuestActiveOK;
+    public static String rewardsPlaceholderSeparator = ", ";
+    public static String rewardsPlaceholderEmpty = "";
+    public static String rewardsDisplayItem = "%amount%x %item%";
+    public static String rewardsDisplayMoney = "%amount% %currency%";
+    public static String rewardsDisplayDefaultCurrency = "$";
     public static String placeholderQuestActiveKO;
     public static String mainCommandInventoryName;
     public static Map<Class<?>, EventConfiguration> eventConfigurations = new HashMap<>();
@@ -85,6 +90,12 @@ public class Config {
 
         placeholderQuestActiveKO = configuration.getString("active-placeholder.active", "&c✘");
         placeholderQuestActiveOK = configuration.getString("active-placeholder.complete", "&a✔");
+
+        rewardsPlaceholderSeparator = configuration.getString("rewards-placeholder.separator", ", ");
+        rewardsPlaceholderEmpty = configuration.getString("rewards-placeholder.empty", "");
+        rewardsDisplayItem = configuration.getString("rewards-placeholder.item", "%amount%x %item%");
+        rewardsDisplayMoney = configuration.getString("rewards-placeholder.money", "%amount% %currency%");
+        rewardsDisplayDefaultCurrency = configuration.getString("rewards-placeholder.default-currency", "$");
 
         this.loadFavorites(configuration.getMapList("placeholder-favorites"));
 
