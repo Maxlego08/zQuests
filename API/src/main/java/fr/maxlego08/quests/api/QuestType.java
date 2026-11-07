@@ -70,6 +70,7 @@ public enum QuestType {
     PLAYER_KILL,
     BUCKET_FILL,
     ADVANCEMENT,
+    DIALOG_CLICK,
     ;
 
     public ActionInfo<?> toAction(Object target) {
@@ -93,6 +94,7 @@ public enum QuestType {
             case CUBOID, LOOK_AT_BLOCK, LOOK_AT_ENTITY -> new LocationAction(this, (Location) target);
             case CUSTOM -> new CustomAction((String) target);
             case INVENTORY_OPEN -> new InventoryOpenAction((String) target);
+            case DIALOG_CLICK -> new fr.maxlego08.quests.api.actions.DialogClickAction((fr.maxlego08.quests.api.utils.DialogClick) target);
             case INVENTORY_CONTENT -> new InventoryContentAction((InventoryContent) target);
         };
     }

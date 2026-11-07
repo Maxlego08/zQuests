@@ -969,6 +969,31 @@ quests:
 
 ***
 
+### `DIALOG_CLICK`
+
+Check the buttons clicked by the player in a zMenu dialog. Requires a zMenu version with `PlayerDialogClickEvent`.
+
+- `dialog` / `dialogs`: the file name of the dialog, without `.yml`. Use `*` or leave it empty for every dialog.
+- `button` / `buttons`: the key of the button in the dialog file: the key under `multi-actions` (`button1`), `yes` or `no` for a confirmation dialog, `notice`, `exit-button`. Leave it empty for every button of the dialog.
+
+Only `custom-click` buttons (the default type) are detected.
+
+**Example usage:**
+
+```yaml
+quests:
+  - type: DIALOG_CLICK
+    actions:
+      - dialog: "welcome"
+        button: "button1"
+    name: "dialog-1"
+    display-name: "Join Survival"
+    description: "Click on Join Survival in the welcome dialog"
+    goal: 1
+```
+
+***
+
 ### `INVENTORY_CONTENT`
 
 Allows checking the contents of the player's inventory and removing items. You can use a material or a material tag. You must also specify the name of the citizen the player needs to interact with. You must either use the API to execute this action or use the command `/q progress-inventory <player> <citizen name>`.
