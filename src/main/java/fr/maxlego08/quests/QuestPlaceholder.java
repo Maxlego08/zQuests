@@ -50,6 +50,8 @@ public class QuestPlaceholder extends ZUtils {
             return optional.map(quest -> quest.getType().name()).orElse("Unknown");
         });
 
+        // Must be registered before "objective_" (prefix matching, first match wins)
+        placeholder.register("objective_max_", (player, questId) -> String.valueOf(getQuestObjective(player, questId)));
         placeholder.register("objective_", (player, questId) -> String.valueOf(getQuestObjective(player, questId)));
         placeholder.register("is_completed_", (player, questId) -> String.valueOf(getQuestIsCompleted(player, questId)));
         placeholder.register("complete_", (player, questId) -> getQuestIsCompleted(player, questId) ? Config.placeholderQuestCompleteOK : Config.placeholderQuestCompleteKO);
