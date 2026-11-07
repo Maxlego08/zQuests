@@ -1,0 +1,56 @@
+# Quest suite: the quests below are steps played one after the other.
+# - The first step starts automatically when the player joins (no auto-accept needed).
+# - When a step is completed, its rewards are given and the next step starts immediately.
+# - Steps added at the end later are given to players who already finished the suite.
+# Never rename a step once players have started the suite: the name is what is saved.
+type: principal # principal, secondaire ou journalier (slot 1, 2 ou 3 des placeholders current_*)
+
+suite: true
+
+quests:
+
+  - type: COMMAND
+    actions:
+      - commands:
+          - "spawn"
+    name: "tutorial-1"
+    display-name: "Tutoriel 1/3"
+    description: "&fTape &e/spawn &fpour rejoindre le spawn"
+    goal: 1
+    rewards:
+      - type: message
+        messages:
+          - "&aBravo ! &fÉtape suivante : ouvre le &e/shop&f."
+
+  - type: COMMAND
+    actions:
+      - commands:
+          - "shop"
+    name: "tutorial-2"
+    display-name: "Tutoriel 2/3"
+    description: "&fOuvre la boutique avec &e/shop"
+    goal: 1
+    rewards:
+      - type: message
+        messages:
+          - "&aBien joué ! &fDernière étape : consulte tes &e/quests&f."
+
+  - type: COMMAND
+    actions:
+      - commands:
+          - "quests"
+    name: "tutorial-3"
+    display-name: "Tutoriel 3/3"
+    description: "&fOuvre le menu des quêtes avec &e/quests"
+    goal: 1
+    rewards:
+      - type: message
+        messages:
+          - "&6Tutoriel terminé ! &fBon jeu sur le serveur."
+      - type: console_command
+        commands:
+          - "give %player% diamond 5"
+  - type: DIALOG_CLICK
+    actions:
+      - dialog: "welcome"   # ou dialogs: [...], ou "*" pour tous les dialogs
+        button: "button1"   # ou buttons: [...], vide = tous les boutons

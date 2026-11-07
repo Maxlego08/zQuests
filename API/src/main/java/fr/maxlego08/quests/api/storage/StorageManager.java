@@ -88,6 +88,17 @@ public interface StorageManager {
     void delete(UUID uniqueId, CompletedQuest completedQuest);
 
     /**
+     * Delete the active and completed rows of several quests, then run the callback.
+     * Pending updates of the given active quests are cancelled first, so the callback can safely start them again.
+     *
+     * @param uniqueId     the unique identifier of the user
+     * @param activeQuests the active quests whose pending updates must be cancelled
+     * @param questNames   the names of the quests to delete
+     * @param callback     executed once the rows are deleted, from the storage thread
+     */
+    void resetQuests(UUID uniqueId, List<ActiveQuest> activeQuests, List<String> questNames, Runnable callback);
+
+    /**
      * Upsert the player's favorite quest configuration in the storage.
      *
      * @param uniqueId                the unique identifier of the user

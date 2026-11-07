@@ -1,0 +1,138 @@
+quests:
+  - type: COMMAND
+    name: commande-runes
+    display-name: Utiliser la commande runes
+    actions:
+      - commands: ["runes"]
+    goal: 1
+    auto-accept: true
+
+  - type: RUNE_CRAFT
+    name: fabriquer-rune-tempete
+    display-name: Fabriquer une rune de tempete
+    actions:
+      - rune: "tempete" # ou "*" pour toute rune ultime
+    goal: 1
+    auto-accept: true
+
+  - type: ONEBLOCK_LEVEL
+    name: gagner-5-niveaux
+    display-name: Gagner 5 niveaux OneBlock
+    actions:
+      - {}
+    goal: 5
+    auto-accept: true
+
+  - type: ONEBLOCK_PRESTIGE
+    name: passer-un-prestige
+    display-name: Passer un prestige OneBlock
+    actions:
+      - {}
+    goal: 1
+    auto-accept: true
+
+  - type: ONEBLOCK_PHASE
+    name: terminer-3-phases
+    display-name: Terminer 3 phases OneBlock
+    actions:
+      - phase: "*" # ou l'identifiant exact de la phase terminee dans phases.yml
+    goal: 3
+    auto-accept: true
+
+  - type: BUY_SHOP
+    name: acheter-au-shop
+    display-name: Acheter 16 objets au shop
+    actions:
+      - item: "*" # ou DIAMOND, nexo:identifiant, etc. (cle Shops)
+    goal: 16
+    auto-accept: true
+
+  - type: SELL_SHOP
+    name: vendre-au-shop
+    display-name: Vendre 64 objets au shop
+    actions:
+      - item: "*" # ou DIAMOND, nexo:identifiant, etc. (cle Shops)
+    goal: 64
+    auto-accept: true
+
+  - type: ORDER_COMPLETE
+    name: livrer-des-orders
+    display-name: Terminer 3 orders
+    actions:
+      - item: "*" # ou la cle de l'objet demande
+    goal: 3
+    auto-accept: true
+
+  - type: AH_BUY
+    name: acheter-au-ah
+    display-name: Acheter 10 objets au AH
+    actions:
+      - item: "*" # ou un materiau Bukkit, par exemple DIAMOND
+    goal: 10
+    auto-accept: true
+
+  - type: RUNE_FORGE
+    name: charger-runes-foudre
+    display-name: Recevoir 10 eclairs sur ses runes
+    actions:
+      - rune: "*" # ou l'identifiant d'une rune, par exemple vent ou tempete
+    goal: 10
+    auto-accept: true
+
+  - type: GUILD_NUMBER
+    name: guilde-5-membres
+    display-name: Avoir 5 membres dans sa guilde
+    actions:
+      - metric: members
+    goal: 5
+    auto-accept: true
+
+  - type: GUILD_NUMBER
+    name: guilde-niveau-10
+    display-name: Atteindre le niveau 10 de guilde
+    actions:
+      - metric: level
+    goal: 10
+    auto-accept: true
+
+  - type: ECO_NUMBER
+    name: posseder-1000-or
+    display-name: Posseder 1000 or
+    actions:
+      - mode: balance
+        currency: or
+    goal: 1000
+    auto-accept: true
+
+  - type: ECO_NUMBER
+    name: gagner-5000-or
+    display-name: Gagner 5000 or
+    actions:
+      - mode: earned
+        currency: or
+    goal: 5000
+    auto-accept: true
+
+  - type: CUSTOM_FISHING
+    name: pecher-un-legendaire
+    display-name: Pecher un poisson legendaire
+    actions:
+      - rarete: "legendaire" # commun, peu_commun, rare, epique, legendaire, mythique ou "*"
+    goal: 1
+    auto-accept: true
+
+  - type: CUSTOM_FISHING
+    name: pecher-25-poissons
+    display-name: Pecher 25 poissons RunesTales
+    actions:
+      - poisson: "*" # ou l'identifiant de poissons.yml ; palier: 1 a 4 pour filtrer
+    goal: 25
+    auto-accept: true
+
+  - type: SELL_FISH
+    name: vendre-50-poissons
+    display-name: Vendre 50 poissons
+    actions:
+      - rarete: "*"
+    goal: 50
+    auto-accept: true

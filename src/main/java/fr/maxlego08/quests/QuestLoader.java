@@ -13,6 +13,7 @@ import fr.maxlego08.quests.api.Quest;
 import fr.maxlego08.quests.api.QuestAction;
 import fr.maxlego08.quests.api.QuestActionLoader;
 import fr.maxlego08.quests.api.QuestType;
+import fr.maxlego08.quests.zcore.utils.RewardsDisplay;
 import fr.maxlego08.quests.api.QuestsGroup;
 import fr.maxlego08.quests.api.hologram.HologramConfiguration;
 import fr.maxlego08.quests.api.waypoint.WayPointConfiguration;
@@ -53,6 +54,13 @@ public class QuestLoader extends ZUtils {
         this.loaders.add(new CuboidQuestLoader(plugin));
         this.loaders.add(new CommandQuestLoader(plugin));
         this.loaders.add(new CustomQuestLoader(plugin));
+        this.loaders.add(new fr.maxlego08.quests.loader.RuneCraftQuestLoader());
+        this.loaders.add(new fr.maxlego08.quests.loader.OneBlockProgressQuestLoader());
+        this.loaders.add(new fr.maxlego08.quests.loader.OneBlockJoinQuestLoader());
+        this.loaders.add(new fr.maxlego08.quests.loader.ShopsQuestLoader());
+        this.loaders.add(new fr.maxlego08.quests.loader.PecheQuestLoader());
+        this.loaders.add(new fr.maxlego08.quests.loader.NumberQuestLoader());
+        this.loaders.add(new fr.maxlego08.quests.loader.DialogClickQuestLoader());
         this.loaders.add(new ItemStackQuestLoader(plugin));
         this.loaders.add(new EnchantQuestLoader(plugin));
         this.loaders.add(new EntityQuestLoader(plugin));
@@ -86,6 +94,7 @@ public class QuestLoader extends ZUtils {
      * <li>{@code unique}: whether the quest can be completed only once</li>
      * <li>{@code hidden}: whether the quest should be hidden</li>
      * <li>{@code rewards}: the rewards to give when the quest is completed</li>
+     * <li>{@code rewards-lore}: lines describing the rewards (generated from give / eco commands when absent)</li>
      * <li>{@code start-actions}: the actions to execute when the quest is started</li>
      * <li>{@code permissible-rewards}: the permissible rewards to give when the quest is completed</li>
      * <li>{@code custom-model-id}: the custom model id of the item to display as the quest's thumbnail</li>
@@ -116,6 +125,13 @@ public class QuestLoader extends ZUtils {
 
             Material thumbnail = parseThumbnail(accessor);
             long goal = accessor.getLong("goal", 1);
+            if ((questType == QuestType.GUILD_NUMBER || questType == QuestType.ECO_NUMBER)
+                    && (goal < 1 || goal > Integer.MAX_VALUE)) {
+                throw new IllegalArgumentException("Number quest goal must be between 1 and " + Integer.MAX_VALUE);
+            }
+            if (questType == QuestType.OB_JOIN && goal != 1) {
+                throw new IllegalArgumentException("OB_JOIN quest goal must be 1");
+            }
             boolean autoAccept = accessor.getBoolean("auto-accept", false);
             boolean useGlobalRewards = accessor.getBoolean("use-global-rewards", true);
             boolean canChangeFavorite = accessor.getBoolean("can-change-favorite", true);
@@ -126,6 +142,9 @@ public class QuestLoader extends ZUtils {
             int customModelId = resolveCustomModelId(accessor, name);
 
             List<Action> rewards = loadActionsSection("rewards", accessor, file);
+            List<String> rewardsLore = accessor.contains("rewards-lore")
+                    ? accessor.getStringList("rewards-lore")
+                    : RewardsDisplay.fromRawRewards(accessor.contains("rewards") ? accessor.getList("rewards") : null);
             List<Action> startActions = loadActionsSection("start-actions", accessor, file);
             List<Permissible> permissibleRewards = loadPermissibleSection("permissible-rewards", accessor, file);
 
@@ -142,7 +161,7 @@ public class QuestLoader extends ZUtils {
             return new ZQuest(this.plugin, name, questType, displayName, description, placeholderDescription, //
                     thumbnail, goal, autoAccept, rewards, permissibleRewards, startActions, questActions, //
                     useGlobalRewards, canChangeFavorite, isFavorite, customModelId, isUnique, //
-                    isHidden, hologramConfiguration, waypointConfiguration, requirements, forceConditions);
+                    isHidden, hologramConfiguration, waypointConfiguration, requirements, forceConditions, rewardsLore);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;
@@ -161,8 +180,17 @@ public class QuestLoader extends ZUtils {
      * @return the quest type
      */
     private QuestType resolveQuestType(TypedMapAccessor accessor) {
-        String raw = accessor.getString("type", QuestType.BLOCK_BREAK.name());
-        return QuestType.valueOf(raw.toUpperCase());
+        String raw = accessor.getString("type", QuestType.BLOCK_BREAK.name()).trim().toUpperCase(java.util.Locale.ROOT);
+        raw = switch (raw) {
+            case "SHOP_BUY" -> "BUY_SHOP";
+            case "SHOP_SELL" -> "SELL_SHOP";
+            default -> raw;
+        };
+        try {
+            return QuestType.valueOf(raw);
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("Unknown quest type '" + raw + "'. Valid types: " + java.util.Arrays.toString(QuestType.values()));
+        }
     }
 
 

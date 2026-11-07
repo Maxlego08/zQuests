@@ -1,0 +1,54 @@
+# Daily quests: every quest of a "journalier" file is reset each day at 00:00 (server time).
+# - Unfinished quests lose their progress, completed ones can be done again.
+# - Use auto-accept so every player gets them again after the reset.
+# - Players offline at midnight are reset on their next join.
+type: journalier
+
+quests:
+
+  # Simple
+  - type: BLOCK_BREAK
+    actions:
+      - material: STONE
+      - material: COBBLESTONE
+      - material: DIRT
+      - material: OAK_LOG
+    name: "daily-break-10"
+    display-name: "&aCasseur du jour"
+    description: "&fCasse &e10 blocs &fde ton OneBlock"
+    placeholder-description: "&fCasse encore &e%quest-remaining% &fblocs"
+    goal: 10
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "&aQuête journalière terminée : Casseur du jour"
+
+  # Moyenne
+  - type: ENTITY_KILL
+    actions:
+      - entity: "oneblock:capybara" # oneblock:<id du mob OneBlock>, ou un type Bukkit comme ZOMBIE
+    name: "daily-kill-capybara"
+    display-name: "&eChasseur du jour"
+    description: "&fTue &e5 capybaras &fdu OneBlock"
+    placeholder-description: "&fTue encore &e%quest-remaining% &fcapybaras"
+    goal: 5
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "&eQuête journalière terminée : Chasseur du jour"
+
+  # Difficile
+  - type: ONEBLOCK_PHASE
+    actions:
+      - phase: "*"
+    name: "daily-phase-1"
+    display-name: "&cExplorateur du jour"
+    description: "&fTermine &e1 phase &fdu OneBlock"
+    goal: 1
+    auto-accept: true
+    rewards:
+      - type: message
+        messages:
+          - "&cQuête journalière terminée : Explorateur du jour"

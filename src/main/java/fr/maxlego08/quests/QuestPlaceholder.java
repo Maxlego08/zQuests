@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,6 +32,17 @@ public class QuestPlaceholder extends ZUtils {
 
         LocalPlaceholder placeholder = LocalPlaceholder.getInstance();
 
+        // Without index, the placeholders show slot 1 (principal)
+        placeholder.register("current_exists", player -> String.valueOf(this.getCurrentAt(player, "1").isPresent()));
+        placeholder.register("current_rewards_count", player -> this.getCurrentRewardsCount(player, "1"));
+        placeholder.register("current_text", player -> this.getCurrentText(player, "1"));
+        // One slot per quest type: _1 principal, _2 secondaire, _3 journalier (the type name works too)
+        placeholder.register("current_exists_", (player, index) -> String.valueOf(this.getCurrentAt(player, index).isPresent()));
+        placeholder.register("current_rewards_count_", this::getCurrentRewardsCount);
+        placeholder.register("current_text_", this::getCurrentText);
+        // Registered after "current_rewards_count_" (prefix matching, first match wins)
+        placeholder.register("current_rewards", player -> this.getCurrentRewards(player, "1"));
+        placeholder.register("current_rewards_", this::getCurrentRewards);
         placeholder.register("name_", this::getQuestName);
         placeholder.register("description_", this::getQuestDescription);
         placeholder.register("placeholder_description_", this::getQuestPlaceholderDescription);
@@ -50,6 +62,8 @@ public class QuestPlaceholder extends ZUtils {
             return optional.map(quest -> quest.getType().name()).orElse("Unknown");
         });
 
+        // Must be registered before "objective_" (prefix matching, first match wins)
+        placeholder.register("objective_max_", (player, questId) -> String.valueOf(getQuestObjective(player, questId)));
         placeholder.register("objective_", (player, questId) -> String.valueOf(getQuestObjective(player, questId)));
         placeholder.register("is_completed_", (player, questId) -> String.valueOf(getQuestIsCompleted(player, questId)));
         placeholder.register("complete_", (player, questId) -> getQuestIsCompleted(player, questId) ? Config.placeholderQuestCompleteOK : Config.placeholderQuestCompleteKO);
@@ -59,6 +73,9 @@ public class QuestPlaceholder extends ZUtils {
         placeholder.register("percent_", this::getPercent);
         placeholder.register("progress_", (player, questId) -> String.valueOf(getProgress(player, questId)));
         placeholder.register("lore_line_", this::getLoreLine);
+        // Must be registered before "rewards_" (prefix matching, first match wins)
+        placeholder.register("rewards_count_", (player, questId) -> String.valueOf(questManager.getQuest(questId).map(quest -> quest.getRewardsLore().size()).orElse(0)));
+        placeholder.register("rewards_", (player, questId) -> questManager.getQuest(questId).map(this::formatRewards).orElse(Config.rewardsPlaceholderEmpty));
 
         placeholder.register("group_name_", (player, groupKey) -> questManager.getGroup(groupKey).map(QuestsGroup::getDisplayName).orElse("Quests group " + groupKey + " was not found"));
         placeholder.register("group_count_", (player, groupKey) -> String.valueOf(questManager.getGroup(groupKey).map(QuestsGroup::getQuests).map(List::size).orElse(0)));
@@ -120,6 +137,38 @@ public class QuestPlaceholder extends ZUtils {
 
             return builder.toString();
         });
+    }
+
+    private Optional<ActiveQuest> getCurrentAt(Player player, String slot) {
+        if (player == null) return Optional.empty();
+        String category = switch (slot.trim().toLowerCase(java.util.Locale.ROOT)) {
+            case "1", "principal" -> "principal";
+            case "2", "secondaire" -> "secondaire";
+            case "3", "journalier" -> "journalier";
+            default -> null;
+        };
+        if (category == null) return Optional.empty();
+        return SequentialQuest.current(questManager, questManager.getUserQuest(player.getUniqueId()), category);
+    }
+
+    private String getCurrentText(Player player, String slot) {
+        return this.getCurrentAt(player, slot).map(active -> active.getQuest().getDisplayName() + " &7- &e" + active.getAmount()
+            + "&7/&f" + active.getQuest().getGoal()).orElse("");
+    }
+
+    private String getCurrentRewards(Player player, String slot) {
+        return this.getCurrentAt(player, slot).map(active -> this.formatRewards(active.getQuest())).orElse(Config.rewardsPlaceholderEmpty);
+    }
+
+    public String formatRewards(Quest quest) {
+        List<String> lines = quest.getRewardsLore();
+        if (lines.isEmpty()) return Config.rewardsPlaceholderEmpty;
+        // "\n" in the separator makes one lore line per reward (zMenu splits lore lines on new lines)
+        return lines.stream().map(line -> Config.rewardsPlaceholderFormat.replace("%reward%", line)).collect(Collectors.joining(Config.rewardsPlaceholderSeparator));
+    }
+
+    private String getCurrentRewardsCount(Player player, String slot) {
+        return this.getCurrentAt(player, slot).map(active -> String.valueOf(active.getQuest().getRewards().size())).orElse("0");
     }
 
     public long getProgress(Player player, String questId) {

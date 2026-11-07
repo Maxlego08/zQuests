@@ -61,17 +61,22 @@ allprojects {
 
         compileOnly(files("libs/zJobs-1.0.0.jar"))
         compileOnly(files("libs/zEssentials-1.0.2.6.jar"))
-        compileOnly("fr.maxlego08.menu:zmenu-api:1.1.1.6")
+        compileOnly("fr.maxlego08.menu:zmenu-api:1.1.2.1")
         compileOnly("fr.maxlego08.shop:zshop-api:3.3.0")
 
         implementation("com.tcoded:FoliaLib:0.5.1")
-        implementation("fr.maxlego08.sarah:sarah:1.23")
+        implementation("fr.maxlego08.sarah:sarah:1.27")
     }
 
 }
 
 dependencies {
     api(projects.api)
+    compileOnly(files("libs/runes-1.0.0.jar"))
+    compileOnly(files("libs/OneBlock-1.0-SNAPSHOT-api.jar"))
+    compileOnly(files("libs/Shops-1.0.0-api.jar"))
+    compileOnly(files("libs/Peche-1.0.0.jar"))
+    compileOnly(files("libs/Guilde-1.0.0.jar", "libs/Economie-1.0.0.jar"))
     // api(projects.hooks)
 }
 

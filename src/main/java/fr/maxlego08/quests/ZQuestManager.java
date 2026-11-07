@@ -55,6 +55,8 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -78,10 +80,17 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     private final Map<String, Quest> questCache = new HashMap<>();
     private final Map<UUID, UserQuest> usersQuests = new HashMap<>();
     private final List<CustomReward> customRewards = new ArrayList<>();
+    // Quest suites: each entry is the ordered list of quest names of a file marked "suite: true"
+    private final List<List<String>> suites = new ArrayList<>();
+    // Category of each quest (lowercase name -> principal, secondaire or journalier), from the "type" key of its file
+    private final Map<String, String> questCategories = new HashMap<>();
     private final QuestGroupManager groupManager;
 
     private List<Action> globalRewards = new ArrayList<>();
     private List<Permissible> globalPermissibles = new ArrayList<>();
+
+    public static final String DAILY_CATEGORY = "journalier";
+    public static final List<String> QUEST_CATEGORIES = List.of("principal", "secondaire", DAILY_CATEGORY);
 
     public ZQuestManager(QuestsPlugin plugin) {
         this.plugin = plugin;
@@ -160,7 +169,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
             this.plugin.saveResource("quests/example_enchant.yml", false);
             this.plugin.saveResource("quests/example_brew.yml", false);
             this.plugin.saveResource("quests/example_craft.yml", false);
-            this.plugin.saveResource("quests/example_complex.yml", false);
+            this.plugin.saveResource("quests/example_tutorial.yml", false);
+            this.plugin.saveResource("quests/example_daily.yml", false);
         }
 
         // Load holograms
@@ -173,6 +183,8 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.quests.clear();
         this.customRewards.clear();
         this.questCache.clear();
+        this.suites.clear();
+        this.questCategories.clear();
 
         this.files(folder, file -> this.quests.addAll(this.loadQuests(file)));
 
@@ -271,7 +283,26 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.loadCustomRewards(configuration, file);
 
         QuestLoader questLoader = new QuestLoader(this.plugin);
-        return configuration.getMapList("quests").stream().map(map -> new TypedMapAccessor((Map<String, Object>) map)).map(typedMapAccessor -> questLoader.loadQuest(typedMapAccessor, file)).filter(Objects::nonNull).toList();
+        List<Quest> quests = configuration.getMapList("quests").stream().map(map -> new TypedMapAccessor((Map<String, Object>) map)).map(typedMapAccessor -> questLoader.loadQuest(typedMapAccessor, file)).filter(Objects::nonNull).toList();
+
+        String category = configuration.getString("type");
+        if (category != null) {
+            category = category.trim().toLowerCase(Locale.ROOT);
+            if (QUEST_CATEGORIES.contains(category)) {
+                for (Quest quest : quests) {
+                    this.questCategories.put(quest.getName().toLowerCase(Locale.ROOT), category);
+                }
+            } else {
+                this.plugin.getLogger().severe("Unknown quest type '" + category + "' in " + file.getName() + ", use one of " + QUEST_CATEGORIES);
+            }
+        }
+
+        if (configuration.getBoolean("suite", false) && !quests.isEmpty()) {
+            this.suites.add(quests.stream().map(Quest::getName).toList());
+            this.plugin.getLogger().info("Quest suite loaded from " + file.getName() + " (" + quests.size() + " steps)");
+        }
+
+        return quests;
     }
 
     @Override
@@ -300,7 +331,10 @@ public class ZQuestManager extends ZUtils implements QuestManager {
                     userQuest.getActiveQuests().removeAll(toRemove);
                 }
 
-                handleDefaultQuest(player.getUniqueId());
+                // Daily quests started before the last midnight are reset first, then default quests are started
+                if (!this.resetDailyQuests(player.getUniqueId(), () -> handleDefaultQuest(player.getUniqueId()))) {
+                    handleDefaultQuest(player.getUniqueId());
+                }
             });
         });
     }
@@ -316,10 +350,98 @@ public class ZQuestManager extends ZUtils implements QuestManager {
     private void handleDefaultQuest(UUID uuid) {
 
         UserQuest userQuest = getUserQuest(uuid);
-        var quests = this.quests.stream().filter(Quest::isAutoAccept).filter(quest -> userQuest.getActiveQuests().stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest)));
-        this.startQuests(uuid, quests.toList());
+        this.startQuests(uuid, this.getDefaultQuests(userQuest));
+
+        this.handleSuites(uuid);
 
         this.callQuestEvent(uuid, new QuestUserLoadEvent(userQuest));
+    }
+
+    @Override
+    public Optional<String> getQuestCategory(String questName) {
+        return Optional.ofNullable(this.questCategories.get(questName.toLowerCase(Locale.ROOT)));
+    }
+
+    @Override
+    public void resetDailyQuests(UUID uuid) {
+        this.resetDailyQuests(uuid, () -> {
+            this.startQuests(uuid, this.getDefaultQuests(getUserQuest(uuid)));
+            this.handleSuites(uuid);
+        });
+    }
+
+    /**
+     * Remove the daily quests (active or completed) that the player started before the last midnight.
+     *
+     * <p>Rows are deleted from the storage before the callback runs on the next tick,
+     * so the quests can be started again without the deletion erasing them.</p>
+     *
+     * @param uuid     the UUID of the player
+     * @param callback executed once the quests are removed, used to start them again
+     * @return true if quests were removed, in which case the callback will be executed
+     */
+    private boolean resetDailyQuests(UUID uuid, Runnable callback) {
+
+        UserQuest userQuest = getUserQuest(uuid);
+        Date midnight = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        List<ActiveQuest> activeQuests = userQuest.getActiveQuests().stream().filter(activeQuest -> this.isDaily(activeQuest.getQuest()) && activeQuest.getCreatedAt().before(midnight)).toList();
+        List<CompletedQuest> completedQuests = userQuest.getCompletedQuests().stream().filter(completedQuest -> {
+            Date startedAt = completedQuest.startedAt() == null ? completedQuest.completedAt() : completedQuest.startedAt();
+            return this.isDaily(completedQuest.quest()) && (startedAt == null || startedAt.before(midnight));
+        }).toList();
+
+        if (activeQuests.isEmpty() && completedQuests.isEmpty()) return false;
+
+        userQuest.getActiveQuests().removeAll(activeQuests);
+        userQuest.getCompletedQuests().removeAll(completedQuests);
+
+        Set<String> questNames = new HashSet<>();
+        activeQuests.forEach(activeQuest -> questNames.add(activeQuest.getQuest().getName()));
+        completedQuests.forEach(completedQuest -> questNames.add(completedQuest.quest().getName()));
+
+        this.plugin.getStorageManager().resetQuests(uuid, activeQuests, new ArrayList<>(questNames), () -> this.plugin.getScheduler().runNextTick(w -> {
+            // The player may have left while the rows were deleted
+            if (this.usersQuests.containsKey(uuid)) callback.run();
+        }));
+        return true;
+    }
+
+    private boolean isDaily(Quest quest) {
+        return this.getQuestCategory(quest.getName()).map(DAILY_CATEGORY::equals).orElse(false);
+    }
+
+    private List<Quest> getDefaultQuests(UserQuest userQuest) {
+        // Suite steps are started by handleSuites, never through auto-accept
+        Set<String> suiteQuests = new HashSet<>();
+        this.suites.forEach(suiteQuests::addAll);
+        return this.quests.stream().filter(Quest::isAutoAccept).filter(quest -> !suiteQuests.contains(quest.getName())).filter(quest -> userQuest.getActiveQuests().stream().noneMatch(activeQuest -> activeQuest.getQuest().equals(quest))).toList();
+    }
+
+    /**
+     * Start the current step of every quest suite for a player.
+     *
+     * <p>The current step is the first quest of the suite that the player has not completed yet.
+     * It is started only if it is not already active, so this method can be called at any time:
+     * on join (first step, or a step added after the player finished the suite) and after each completion.</p>
+     *
+     * @param uuid the UUID of the player
+     */
+    private void handleSuites(UUID uuid) {
+
+        UserQuest userQuest = getUserQuest(uuid);
+        List<Quest> toStart = new ArrayList<>();
+
+        for (List<String> suite : this.suites) {
+            suite.stream().filter(questName -> !userQuest.isQuestCompleted(questName)).findFirst()
+                    .filter(questName -> !userQuest.isQuestActive(questName))
+                    .flatMap(this::getQuest)
+                    .ifPresent(toStart::add);
+        }
+
+        if (!toStart.isEmpty()) {
+            this.startQuests(uuid, toStart);
+        }
     }
 
     @Override
@@ -567,6 +689,11 @@ public class ZQuestManager extends ZUtils implements QuestManager {
         this.plugin.getStorageManager().delete(activeQuest);
 
         this.handleCustomReward(userQuest, activeQuest);
+
+        // Start the next step if this quest belongs to a suite
+        if (this.suites.stream().anyMatch(suite -> suite.contains(activeQuest.getQuest().getName()))) {
+            this.handleSuites(activeQuest.getPlayerUUID());
+        }
     }
 
     @Override

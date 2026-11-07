@@ -80,8 +80,65 @@ public class QuestsPlugin extends ZPlugin {
         this.storageManager.loadDatabase();
 
         this.addListener(new QuestListener(this, this.questManager));
+        if (!fr.maxlego08.quests.listeners.DialogClickListener.register(this, this.questManager)) {
+            getLogger().info("Update zMenu to enable DIALOG_CLICK quests (PlayerDialogClickEvent not found).");
+        }
+        if (getServer().getPluginManager().isPluginEnabled("Runes")) {
+            try {
+                Class.forName("fr.kazotaruu.runes.api.event.RuneCraftEvent");
+                this.addListener(new fr.maxlego08.quests.listeners.RuneListener(this.questManager));
+            } catch (ClassNotFoundException exception) {
+                getLogger().warning("Update Runes to enable RUNE_CRAFT quests.");
+            }
+            try {
+                Class.forName("fr.kazotaruu.runes.api.event.RuneForgeEvent");
+                this.addListener(new fr.maxlego08.quests.listeners.RuneForgeListener(this.questManager));
+            } catch (ClassNotFoundException exception) {
+                getLogger().warning("Update Runes to enable RUNE_FORGE quests.");
+            }
+        }
         this.addListener(this.hologramManager);
+        if (getServer().getPluginManager().isPluginEnabled("OneBlock")) {
+            try {
+                Class.forName("fr.kazotaruu.oneBlock.api.event.OneBlockProgressEvent");
+                this.addListener(new fr.maxlego08.quests.listeners.OneBlockProgressListener(this.questManager));
+            } catch (ClassNotFoundException exception) {
+                getLogger().warning("Update OneBlock to enable ONEBLOCK_LEVEL, ONEBLOCK_PRESTIGE and ONEBLOCK_PHASE quests.");
+            }
+            try {
+                Class.forName("fr.kazotaruu.oneBlock.api.OneBlockAPI");
+                this.getScheduler().runTimer(new fr.maxlego08.quests.listeners.OneBlockJoinTracker(this.questManager), 20L, 20L);
+            } catch (ClassNotFoundException exception) {
+                getLogger().warning("Update OneBlock to enable OB_JOIN quests.");
+            }
+            try {
+                fr.kazotaruu.oneBlock.api.OneBlockAPI.class.getMethod("isMagicBlock", org.bukkit.Location.class);
+                this.addListener(new fr.maxlego08.quests.listeners.OneBlockBreakListener(this.questManager));
+            } catch (NoClassDefFoundError | NoSuchMethodException exception) {
+                getLogger().warning("Update OneBlock to enable ONEBLOCK_BLOCK_BREAK quests.");
+            }
+        }
         this.addListener(this.wayPointManager);
+        this.getScheduler().runTimer(new fr.maxlego08.quests.listeners.DailyQuestReset(this.questManager), 20L * 20, 20L * 20);
+        if (getServer().getPluginManager().isPluginEnabled("Guilde")) {
+            this.getScheduler().runTimer(new fr.maxlego08.quests.listeners.GuildNumberTracker(this.questManager), 20L, 20L);
+        }
+        if (getServer().getPluginManager().isPluginEnabled("Economie")) {
+            var economyTracker = new fr.maxlego08.quests.listeners.EconomyNumberTracker(this.questManager);
+            this.addListener(economyTracker);
+            this.getScheduler().runTimer(economyTracker, 20L, 20L);
+        }
+        if (getServer().getPluginManager().isPluginEnabled("Shops")) {
+            this.addListener(new fr.maxlego08.quests.listeners.ShopsListener(this.questManager));
+        }
+        if (getServer().getPluginManager().isPluginEnabled("Peche")) {
+            try {
+                Class.forName("fr.kazotaruu.peche.api.event.PoissonPecheEvent");
+                this.addListener(new fr.maxlego08.quests.listeners.PecheListener(this.questManager));
+            } catch (ClassNotFoundException exception) {
+                getLogger().warning("Update Peche to enable CUSTOM_FISHING and SELL_FISH quests.");
+            }
+        }
 
         if (isEnable(Plugins.BLOCKTRACKER)) {
             getLogger().info("Using BlockTracker");
