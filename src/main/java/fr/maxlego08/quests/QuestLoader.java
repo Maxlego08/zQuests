@@ -53,6 +53,7 @@ public class QuestLoader extends ZUtils {
         this.loaders.add(new CuboidQuestLoader(plugin));
         this.loaders.add(new CommandQuestLoader(plugin));
         this.loaders.add(new CustomQuestLoader(plugin));
+        this.loaders.add(new fr.maxlego08.quests.loader.DialogClickQuestLoader());
         this.loaders.add(new ItemStackQuestLoader(plugin));
         this.loaders.add(new EnchantQuestLoader(plugin));
         this.loaders.add(new EntityQuestLoader(plugin));

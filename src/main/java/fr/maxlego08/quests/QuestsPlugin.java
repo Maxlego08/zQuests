@@ -80,6 +80,9 @@ public class QuestsPlugin extends ZPlugin {
         this.storageManager.loadDatabase();
 
         this.addListener(new QuestListener(this, this.questManager));
+        if (!fr.maxlego08.quests.listeners.DialogClickListener.register(this, this.questManager)) {
+            getLogger().info("Update zMenu to enable DIALOG_CLICK quests (PlayerDialogClickEvent not found).");
+        }
         this.addListener(this.hologramManager);
         this.addListener(this.wayPointManager);
 
