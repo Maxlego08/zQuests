@@ -49,6 +49,21 @@ public interface QuestManager {
     List<Quest> loadQuests(File file);
 
     /**
+     * Get the category of a quest (principal, secondaire or journalier), set by the "type" key of its file.
+     *
+     * @param questName the name of the quest
+     * @return the category, or empty if the file has no type
+     */
+    Optional<String> getQuestCategory(String questName);
+
+    /**
+     * Reset the daily quests that the player started before the last midnight, then start them again.
+     *
+     * @param uuid the UUID of the player
+     */
+    void resetDailyQuests(UUID uuid);
+
+    /**
      * Retrieve all available quests.
      *
      * @return a list of quests

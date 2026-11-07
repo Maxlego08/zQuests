@@ -330,6 +330,23 @@ permissible-rewards:
           - "&aVIP bonus reward!"
 ```
 
+### `premium-rewards`
+
+Extra rewards executed on completion when the player has the premium permission (`premium-rewards.permission` in `config.yml`, `zquests.premium` by default). They are given in addition to `rewards`.
+
+- **Default:** Empty list.
+- **Notes:** Same format as `rewards`. Displayed with `%zquests_premium_rewards_<quest>%`: players without the permission see them with `premium-rewards.locked-format` (greyed out by default). The lines come from `premium-rewards-lore` when present, otherwise they are generated from the `give` / `eco give` commands.
+
+**Example:**
+
+```yaml
+premium-rewards:
+  - type: console_command
+    commands:
+      - "give %player% diamond 10"
+      - "eco give %player% 500"
+```
+
 ### `action-requirements`
 
 Requirements that must be met for the quest to register progress. If the player does not satisfy these conditions, the quest will not advance.
@@ -964,6 +981,31 @@ quests:
     name: "inventory-1"
     display-name: "Open Island Shop"
     description: "Open Island Shop"
+    goal: 1
+```
+
+***
+
+### `DIALOG_CLICK`
+
+Check the buttons clicked by the player in a zMenu dialog. Requires a zMenu version with `PlayerDialogClickEvent`.
+
+- `dialog` / `dialogs`: the file name of the dialog, without `.yml`. Use `*` or leave it empty for every dialog.
+- `button` / `buttons`: the key of the button in the dialog file: the key under `multi-actions` (`button1`), `yes` or `no` for a confirmation dialog, `notice`, `exit-button`. Leave it empty for every button of the dialog.
+
+Only `custom-click` buttons (the default type) are detected.
+
+**Example usage:**
+
+```yaml
+quests:
+  - type: DIALOG_CLICK
+    actions:
+      - dialog: "welcome"
+        button: "button1"
+    name: "dialog-1"
+    display-name: "Join Survival"
+    description: "Click on Join Survival in the welcome dialog"
     goal: 1
 ```
 

@@ -44,6 +44,17 @@ public interface Quest {
     String getPlaceholderDescription();
 
     /**
+     * Gets the human-readable lines describing the rewards of the quest.
+     * Uses the {@code rewards-lore} section when present, otherwise lines generated
+     * from the give / eco commands of the rewards.
+     *
+     * @return the rewards lines, never null
+     */
+    default List<String> getRewardsLore() {
+        return java.util.Collections.emptyList();
+    }
+
+    /**
      * Gets the thumbnail material of the quest.
      *
      * @return the thumbnail material of the quest
@@ -79,6 +90,27 @@ public interface Quest {
      * @return the list of permissible rewards
      */
     List<Permissible> getPermissibleRewards();
+
+    /**
+     * Gets the extra rewards given when the player has the premium permission
+     * ({@code premium-rewards.permission} in the config).
+     *
+     * @return the premium rewards, never null
+     */
+    default List<Action> getPremiumRewards() {
+        return java.util.Collections.emptyList();
+    }
+
+    /**
+     * Gets the human-readable lines describing the premium rewards of the quest.
+     * Uses the {@code premium-rewards-lore} section when present, otherwise lines generated
+     * from the give / eco commands of the premium rewards.
+     *
+     * @return the premium rewards lines, never null
+     */
+    default List<String> getPremiumRewardsLore() {
+        return java.util.Collections.emptyList();
+    }
 
     /**
      * Gets the list of start actions associated with the quest.

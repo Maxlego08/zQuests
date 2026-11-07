@@ -70,12 +70,28 @@ public enum QuestType {
     PLAYER_KILL,
     BUCKET_FILL,
     ADVANCEMENT,
+    RUNE_CRAFT,
+    RUNE_FORGE,
+    GUILD_NUMBER,
+    ECO_NUMBER,
+    ONEBLOCK_LEVEL,
+    ONEBLOCK_PRESTIGE,
+    ONEBLOCK_PHASE,
+    ONEBLOCK_BLOCK_BREAK,
+    OB_JOIN,
+    BUY_SHOP,
+    SELL_SHOP,
+    AH_BUY,
+    ORDER_COMPLETE,
+    CUSTOM_FISHING,
+    SELL_FISH,
+    DIALOG_CLICK,
     ;
 
     public ActionInfo<?> toAction(Object target) {
         return switch (this) {
             case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, PURCHASE, ITEM_BREAK, ITEM_MENDING,
-                 SMITHING, BUCKET_FILL -> new MaterialAction(this, (Material) target);
+                 SMITHING, BUCKET_FILL, ONEBLOCK_BLOCK_BREAK -> new MaterialAction(this, (Material) target);
             case CRAFT, ITEM_CONSUME -> new ItemStackAction(this, (ItemStack) target);
             case ENTITY_KILL, TAME, SHEAR, BREED, MILK -> new EntityAction(this, (Entity) target);
             case ENCHANT -> new EnchantAction(this, (EnchantItemEvent) target);
@@ -92,7 +108,17 @@ public enum QuestType {
             case ADVANCEMENT -> new AdvancementAction((String) target);
             case CUBOID, LOOK_AT_BLOCK, LOOK_AT_ENTITY -> new LocationAction(this, (Location) target);
             case CUSTOM -> new CustomAction((String) target);
+            case RUNE_CRAFT -> new fr.maxlego08.quests.api.actions.RuneCraftAction((String) target);
+            case RUNE_FORGE -> new fr.maxlego08.quests.api.actions.RuneForgeAction((String) target);
+            case GUILD_NUMBER, ECO_NUMBER -> new fr.maxlego08.quests.api.actions.NumberAction(this, (String) target);
+            case ONEBLOCK_LEVEL, ONEBLOCK_PRESTIGE, ONEBLOCK_PHASE, OB_JOIN ->
+                    new fr.maxlego08.quests.api.actions.OneBlockProgressAction(this, (String) target);
+            case BUY_SHOP, SELL_SHOP, AH_BUY, ORDER_COMPLETE ->
+                    new fr.maxlego08.quests.api.actions.ShopsAction(this, (String) target);
+            case CUSTOM_FISHING, SELL_FISH ->
+                    new fr.maxlego08.quests.api.actions.ShopsAction(this, String.valueOf(target));
             case INVENTORY_OPEN -> new InventoryOpenAction((String) target);
+            case DIALOG_CLICK -> new fr.maxlego08.quests.api.actions.DialogClickAction((fr.maxlego08.quests.api.utils.DialogClick) target);
             case INVENTORY_CONTENT -> new InventoryContentAction((InventoryContent) target);
         };
     }
@@ -100,7 +126,7 @@ public enum QuestType {
     public boolean isMaterial() {
         return switch (this) {
             case BLOCK_BREAK, BLOCK_PLACE, FARMING, FISHING, SMELT, SELL, ITEM_BREAK, ITEM_MENDING, SMITHING,
-                 PURCHASE, BUCKET_FILL -> true;
+                 PURCHASE, BUCKET_FILL, ONEBLOCK_BLOCK_BREAK -> true;
             default -> false;
         };
     }

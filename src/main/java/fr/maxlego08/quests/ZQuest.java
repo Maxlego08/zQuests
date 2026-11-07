@@ -1,5 +1,7 @@
 package fr.maxlego08.quests;
 
+import fr.maxlego08.quests.save.Config;
+
 import fr.maxlego08.menu.api.requirement.Action;
 import fr.maxlego08.menu.api.requirement.Permissible;
 import fr.maxlego08.menu.api.utils.Placeholders;
@@ -41,8 +43,11 @@ public class ZQuest implements Quest {
     private final WayPointConfiguration wayPointConfiguration;
     private final List<Permissible> permissibles;
     private final List<Permissible> forceConditions;
+    private final List<String> rewardsLore;
+    private final List<Action> premiumRewards;
+    private final List<String> premiumRewardsLore;
 
-    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Permissible> permissibleRewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration, WayPointConfiguration wayPointConfiguration, List<Permissible> permissibles, List<Permissible> forceConditions) {
+    public ZQuest(QuestsPlugin plugin, String name, QuestType type, String displayName, String description, String placeholderDescription, Material thumbnail, long goal, boolean autoAccept, List<Action> rewards, List<Permissible> permissibleRewards, List<Action> startActions, List<QuestAction> actions, boolean useGlobalRewards, boolean canChangeFavorite, boolean isFavorite, int customModelId, boolean isUnique, boolean isHidden, List<HologramConfiguration> hologramConfiguration, WayPointConfiguration wayPointConfiguration, List<Permissible> permissibles, List<Permissible> forceConditions, List<String> rewardsLore, List<Action> premiumRewards, List<String> premiumRewardsLore) {
         this.plugin = plugin;
         this.name = name;
         this.type = type;
@@ -66,6 +71,9 @@ public class ZQuest implements Quest {
         this.wayPointConfiguration = wayPointConfiguration;
         this.permissibles = permissibles;
         this.forceConditions = forceConditions;
+        this.rewardsLore = rewardsLore == null ? List.of() : List.copyOf(rewardsLore);
+        this.premiumRewards = premiumRewards == null ? List.of() : List.copyOf(premiumRewards);
+        this.premiumRewardsLore = premiumRewardsLore == null ? List.of() : List.copyOf(premiumRewardsLore);
     }
 
     @Override
@@ -99,6 +107,10 @@ public class ZQuest implements Quest {
             var actions = permissible.hasPermission(player, null, fakeInventory, placeholders) ? permissible.getSuccessActions() : permissible.getDenyActions();
             actions.forEach(action -> action.preExecute(player, null, fakeInventory, placeholders));
         }
+
+        if (!this.premiumRewards.isEmpty() && Config.isPremium(player)) {
+            this.premiumRewards.forEach(reward -> reward.preExecute(player, null, fakeInventory, placeholders));
+        }
     }
 
     @Override
@@ -114,6 +126,21 @@ public class ZQuest implements Quest {
     @Override
     public String getPlaceholderDescription() {
         return this.placeholderDescription;
+    }
+
+    @Override
+    public List<String> getRewardsLore() {
+        return this.rewardsLore;
+    }
+
+    @Override
+    public List<Action> getPremiumRewards() {
+        return this.premiumRewards;
+    }
+
+    @Override
+    public List<String> getPremiumRewardsLore() {
+        return this.premiumRewardsLore;
     }
 
     @Override
