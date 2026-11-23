@@ -1,4 +1,4 @@
-# Unreleased
+# 1.0.0.6
 
 - Update to zMenu 1.1.2.1 and Sarah 1.27
 - Added PostgreSQL support (`storage-type: POSTGRESQL`)
