@@ -15,3 +15,4 @@ softdepend:
   - SuperiorSkyblock2
 libraries:
   - org.mariadb.jdbc:mariadb-java-client:3.5.6
+  - org.postgresql:postgresql:42.7.8

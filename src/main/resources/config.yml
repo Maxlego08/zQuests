@@ -56,8 +56,9 @@ disable-offhand-craft: true
 # SQLITE - For the launch of the plugin only.
 # MARIADB - RECOMMENDED
 # MYSQL
+# POSTGRESQL
 #
-# We advise you to use MARIADB or MYSQL, the SQLITE storage is only there to install the plugin and do some tests, not all features are available with SQLITE yet.
+# We advise you to use MARIADB, MYSQL or POSTGRESQL, the SQLITE storage is only there to install the plugin and do some tests, not all features are available with SQLITE yet.
 # The plugin will work, but some features like sanctions update when launching the plugin will not work.
 # This will be fixed in future plugin updates
 storage-type: SQLITE
@@ -70,7 +71,7 @@ database-configuration:
   table-prefix: "zquests_"
   # IP Address of the machine the database is hosted on
   host: 192.168.10.10
-  # Port of the database, by default, MYSQL's port is 3306
+  # Port of the database, by default, MYSQL/MARIADB port is 3306 and POSTGRESQL port is 5432
   port: 3306
   # Database username
   user: homestead

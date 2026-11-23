@@ -1,3 +1,8 @@
+# Unreleased
+
+- Update to zMenu 1.1.2.1 and Sarah 1.27
+- Added PostgreSQL support (`storage-type: POSTGRESQL`)
+
 # 1.0.0.5
 
 - Added 5 new quest types: `BREED`, `MILK`, `PLAYER_KILL`, `BUCKET_FILL`, `ADVANCEMENT`
